@@ -1,0 +1,155 @@
+/* ============================================================================
+   ASSET MANIFEST — the one file to edit when you swap art or audio.
+
+   Every picture and sound in the game is looked up here by key. To replace one,
+   drop your file into the assets folder and change the path below. Any format
+   the browser can show or play works (svg, png, jpg, webp / mp3, ogg, m4a, wav).
+
+   Music:  loop = seconds of music before the next pass starts. The files are
+           rendered with a reverb tail past that point so loops overlap cleanly.
+           Leave loop out (or set it to 0) for a file that should loop end-to-end.
+   volume: 0..1 per sound, multiplied by the player's volume settings.
+   ========================================================================== */
+window.ASSETS = {
+  scenes: {
+    title: "assets/img/scenes/title.svg",
+    street: "assets/img/scenes/street.svg",
+    hall1: "assets/img/scenes/hall1.svg",
+    hall2: "assets/img/scenes/hall2.svg",
+    hall3: "assets/img/scenes/hall3.svg",
+    doorway: "assets/img/scenes/doorway.svg",
+    station: "assets/img/scenes/station.svg",
+    apt2b_living: "assets/img/scenes/apt2b_living.svg",
+    apt2b_kitchen: "assets/img/scenes/apt2b_kitchen.svg",
+    apt2b_bedroom: "assets/img/scenes/apt2b_bedroom.svg",
+    apt2b_storage: "assets/img/scenes/apt2b_storage.svg",
+    apt2a: "assets/img/scenes/apt2a.svg",
+    basement: "assets/img/scenes/basement.svg",
+    paper_guest: "assets/img/scenes/paper_guest.svg",
+    paper_dojo: "assets/img/scenes/paper_dojo.svg",
+    paper_study: "assets/img/scenes/paper_study.svg",
+    paper_hall: "assets/img/scenes/paper_hall.svg",
+    paper_2b: "assets/img/scenes/paper_2b.svg",
+    end_banish: "assets/img/scenes/end_banish.svg",
+    end_kill: "assets/img/scenes/end_kill.svg"
+  },
+  portraits: {
+    haruka: "assets/img/portraits/haruka.svg",
+    kenji: "assets/img/portraits/kenji.svg",
+    daichi: "assets/img/portraits/daichi.svg",
+    nomura: "assets/img/portraits/nomura.svg",
+    kaede: "assets/img/portraits/kaede.svg",
+    naoko: "assets/img/portraits/naoko.svg",
+    hideki: "assets/img/portraits/hideki.svg",
+    kenjiro: "assets/img/portraits/kenjiro.svg",
+    daigo: "assets/img/portraits/daigo.svg",
+    chihiro: "assets/img/portraits/chihiro.svg",
+    ayaka: "assets/img/portraits/ayaka.svg"
+  },
+  sprites: {
+    replica: "assets/img/sprites/replica.svg",
+    ghost_base: "assets/img/sprites/ghost_base.svg",
+    ghost_blades: "assets/img/sprites/ghost_blades.svg",
+    ghost_lantern: "assets/img/sprites/ghost_lantern.svg"
+  },
+  ui: {
+    emblem: "assets/img/ui/emblem_ehg.svg",
+    lily: "assets/img/ui/lily.svg",
+    lily_blood: "assets/img/ui/lily_blood.svg",
+    ember: "assets/img/ui/ember.svg",
+    washi_light: "assets/img/ui/washi_light.png",
+    washi_dark: "assets/img/ui/washi_dark.png",
+    seal_solved: "assets/img/ui/seal_solved.svg",
+    seal_done: "assets/img/ui/seal_done.svg",
+    seal_failed: "assets/img/ui/seal_failed.svg",
+    seal_secret: "assets/img/ui/seal_secret.svg",
+    seal_dead: "assets/img/ui/seal_dead.svg"
+  },
+  items: {
+    flashlight: "assets/img/ui/item_flashlight.svg",
+    cigarettes: "assets/img/ui/item_cigarettes.svg",
+    salt: "assets/img/ui/item_salt.svg",
+    omamori: "assets/img/ui/item_omamori.svg",
+    crowbar: "assets/img/ui/item_crowbar.svg",
+    lockpicks: "assets/img/ui/item_lockpicks.svg",
+    book: "assets/img/ui/item_book.svg",
+    camera: "assets/img/ui/item_camera.svg",
+    records: "assets/img/ui/item_records.svg",
+    journal: "assets/img/ui/item_journal.svg",
+    knife: "assets/img/ui/item_knife.svg",
+    tape: "assets/img/ui/item_tape.svg",
+    talisman: "assets/img/ui/item_talisman.svg",
+    medicine: "assets/img/ui/item_medicine.svg"
+  },
+  music: {
+    title:         { src: "assets/audio/music/title.mp3",         loop: 64.0,    volume: 0.8 },
+    hideout:       { src: "assets/audio/music/hideout.mp3",       loop: 0,       volume: 0.7 },
+    investigation: { src: "assets/audio/music/investigation.mp3", loop: 53.3333, volume: 0.7 },
+    basement:      { src: "assets/audio/music/basement.mp3",      loop: 60.0,    volume: 0.8 },
+    paperhouse:    { src: "assets/audio/music/paperhouse.mp3",    loop: 57.6,    volume: 0.8 },
+    combat:        { src: "assets/audio/music/combat.mp3",        loop: 49.6552, volume: 0.75 },
+    boss:          { src: "assets/audio/music/boss.mp3",          loop: 58.1818, volume: 0.8 },
+    ending_banish: { src: "assets/audio/music/ending_banish.mp3", loop: 43.6364, volume: 0.8 },
+    ending_kill:   { src: "assets/audio/music/ending_kill.mp3",   loop: 41.3793, volume: 0.8 }
+  },
+  ambience: {
+    rain:     { src: "assets/audio/sfx/rain_loop.mp3",    volume: 0.45 },
+    building: { src: "assets/audio/sfx/building_hum.mp3", volume: 0.35 },
+    boiler:   { src: "assets/audio/sfx/boiler.mp3",       volume: 0.4 }
+  },
+  sfx: {
+    ui_click: { src: "assets/audio/sfx/ui_click.mp3", volume: 0.5 },
+    ui_open: { src: "assets/audio/sfx/ui_open.mp3", volume: 0.6 },
+    ui_close: { src: "assets/audio/sfx/ui_close.mp3", volume: 0.6 },
+    page_turn: { src: "assets/audio/sfx/page_turn.mp3", volume: 0.6 },
+    dice_roll: { src: "assets/audio/sfx/dice_roll.mp3", volume: 0.9 },
+    roll_success: { src: "assets/audio/sfx/roll_success.mp3", volume: 0.8 },
+    roll_fail: { src: "assets/audio/sfx/roll_fail.mp3", volume: 0.8 },
+    roll_crit: { src: "assets/audio/sfx/roll_crit.mp3", volume: 0.9 },
+    roll_fumble: { src: "assets/audio/sfx/roll_fumble.mp3", volume: 0.9 },
+    clue: { src: "assets/audio/sfx/clue.mp3", volume: 0.7 },
+    objective: { src: "assets/audio/sfx/objective.mp3", volume: 0.9 },
+    fate: { src: "assets/audio/sfx/fate.mp3", volume: 0.8 },
+    footsteps: { src: "assets/audio/sfx/footsteps.mp3", volume: 0.5 },
+    door_slide: { src: "assets/audio/sfx/door_slide.mp3", volume: 0.7 },
+    door_knock: { src: "assets/audio/sfx/door_knock.mp3", volume: 0.8 },
+    door_creak: { src: "assets/audio/sfx/door_creak.mp3", volume: 0.7 },
+    radio: { src: "assets/audio/sfx/radio.mp3", volume: 0.5 },
+    camera_shutter: { src: "assets/audio/sfx/camera_shutter.mp3", volume: 0.7 },
+    tape_click: { src: "assets/audio/sfx/tape_click.mp3", volume: 0.8 },
+    tape_whisper: { src: "assets/audio/sfx/tape_whisper.mp3", volume: 1.0 },
+    elevator_ding: { src: "assets/audio/sfx/elevator_ding.mp3", volume: 0.7 },
+    mail_chute: { src: "assets/audio/sfx/mail_chute.mp3", volume: 0.9 },
+    hallway_stretch: { src: "assets/audio/sfx/hallway_stretch.mp3", volume: 0.8 },
+    lily_chime: { src: "assets/audio/sfx/lily_chime.mp3", volume: 0.7 },
+    paper_crinkle: { src: "assets/audio/sfx/paper_crinkle.mp3", volume: 0.7 },
+    paper_tear: { src: "assets/audio/sfx/paper_tear.mp3", volume: 0.9 },
+    paper_unfold: { src: "assets/audio/sfx/paper_unfold.mp3", volume: 0.9 },
+    gunshot: { src: "assets/audio/sfx/gunshot.mp3", volume: 0.8 },
+    axe_hit: { src: "assets/audio/sfx/axe_hit.mp3", volume: 0.9 },
+    blade_hit: { src: "assets/audio/sfx/blade_hit.mp3", volume: 0.85 },
+    miss_whoosh: { src: "assets/audio/sfx/miss_whoosh.mp3", volume: 0.7 },
+    spell_cast: { src: "assets/audio/sfx/spell_cast.mp3", volume: 0.8 },
+    heal: { src: "assets/audio/sfx/heal.mp3", volume: 0.8 },
+    burn: { src: "assets/audio/sfx/burn.mp3", volume: 0.8 },
+    stun_gong: { src: "assets/audio/sfx/stun_gong.mp3", volume: 0.8 },
+    shift_walls: { src: "assets/audio/sfx/shift_walls.mp3", volume: 0.9 },
+    folding_flesh: { src: "assets/audio/sfx/folding_flesh.mp3", volume: 0.9 },
+    sanity_hit: { src: "assets/audio/sfx/sanity_hit.mp3", volume: 0.8 },
+    stability_hit: { src: "assets/audio/sfx/stability_hit.mp3", volume: 0.8 },
+    health_hit: { src: "assets/audio/sfx/health_hit.mp3", volume: 0.85 },
+    replica_flicker: { src: "assets/audio/sfx/replica_flicker.mp3", volume: 0.7 },
+    replica_scream: { src: "assets/audio/sfx/replica_scream.mp3", volume: 0.8 },
+    ghost_free: { src: "assets/audio/sfx/ghost_free.mp3", volume: 1.0 },
+    ghost_hit: { src: "assets/audio/sfx/ghost_hit.mp3", volume: 0.9 },
+    ghost_shape: { src: "assets/audio/sfx/ghost_shape.mp3", volume: 0.9 },
+    ghost_die: { src: "assets/audio/sfx/ghost_die.mp3", volume: 0.9 },
+    banish: { src: "assets/audio/sfx/banish.mp3", volume: 1.0 },
+    death_die: { src: "assets/audio/sfx/death_die.mp3", volume: 0.9 },
+    injury: { src: "assets/audio/sfx/injury.mp3", volume: 0.9 },
+    lotus: { src: "assets/audio/sfx/lotus.mp3", volume: 0.8 },
+    turn_start: { src: "assets/audio/sfx/turn_start.mp3", volume: 0.5 },
+    guard: { src: "assets/audio/sfx/guard.mp3", volume: 0.8 },
+    flare: { src: "assets/audio/sfx/flare.mp3", volume: 0.8 }
+  }
+};

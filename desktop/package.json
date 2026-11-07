@@ -1,0 +1,57 @@
+{
+  "name": "the-beyond-desktop",
+  "productName": "The Beyond",
+  "version": "0.1.0",
+  "description": "The Beyond: investigate the Beyond across the centuries, alone or with friends.",
+  "author": "Gage Lee",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "copy": "node copy-game.js",
+    "start": "npm run copy && electron .",
+    "dist": "npm run copy && electron-builder",
+    "dist:win": "npm run copy && electron-builder --win",
+    "dist:mac": "npm run copy && electron-builder --mac",
+    "dist:linux": "npm run copy && electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "33.2.1",
+    "electron-builder": "25.1.8"
+  },
+  "build": {
+    "appId": "com.gagelee.thebeyond",
+    "productName": "The Beyond",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "game/**/*"
+    ],
+    "icon": "game/assets/icons/icon-512.png",
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.role-playing-games"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Game"
+    },
+    "publish": null
+  }
+}

@@ -1,0 +1,160 @@
+/* ============================================================================
+   THE WALL — a corkboard of standing, threats, contacts, rivals and news
+   ========================================================================== */
+.wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; align-items: start; padding: 18px 16px 16px; margin: 0 0 1.2rem;
+  border-radius: 6px; background: #6b4a2e radial-gradient(circle at 20% 30%, rgba(255,255,255,.06), transparent 40%), repeating-linear-gradient(45deg, rgba(0,0,0,.05) 0 2px, transparent 2px 5px);
+  box-shadow: inset 0 0 0 6px #3f2a19, inset 0 0 30px rgba(0,0,0,.45); }
+.wpin { position: relative; background: var(--washi) url("../assets/img/ui/washi_light.png"); color: var(--sumi); padding: .8rem .9rem .9rem; border-radius: 2px;
+  box-shadow: 0 6px 14px rgba(0,0,0,.4); display: grid; gap: .35rem; align-content: start; min-width: 0; }
+.wpin:nth-child(odd) { transform: rotate(-.6deg); } .wpin:nth-child(even) { transform: rotate(.5deg); }
+.wpin .tack { position: absolute; top: -6px; left: 50%; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #f27a6e, var(--hanko) 60%, #5a1410); box-shadow: 0 2px 3px rgba(0,0,0,.5); }
+.wpin h4 { margin: 0; font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: #5b5a52; }
+.wpin small { color: #4a4943; line-height: 1.35; }
+.wbig { font-family: var(--serif); font-size: 1.15rem; line-height: 1.2; }
+.wprog { height: 6px; background: rgba(0,0,0,.12); border-radius: 3px; overflow: hidden; }
+.wprog i { display: block; height: 100%; background: var(--sodium); }
+.pullbar { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+.pullbar i { height: 10px; background: rgba(0,0,0,.12); border-radius: 1px; }
+.pullbar i.on { background: #7d6c94; } .pullbar i.on.hot { background: var(--hanko); }
+.wperk { display: flex; gap: .4rem; align-items: flex-start; font-size: .8rem; color: #3a3934; cursor: pointer; margin-top: .2rem; }
+.wperk input { margin-top: .15rem; }
+.wlist { margin: 0; padding-left: 1rem; display: grid; gap: .3rem; font-size: .88rem; line-height: 1.35; }
+.wlist.small { font-size: .78rem; }
+.wpin.threats li b { color: #7a1d17; }
+.wfaces { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 6px; }
+.wface { display: grid; justify-items: center; gap: 2px; min-width: 0; }
+.wface img { width: 42px; height: 42px; object-fit: cover; border-radius: 50%; border: 2px solid #5d9a6c; background: #5a6470; }
+.wface.wary img { border-color: #b8322a; filter: grayscale(.6); }
+.wface small { font-size: .62rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wrivals { display: grid; gap: .5rem; }
+.wrival { display: grid; grid-template-columns: 40px 1fr; gap: .5rem; align-items: center; }
+.wrival img { width: 40px; height: 40px; object-fit: cover; border-radius: 3px; background: #5a6470; filter: grayscale(.4) contrast(1.05); }
+.wrival b { display: block; font-size: .9rem; }
+.hrank { display: block; font-family: var(--mono); font-size: .66rem; letter-spacing: .06em; opacity: .85; }
+.dwall { margin: .6rem 0; padding: .6rem .8rem; border-left: 3px solid var(--sodium); background: rgba(227,164,71,.07); }
+.dwall h4 { margin: 0 0 .3rem; font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--sodium); }
+@media (max-width: 560px) { .wall { padding: 14px 10px; gap: 12px; } .wpin { transform: none !important; } }
+
+/* ============================================================================
+   POINT AND CLICK — spot markers, hover card, focus pips
+   ========================================================================== */
+.hot .mark { display: grid; place-items: center; width: 30px; height: 30px; border-width: 2.5px; box-shadow: 0 0 0 3px rgba(0,0,0,.35), 0 0 14px rgba(227,164,71,.45); }
+.hot:disabled .mark { opacity: .55; animation: none; }
+.hot .mark i { font-style: normal; font-family: var(--mono); font-size: .72rem; font-weight: 700; color: var(--bone); line-height: 1; text-transform: uppercase; }
+.hot.k-talk .mark { border-color: #8fc3e8; background: rgba(107,147,234,.22); animation: none; }
+.hot.k-fight .mark { border-color: var(--hanko); background: rgba(184,50,42,.3); }
+.hot.k-look .mark { width: 32px; height: 32px; }
+.hottip { position: fixed; z-index: 60; max-width: 260px; display: grid; gap: 2px; padding: .5rem .65rem; background: rgba(11,15,21,.95); color: var(--bone); border: 1px solid rgba(227,164,71,.5); border-radius: 3px; box-shadow: 0 6px 18px rgba(0,0,0,.5); pointer-events: none; font-size: .82rem; line-height: 1.3; }
+.hottip b { font-family: var(--serif); font-size: .95rem; }
+.hottip .roll { font-family: var(--mono); font-size: .72rem; color: var(--sodium); }
+.hottip .roll.none { color: var(--fog); }
+.hottip .cost { font-family: var(--mono); font-size: .68rem; color: var(--fog); }
+.idle .spotinfo { display: block; font-family: var(--mono); font-size: .64rem; opacity: .75; margin-top: 2px; }
+#party .agent .focus { display: flex; gap: 2px; margin-top: 2px; }
+#party .agent .focus i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--sodium); }
+#party .agent .focus i.on { background: var(--sodium); }
+
+/* ============================================================================
+   PATRONS — altars, the gift ceremony, the patron's voice
+   ========================================================================== */
+.altarwrap { display: grid; gap: 1rem; }
+.altarwrap .agentchip { position: relative; }
+.altarwrap .pmark { position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border-radius: 50%; box-shadow: 0 0 6px currentColor; }
+.altar { --pc: #c4c08e; position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 1.2rem; padding: 1.2rem; border-radius: 4px;
+  background: radial-gradient(ellipse at 20% 40%, color-mix(in srgb, var(--pc) 18%, transparent), transparent 60%), linear-gradient(180deg, #0c0a10, #050407);
+  border: 1px solid color-mix(in srgb, var(--pc) 35%, #000); box-shadow: inset 0 0 60px rgba(0,0,0,.8), 0 10px 30px rgba(0,0,0,.4); }
+.altar .aidol { width: 100%; border-radius: 3px; filter: drop-shadow(0 0 18px color-mix(in srgb, var(--pc) 45%, transparent)); animation: breathe 6s ease-in-out infinite; }
+.altar .atext { display: grid; gap: .5rem; align-content: start; min-width: 0; color: #e8e2d6; }
+.altar h3 { margin: 0; font-family: var(--display); font-size: 1.5rem; color: var(--pc); text-shadow: 0 0 18px color-mix(in srgb, var(--pc) 60%, transparent); }
+.altar .akicker { font-family: var(--mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--fog); }
+.altar .aquote { margin: 0; font-family: var(--serif); font-style: italic; font-size: 1.05rem; color: #f2ecdf; opacity: .9; }
+.altar .alore summary { cursor: pointer; font-family: var(--mono); font-size: .72rem; color: var(--fog); }
+.altar .alore p { font-size: .88rem; color: #cfc8ba; }
+.agifts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: .5rem; }
+.agift { display: grid; gap: .25rem; padding: .55rem .65rem; border: 1px solid #2a2530; border-radius: 3px; background: rgba(255,255,255,.03); font-size: .82rem; }
+.agift.has { border-color: color-mix(in srgb, var(--pc) 55%, #000); background: color-mix(in srgb, var(--pc) 8%, transparent); }
+.agift.sealed { opacity: .5; } .agift.sealed b { letter-spacing: .1em; }
+.agift.lost { opacity: .55; text-decoration: line-through; }
+.agift small { color: #c9c2b4; line-height: 1.35; }
+.candles { position: absolute; inset: auto 0 0 0; height: 40px; pointer-events: none; }
+.candles i { position: absolute; bottom: 4px; width: 6px; height: 16px; border-radius: 2px; background: #e9dfc8; }
+.candles i::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 8px; height: 14px; margin-left: -4px; border-radius: 50% 50% 40% 40%; background: radial-gradient(circle at 50% 70%, #fff6c8, #ffb347 55%, transparent 70%); animation: flick 1.7s ease-in-out infinite; animation-delay: inherit; }
+@keyframes flick { 0%, 100% { transform: scale(1) translateY(0); opacity: .95; } 30% { transform: scale(.85, 1.1) translateY(-1px); opacity: .8; } 60% { transform: scale(1.1, .9); opacity: 1; } }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+.warnline { color: #e8a08c !important; }
+.shrines { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .7rem; }
+.shrine { appearance: none; text-align: left; display: grid; gap: .3rem; align-content: start; padding: .5rem; background: #08070b; color: #e8e2d6; border: 1px solid #241f2a; border-radius: 3px; cursor: pointer; transition: border-color .2s, transform .2s; }
+.shrine:hover, .shrine:focus-visible { border-color: var(--pc); transform: translateY(-2px); }
+.shrine img { width: 100%; border-radius: 2px; }
+.shrine b { font-family: var(--serif); color: var(--pc); }
+.shrine small { font-family: var(--serif); font-style: italic; color: #b9b2a5; font-size: .78rem; line-height: 1.35; }
+.ceremony { --pc: #c4c08e; position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; padding: 24px max(16px, env(safe-area-inset-left)); background-color: #030205; background-image: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--pc) 16%, #050407), #000 70%); color: #efe8da; opacity: 0; transition: opacity .9s ease; overflow-y: auto; }
+.ceremony.in { opacity: 1; } .ceremony.out { opacity: 0; transition-duration: .6s; }
+.ceremony .cinner { max-width: 640px; width: 100%; display: grid; gap: .7rem; text-align: center; }
+.ceremony .cidol { width: min(360px, 80%); margin: 0 auto; filter: drop-shadow(0 0 30px color-mix(in srgb, var(--pc) 60%, transparent)); animation: breathe 5s ease-in-out infinite; }
+.ceremony .ckicker { font-family: var(--mono); font-size: .72rem; letter-spacing: .16em; text-transform: uppercase; color: #9d968a; }
+.ceremony .cname { margin: 0; font-family: var(--display); font-size: clamp(1.6rem, 4vw, 2.4rem); color: var(--pc); text-shadow: 0 0 24px color-mix(in srgb, var(--pc) 70%, transparent); }
+.ceremony .cq { min-height: 3em; margin: 0; font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.5; }
+.ceremony .cbody { display: grid; gap: .5rem; animation: fadeup .8s ease both; }
+.ceremony .cbody:empty { display: none; }
+.ceremony h3 { margin: .4rem 0 0; font-family: var(--serif); font-size: 1.15rem; }
+.ceremony .cdesc { margin: 0; color: #d9d1c2; }
+.ceremony .ccost { text-align: left; padding: .7rem .9rem; border: 1px solid color-mix(in srgb, var(--pc) 50%, #000); background: rgba(0,0,0,.4); border-radius: 3px; }
+.ceremony .ccost b { display: block; font-family: var(--mono); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; color: var(--pc); margin-bottom: .3rem; }
+.ceremony .ccost p { margin: 0; font-size: .92rem; }
+.ceremony .cwarn { color: #e8a08c; }
+.ceremony .cskip { position: fixed; top: calc(14px + env(safe-area-inset-top, 0px)); right: max(16px, env(safe-area-inset-right)); }
+.ceremony .row.center { justify-content: center; }
+.ceremony .candles { height: 60px; }
+@keyframes fadeup { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.pvoice { display: block; padding: .5rem .7rem; border-left: 3px solid var(--pc); background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 12%, transparent), transparent); font-family: var(--serif); font-style: italic; animation: fadeup 1.2s ease both; }
+.pvoice small { display: block; font-style: normal; font-family: var(--mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
+.pstir { appearance: none; width: 100%; text-align: left; display: grid; gap: .2rem; margin: .8rem 0; padding: .7rem .9rem; background: linear-gradient(90deg, color-mix(in srgb, var(--pc) 14%, #07060a), #07060a); color: #e8e2d6; border: 1px solid color-mix(in srgb, var(--pc) 40%, #000); border-radius: 3px; cursor: pointer; }
+.pstir small { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--pc); }
+.pstir span { font-family: var(--serif); font-style: italic; }
+.pstir .pdem { color: #a9a294; text-transform: none; letter-spacing: 0; font-family: var(--serif); }
+@media (max-width: 640px) { .altar { grid-template-columns: 1fr; } .altar .aidol { max-width: 280px; } }
+@media (prefers-reduced-motion: reduce) { .candles i::before, .altar .aidol, .ceremony .cidol { animation: none; } }
+
+/* ============================================================================
+   CO-OP — the player's own drawer, private notes, reconnecting
+   ========================================================================== */
+.livebar .mybtn { position: relative; }
+.livebar .mybtn i { font-style: normal; display: inline-grid; place-items: center; min-width: 1.2em; height: 1.2em; margin-left: .2rem; border-radius: 1em; font-size: .7rem; background: transparent; }
+.livebar .mybtn.ping i { background: var(--hanko); color: #fff; animation: pulse 2s ease-out infinite; }
+.livebar .lvnet { font-family: var(--mono); font-size: .72rem; color: var(--sodium); animation: blink 1.2s steps(2) infinite; }
+@keyframes blink { 50% { opacity: .3; } }
+.mydrawer { position: absolute; top: 56px; right: 0; bottom: 0; width: min(380px, 100%); overflow-y: auto; z-index: 2; padding: .9rem max(16px, env(safe-area-inset-right)) 1.2rem .9rem; display: grid; gap: .6rem; align-content: start;
+  background: var(--washi) url("../assets/img/ui/washi_light.png"); color: var(--sumi); box-shadow: -10px 0 30px rgba(0,0,0,.5); }
+.mydrawer .myhead { display: flex; justify-content: space-between; align-items: center; }
+.mydrawer .myhead b { font-family: var(--serif); font-size: 1.1rem; }
+.mydrawer .mycard { display: grid; grid-template-columns: 56px 1fr; gap: .2rem .7rem; align-items: center; }
+.mydrawer .mycard b, .mydrawer .mycard small { display: block; }
+.mydrawer .mycard img { width: 56px; height: 56px; object-fit: cover; border-radius: 50%; grid-row: span 2; }
+.mydrawer .mycard .pools { grid-column: 1 / -1; }
+.mydrawer .myfocus { display: flex; gap: 4px; align-items: center; margin: 0; font-family: var(--mono); font-size: .75rem; }
+.mydrawer .myfocus i { width: 9px; height: 9px; border-radius: 50%; border: 1.5px solid #9a6a1e; } .mydrawer .myfocus i.on { background: #c98a2a; }
+.mydrawer .myasp { display: flex; flex-wrap: wrap; gap: .25rem .6rem; font-family: var(--mono); font-size: .72rem; }
+.mydrawer h4 { margin: .4rem 0 0; font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: #5b5a52; }
+.myitem { display: grid; gap: .3rem; padding: .6rem .7rem; border: 1px solid rgba(0,0,0,.15); border-left: 3px solid #7d6c94; border-radius: 2px; background: rgba(255,255,255,.35); }
+.myitem.new { border-left-color: var(--hanko); box-shadow: 0 0 0 2px rgba(184,50,42,.15); }
+.myitem.shared { opacity: .65; }
+.myitem.vision { border-left-color: #4b2f5e; background: rgba(75,47,94,.08); font-style: italic; }
+.myitem small { font-family: var(--mono); font-size: .66rem; letter-spacing: .06em; color: #5b5a52; text-transform: uppercase; }
+.myitem p { margin: 0; font-size: .9rem; line-height: 1.4; }
+.myitem .myclue { font-weight: 600; }
+.myitem .ok { color: #2f6b3f; }
+.private-note { font-style: italic; opacity: .85; }
+
+/* ============================================================================
+   ARCS AND PACKS
+   ========================================================================== */
+.arcpin { border-top: 4px solid var(--hanko); }
+.arcsteps { display: flex; gap: 6px; }
+.arcsteps i { width: 22px; height: 8px; border-radius: 2px; background: rgba(0,0,0,.15); }
+.arcsteps i.solved { background: #5d9a6c; } .arcsteps i.failed { background: var(--hanko); } .arcsteps i.next { background: var(--sodium); animation: pulse 2.4s ease-out infinite; }
+.mcard.arccard { box-shadow: inset 0 3px 0 var(--hanko); }
+.arctag { display: inline-block; font-family: var(--mono); font-size: .64rem; letter-spacing: .08em; text-transform: uppercase; color: var(--hanko); margin-bottom: .2rem; }
+.packrow { display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
+.packrow > div:first-child { min-width: 0; flex: 1 1 320px; }
+.packrow.off { opacity: .6; }
