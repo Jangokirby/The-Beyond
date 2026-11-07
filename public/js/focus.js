@@ -175,6 +175,11 @@
     for (const a of loc.actions || []) if (!a.if || a.if(G.api)) wrap.append(el("button", { class: "btn choice idle", onclick: () => { U.click(); G.run(() => a.run(G.api)); } }, el("span", { class: "lbl" }, a.label)));
     if (FOCUS.on() && G.active().some((a) => FOCUS.get(a).cur < FOCUS.get(a).max))
       wrap.append(el("button", { class: "btn choice idle ghost", onclick: () => { U.click(); G.run(async () => { await FOCUS.regroupAsk(); }); } }, el("span", { class: "lbl" }, "Regroup"), el("small", { class: "spotinfo" }, "Refill Focus · 2 Stability each")));
+    /* safety net: a scene with nothing left to do never leaves the table stuck */
+    if (!wrap.children.length || (![...wrap.children].some((b) => !b.classList.contains("ghost")) && !(G.visibleHotspots().length))) {
+      box.append(el("p", { class: "cnote" }, "There's nothing left to try here."));
+      wrap.append(el("button", { class: "btn choice idle", onclick: () => { U.click(); G.run(() => window.CAMP.endAdventure("lose")); } }, el("span", { class: "lbl" }, "Close the case as it stands"), el("small", { class: "spotinfo" }, "Counts as not solved")));
+    }
     box.append(wrap);
   };
 

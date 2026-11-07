@@ -54,3 +54,6 @@ Rooms are kept 3 days idle. Set `PORT` / `DATA_DIR` env vars if your host needs 
 ## Downtime
 Between jobs each agent has 3 downtime actions (change it in the Hideout: 1–6 or no limit). An adventure can set its own
 number with `M.downtime = 2` in its module. Evenings at the Common table are story only and free.
+
+## Checking cases for soft locks
+`node tools/softlock.js` walks every path through every written case (each roll passing and failing, every choice, every order of options) and reports anywhere players would be left with nothing to click, or unable to win. `node tools/softlock-sidejobs.js` does the same for several hundred generated side jobs. Run them after writing or editing a case.
