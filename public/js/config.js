@@ -6,4 +6,4 @@
    The desktop app and any copy opened from a file need this set to play online.
    Players can also override it under Live table > Server.
    ========================================================================== */
-window.BEYOND_CONFIG = Object.assign({ relay: "", appName: "The Beyond" }, window.BEYOND_CONFIG || {});
+window.BEYOND_CONFIG = Object.assign({ relay: "https://the-beyond.onrender.com", appName: "The Beyond" }, window.BEYOND_CONFIG || {});

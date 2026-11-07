@@ -14,9 +14,10 @@
   /* the relay: a saved override, then config.js, then whoever served this page */
   NET.relay = () => {
     const saved = LS("beyond.relay"), cfg = (window.BEYOND_CONFIG || {}).relay;
-    const r = (saved || cfg || "").trim().replace(/\/+$/, "");
-    if (r) return r;
-    return /^https?:$/.test(location.protocol) && !window.BEYOND_DESKTOP ? location.origin : "";
+    /* the web version talks to the server it was loaded from; the desktop app and file copies use config.js */
+    const web = /^https?:$/.test(location.protocol) && !window.BEYOND_DESKTOP;
+    const r = (saved || (web ? location.origin : cfg) || "").trim().replace(/\/+$/, "");
+    return r;
   };
   NET.setRelay = (url) => LS("beyond.relay", String(url || "").trim());
   NET.isApp = () => !/^https?:$/.test(location.protocol) || !!window.BEYOND_DESKTOP;
@@ -76,7 +77,7 @@
   NET.create = async () => { await connect(true); location.hash = "room=" + NET.room; try { LS("beyond.host." + NET.room, "1"); } catch (e) {} return NET.room; };
   NET.join = (code) => { location.hash = "room=" + String(code || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); location.reload(); };
   /* invite links always point at the web version on the relay, so friends without the app can join from a browser */
-  NET.link = () => (NET.isApp() || (window.BEYOND_CONFIG || {}).relay ? NET.relay() + "/" : location.origin + location.pathname) + "#room=" + NET.room;
+  NET.link = () => (NET.isApp() ? NET.relay() + "/" : location.origin + location.pathname) + "#room=" + NET.room;
   NET.leave = () => { location.hash = ""; location.reload(); };
 
   if (NET.room) ready = connect(false).catch((e) => { NET.error = e.message; });
