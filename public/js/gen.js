@@ -115,14 +115,31 @@
     /* people */
     const [role, sex] = pick(E.roles), [role2, sex2] = pick(E.roles.filter((r) => r[0] !== role));
     const nm = () => (CAMP.rollName ? CAMP.rollName() : "A local");
-    const wit = { name: nm(), tag: role, look: `${role}, ${sex === "f" ? "she" : "he"} has been waiting for someone to take this seriously.`, face: { sex } };
-    const surv = { name: nm(), tag: `${role2}, still inside`, look: `${sex2 === "f" ? "She" : "He"} is the last one it took, and the only one still answering.`, face: { sex: sex2 } };
+    const wit = { name: nm(), tag: role, look: `${role}. Has been waiting a long time for someone to take this seriously.`, face: { sex } };
+    const surv = { name: nm(), tag: `${role2}, still missing`, look: `${sex2 === "f" ? "She" : "He"} is the last one taken, and the only one who might still be alive.`, face: { sex: sex2 } };
     const T = (k) => E[k] || "interior";
     const title = threat ? `${threat.name} Returns` : fillT(pick(H.title));
     const id = "gen-" + hash(seed).toString(36);
     const asp = (xs) => pick(xs);
     const a1 = asp(["awareness", "iq"]), a2 = asp(["awareness", "iq", "occult"]), a3 = asp(["occult", "faith", "willpower"]);
+    /* the writing for this kind of job, with this job's names filled in */
+    const TX = ((window.GEN_TEXT || {}).hooks || {})[H.id] || {};
+    const src = pick(((window.GEN_TEXT || {}).sources || {})[era.id] || ["the town's records"]);
+    const pr = sex2 === "f" ? { sp: "she", op: "her", pp: "her" } : { sp: "he", op: "him", pp: "his" };
+    const cap1 = (t) => t.replace(/(^|[.!?]\s+)([a-z])/g, (m, p1, c1) => p1 + c1.toUpperCase());
+    const fillS = (t) => cap1(fillT(String(t)).replace(/\{wit\}/g, wit.name).replace(/\{witFirst\}/g, wit.name.split(" ")[0]).replace(/\{role\}/g, role)
+      .replace(/\{surv\}/g, surv.name).replace(/\{survFirst\}/g, surv.name.split(" ")[0]).replace(/\{sp\}/g, pr.sp).replace(/\{op\}/g, pr.op).replace(/\{pp\}/g, pr.pp)
+      .replace(/\{villain\}/g, boss.name).replace(/\{src\}/g, src).replace(/\{Src\}/g, src.replace(/^\w/, (m) => m.toUpperCase())));
+    const deep = (x) => (typeof x === "string" ? fillS(x) : Array.isArray(x) ? x.map(deep) : x && typeof x === "object" ? Object.fromEntries(Object.entries(x).map(([k, v]) => [k, deep(v)])) : x);
+    /* a line of writing as a story step: plain text is narration, {npc,text} is someone speaking, {you} is your agent */
+    const step = (l) => (typeof l === "string" ? { say: fillS(l) } : l.npc ? { talk: { npc: l.npc, text: fillS(l.text) } } : l.you ? { say: `<i>You:</i> “${fillS(l.you)}”` } : l.say ? { say: fillS(l.say) } : l);
+    const steps = (ls) => (ls || []).map(step);
+    const speech = (TX.speech || []).map((l) => (typeof l === "string" ? { say: `<b>${boss.name}:</b> “${fillS(l)}”` } : step(l)));
     const hookText = threat ? `${threat.name}, the thing you failed to stop in ${threat.case}, has surfaced in ${town}. The same signs as before, and worse.` : fillT(H.hook);
+    const site = TX.site || H.site, lair = TX.lair || H.lair;
+    const clueText = (k, d) => fillS((TX.clues || {})[k] || d);
+    const topics = (TX.topics || []).map((t) => ({ ask: fillS(t.ask), lines: deep(t.lines), then: t.clue ? [{ clue: t.clue }] : [] }));
+    if (!topics.some((t) => t.then.length) && topics.length) topics[0].then = [{ clue: "c1" }];
     return {
       id, title, generated: true, seed, closes: threat ? threat.id : null,
       setting: `${town.replace(/^\w/, (m) => m.toUpperCase())} · ${c.year}`, year: c.year, level: [1, 6], agencies: [c.agency],
@@ -132,42 +149,42 @@
         { id: "po2", kind: "primary", t: `Stop ${boss.name}`, done: `${boss.name} is finished.` },
         { id: "so1", kind: "secondary", t: `Get ${surv.name} out alive`, done: `${surv.name} walks out with you.` }],
       clues: {
-        c1: { t: "What the witness saw", s: wit.name, x: fillT(H.clue1) },
-        c2: { t: "The pattern", s: H.site[0], x: fillT(H.clue2) },
-        c3: { t: "Its weakness", s: "Your own research", x: fillT(H.weak) } },
+        c1: { t: "What the witness told you", s: wit.name, x: clueText("c1", H.clue1) },
+        c2: { t: "What the place told you", s: site[0], x: clueText("c2", H.clue2) },
+        c3: { t: "What the old records say", s: src, x: clueText("c3", H.weak) } },
       npcs: { wit, surv },
       enemies: { boss: { build: boss }, min: { build: minion } },
-      encounters: { fight: { name: H.lair[0].replace(/^\w/, (m) => m.toUpperCase()), theme: T(H.lair[1]), fightText: `${boss.name} is waiting for you.`,
+      encounters: { fight: { name: lair[0].replace(/^\w/, (m) => m.toUpperCase()), theme: T(lair[1]), fightText: `${boss.name} rises to meet you.`,
         zones: [{ id: "a", name: "The way in", col: 0, row: 0 }, { id: "b", name: "Halfway", col: 1, row: 0 }, { id: "c", name: "The heart of it", col: 2, row: 0 }],
         edges: [["a", "b"], ["b", "c"]], start: "a", foes: [{ t: "boss", zone: "c" }, { t: "min", zone: "b" }, { t: "min", zone: "b", name: `${minion.name} (2)` }] } },
       start: "arrive",
       scenes: {
         arrive: { name: town.replace(/^\w/, (m) => m.toUpperCase()), theme: T("street"), mood: "calm", cast: ["wit"],
-          onEnter: [{ once: "intro", steps: [{ say: `${hookText} The ${role.toLowerCase()} who sent for you, ${wit.name}, meets you at the edge of town.` }] }],
+          onEnter: [{ once: "intro", steps: [...(threat ? [{ say: hookText }] : []), ...steps(TX.arrive || [hookText])] }],
           options: [
-            { label: `Hear ${wit.name} out`, once: true, steps: [{ talk: { npc: "wit", text: `It started a few weeks ago. Nobody listens to a ${role.toLowerCase()}. But I wrote it all down.` } },
-              { check: { aspect: "charisma", cr: "easy", label: "Get the whole story", ok: [{ say: fillT(H.clue1) }, { clue: "c1" }], fail: [{ say: "The story comes out in pieces and in the wrong order. You get the gist of it, and a headache." }, { clue: "c1" }, { damage: { pool: "stability", amount: 2 } }] } }] },
-            { label: "Look into the history of the place", once: true, steps: [{ check: { aspect: a3, cr: "medium", label: "Find what the old records say", investigate: true, ok: [{ say: fillT(H.weak) }, { clue: "c3" }, { set: "weak" }],
-              fail: [{ say: "Dead ends and mouldy pages. Whatever this is, nobody wrote it down properly." }] } }] },
-            { label: `Go to ${H.site[0]}`, steps: [{ goto: "site" }] }] },
-        site: { name: H.site[0].replace(/^\w/, (m) => m.toUpperCase()), theme: T(H.site[1]), mood: "tense", lighting: "shadow",
-          onEnter: [{ once: "site", steps: [{ say: fillT(H.site[2]) }] }],
+            { label: `Talk to ${wit.name}`, hint: `${role}. They sent for you`, steps: [{ converse: { npc: "wit", id: "main", open: deep(TX.open || []), again: `Ask me anything. I've had a lot of time to think about it.`, topics, bye: deep(TX.bye || []) } }] },
+            { label: "Look into the history of the place", hint: `Read ${src}`, once: true, steps: [{ check: { aspect: a3 === "faith" ? "iq" : a3, cr: "medium", label: `Search ${src}`, investigate: true,
+              ok: [...steps(TX.doc || [H.weak]), { clue: "c3" }, { set: "weak" }],
+              fail: steps(TX.docFail || ["Dead ends and mouldy pages. Whatever this is, nobody wrote it down properly."]) } }] },
+            { label: `Go to ${site[0]}`, steps: [{ goto: "site" }] }] },
+        site: { name: site[0].replace(/^\w/, (m) => m.toUpperCase()), theme: T(site[1]), mood: "tense", lighting: "shadow",
+          onEnter: [{ once: "site", steps: steps(Array.isArray(site[2]) ? site[2] : [site[2]]) }],
           options: [
-            { label: "Search it properly", once: true, steps: [{ check: { aspect: a1, cr: diff === "medium" ? "medium" : "challenging", label: "Read the scene", investigate: true,
-              ok: [{ say: fillT(H.clue2) }, { clue: "c2" }, { objective: "po1" }],
-              fail: [{ say: "You find it the hard way: something here notices you looking, and the cold of it gets into your head before you work it out." }, { damage: { pool: "sanity", amount: 4 } }, { clue: "c2" }, { objective: "po1" }] } }] },
-            { label: `Find ${surv.name}`, if: { clue: "c2" }, once: true, steps: [{ check: { aspect: a2, cr: "medium", label: `Follow ${surv.name}'s trail`,
-              ok: [{ say: `${surv.name} is curled up in a corner nobody looked in, alive and very quiet. You get ${sex2 === "f" ? "her" : "him"} out into the light.` }, { objective: "so1" }],
-              fail: [{ say: `You hear ${surv.name} calling, always one room away. By the time you stop following, the voice has stopped too.` }] } }] },
-            { label: `Go to ${H.lair[0]}`, if: { clue: "c2" }, steps: [{ goto: "lair" }] },
+            { label: "Search it properly", hint: "Every room, every corner", once: true, steps: [{ check: { aspect: a1, cr: diff === "medium" ? "medium" : "challenging", label: "Read the scene", investigate: true,
+              ok: [...steps(TX.searchOk || [H.clue2]), { clue: "c2" }, { objective: "po1" }],
+              fail: [...steps(TX.searchFail || ["Something here notices you looking."]), { damage: { pool: "sanity", amount: 4 } }, { clue: "c2" }, { objective: "po1" }] } }] },
+            { label: `Find ${surv.name}`, hint: "The last one taken", if: { clue: "c2" }, once: true, steps: [{ check: { aspect: a2, cr: "medium", label: `Follow ${surv.name}'s trail`,
+              ok: [...steps(TX.survOk || [`${surv.name} is alive.`]), { objective: "so1" }],
+              fail: steps(TX.survFail || [`You hear ${surv.name} calling, always one room away.`]) } }] },
+            { label: `Go to ${lair[0]}`, if: { clue: "c2" }, steps: [{ goto: "lair" }] },
             { label: "Back to town", steps: [{ goto: "arrive" }] }] },
-        lair: { name: H.lair[0].replace(/^\w/, (m) => m.toUpperCase()), theme: T(H.lair[1]), mood: "boss", lighting: "shadow",
-          onEnter: [{ say: fillT(H.lair[2]) }],
+        lair: { name: lair[0].replace(/^\w/, (m) => m.toUpperCase()), theme: T(lair[1]), mood: "boss", lighting: "shadow",
+          onEnter: [{ once: "lairIn", steps: [...steps(Array.isArray(lair[2]) ? lair[2] : [lair[2]]), ...speech] }],
           options: [
-            { label: "Use what you learned about it", if: "weak", once: true, steps: [{ check: { aspect: a3, cr: "medium", label: "Turn its weakness against it",
-              ok: [{ say: "It feels you do it. For the first time, it is the one that's afraid." }, { set: "shaken" }], fail: [{ say: "Close, but not close enough. It knows you're here now." }] } }] },
+            { label: "Use what you learned about it", hint: "What the old records said", if: "weak", once: true, steps: [{ check: { aspect: a3, cr: "medium", label: "Turn its weakness against it",
+              ok: [...steps(TX.weakOk || ["For the first time, it is the one that's afraid."]), { set: "shaken" }], fail: steps(TX.weakFail || ["It knows you're here now."]) } }] },
             { label: `Face ${boss.name}`, steps: [{ combat: "fight", surpriseIf: "shaken", win: [
-              { say: `${boss.name} ${boss.dies || "is gone"}. ${town.replace(/^\w/, (m) => m.toUpperCase())} will sleep tonight, mostly.` }, { objective: "po2" }, { end: "win" }] }] },
+              { say: `${boss.name} ${boss.dies || "is gone"}.` }, ...steps(TX.win || []), { objective: "po2" }, { end: "win" }] }] },
             { label: "Fall back for now", steps: [{ goto: "site" }] }] }
       }
     };

@@ -17,6 +17,8 @@
           {group:{aspect, cr, label, ok:[], fail:[]}} {combat:"id", surprise?, win:[], lose:[]} {goto:"scene"}
           {set:"flag"} {unset:"flag"} {clue:"id"} {objective:"id"} {if:cond, then:[], else:[]} {once:"key", steps:[]}
           {choice:{prompt, options:[{label, if?, steps}]}} {damage:{pool, amount}} {heal:{pool, amount}} {sfx:"key"} {end:"win"|"lose"}
+          {converse:{npc, id?, open:[line], topics:[{ask, if?, once?, lines:[line], then:[steps]}], leave?, bye:[line], done:[line], again?}}
+          line = "spoken by the npc" | {say:"narration"} | {you:"spoken by the agent who is talking"} | {npc:"id", text}
    cond = "flag" | {flag} | {not:cond} | {clue:"id"} | {obj:"id"} | {all:[...]} | {any:[...]} | {arc:"flag"}
    arcs:  a case that belongs to a campaign arc has arc: {id, part}. {arcSet:"flag"} remembers a choice for
           the rest of the arc (kept when the case ends), and {arc:"flag"} checks it in a later part.
@@ -176,6 +178,29 @@
       } else if (st.heal) {
         for (const a of window.GAME.active()) { if (!R.canHeal(a)) continue; const p = a.pools[st.heal.pool]; p.cur = Math.min(p.max, p.cur + st.heal.amount); }
         window.GAME.refreshParty(); window.AudioMan.sfx("heal");
+      } else if (st.converse) {
+        /* a conversation: the players pick what to ask, in any order, until they're done */
+        const cv = st.converse, npcId = cv.npc, G = window.GAME;
+        const speak = async (line) => {
+          if (typeof line === "string") return g.say(line, { who: npcId });
+          if (line.say) return g.narrate(line.say);
+          if (line.you) { const ag = (G._actor && G.agentById(G._actor)) || G.active()[0]; return g.say(line.you, { who: ag ? ag.id : null }); }
+          if (line.npc) return g.say(line.text, { who: line.npc });
+          return ADV.exec([line], g, M);
+        };
+        const k = (i) => `conv:${npcId}:${cv.id || ""}:${i}`;
+        if (!(cv.id && g.flag(`conv:${npcId}:${cv.id}:opened`))) { for (const l of cv.open || []) await speak(l); if (cv.id) g.set(`conv:${npcId}:${cv.id}:opened`); }
+        else if (cv.again) await speak(cv.again);
+        for (;;) {
+          const left = (cv.topics || []).map((t, i) => ({ t, i })).filter(({ t, i }) => ADV.cond(t.if, g) && !(t.once !== false && g.flag(k(i))));
+          if (!left.length) { for (const l of cv.done || []) await speak(l); break; }
+          const npc = M.npcs[npcId] || {};
+          const id = await g.choose(cv.prompt || `What do you ask ${npc.name || "them"}?`, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask })), { id: "bye", label: cv.leave || "That's all for now" }]);
+          if (id === "bye" || id == null) { for (const l of cv.bye || []) await speak(l); break; }
+          const t = cv.topics[+id]; g.set(k(+id));
+          for (const l of t.lines || []) { if (window.GAME.state.phase === "ending") return true; await speak(l); }
+          if (t.then && await ADV.exec(t.then, g, M)) return true;
+        }
       } else if (st.arcSet) { if (window.ARCS) window.ARCS.set(st.arcSet); }
       else if (st.arcUnset) { if (window.ARCS) window.ARCS.set(st.arcUnset, false); }
       else if (st.end) { await window.CAMP.endAdventure(st.end); return true; }

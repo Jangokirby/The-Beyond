@@ -65,6 +65,13 @@ function check(a, opts = {}) {
         } else if (st.if) next.push(...run(cond(st.if, x) ? st.then : st.else, x, depth + 1));
         else if (st.once) { const k = "once:" + st.once; if (x.f.has(k)) next.push(x); else { x.f.add(k); next.push(...run(st.steps, x, depth + 1)); } }
         else if (st.choice) { const os = st.choice.options.filter((o) => cond(o.if, x)); if (!os.length) next.push(x); for (const o of os) next.push(...run(o.steps, clone(x), depth + 1)); }
+        else if (st.converse) {
+          /* assume players ask about everything they can, then also the path where they leave at once */
+          next.push(clone(x));
+          let all = [x];
+          for (const t of st.converse.topics || []) all = all.flatMap((y) => (cond(t.if, y) ? run(t.then, y, depth + 1) : [y]));
+          next.push(...all);
+        }
         else if (st.end) { x.end = st.end; next.push(x); }
         else next.push(x);
       }

@@ -36,7 +36,7 @@
     const k = st.find((s) => s.check) || null, gr = st.find((s) => s.group) || null;
     const exit = st.length && st.every((s) => s.goto) ;
     const fight = st.some((s) => s.combat);
-    const talk = !k && !gr && st.some((s) => s.talk);
+    const talk = !k && !gr && st.some((s) => s.talk || s.converse);
     const kind = exit ? "exit" : fight ? "fight" : talk ? "talk" : "look";
     let roll = "No roll";
     if (k) roll = `${Rr().ASPECT_LABEL[k.check.aspect] || k.check.aspect} roll, ${crText(k.check.cr)}`;
