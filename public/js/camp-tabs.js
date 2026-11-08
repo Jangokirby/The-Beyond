@@ -72,6 +72,7 @@
     const w = el("div", { class: "sheet" });
     w.append(el("div", { class: "sheethead" }, el("img", { class: "portrait", src: ui.portraitSrc(a), alt: "" }),
       el("div", {}, el("h3", {}, a.name), el("p", { class: "small muted" }, `Level ${a.level} · ${a.background} · age ${a.age} · ${cap(a.size)} · ${a.missions} mission${a.missions === 1 ? "" : "s"} (${a.solved} solved)`),
+        window.PEOPLE ? el("p", { class: "small muted" }, [PEOPLE.get(a.origin) ? `From ${PEOPLE.get(a.origin).name}` : "", `Speaks ${PEOPLE.langsOf(a).join(", ")}`].filter(Boolean).join(" · ")) : null,
         a.doomed != null ? el("p", { class: "warn small" }, `Marked for death: ${a.doomed} days left.`) : null,
         el("div", { class: "pools" }, ...["health", "sanity", "stability"].map((k) => bar(a.pools[k], k))))));
     if (a.pending) w.append(btn(`Level up (${a.pending})`, () => ui.levelUp(a), "primary"));

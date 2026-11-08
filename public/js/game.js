@@ -737,7 +737,8 @@
         if (!G.state.clues.length) pane.append(el("p", { class: "muted" }, "Nothing yet. Talk to people and search the places you visit."));
         for (const id of [...G.state.clues].reverse()) {
           const c = M.clues[id];
-          pane.append(el("div", { class: "clue" }, el("b", {}, c.t), el("small", {}, c.s), el("p", {}, c.x)));
+          const pk = window.PROPS ? PROPS.find(c.t + " " + (c.x || "").slice(0, 60)) : null;
+          pane.append(el("div", { class: "clue" + (pk ? " withprop" : "") }, pk ? el("img", { class: "clueprop", src: PROPS.src(pk), alt: "" }) : "", el("b", {}, c.t), el("small", {}, c.s), el("p", {}, c.x)));
         }
       } else if (t === "lore") {
         if (!G.state.lore.length) pane.append(el("p", { class: "muted" }, "No history recovered yet."));

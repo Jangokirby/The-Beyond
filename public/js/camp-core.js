@@ -29,7 +29,7 @@
     flashlight: { name: "Flashlight", old: ["Oil lantern", 1900], icon: "flashlight", applies: ["aspect:awareness"], text: "Searching, spotting, noticing.", size: 1 },
     lockpicks: { name: "Lockpick set", icon: "lockpicks", applies: ["tag:lock", "aspect:iq"], text: "Locks and latches.", size: 1 },
     crowbar: { name: "Crowbar", icon: "crowbar", applies: ["aspect:strength"], text: "Forcing, lifting, prying.", size: 1 },
-    rope: { name: "Rope", icon: "crowbar", applies: ["aspect:agility"], text: "Climbing, securing, binding.", size: 1 },
+    rope: { name: "Rope", icon: "rope", applies: ["aspect:agility"], text: "Climbing, securing, binding.", size: 1 },
     book: { name: "Folklore reference", icon: "book", applies: ["tag:lore", "aspect:iq"], text: "Remembering history and legends.", size: 1 },
     camera: { name: "Camera", icon: "camera", applies: ["aspect:awareness", "tag:photo"], text: "Evidence, details, a second look.", size: 1, from: 1888 },
     recorder: { name: "Tape recorder", icon: "tape", applies: ["aspect:charisma", "tag:record"], text: "Interviews and evidence.", size: 1, from: 1950 },
@@ -86,7 +86,7 @@
                aspects:{key:n}, bg, bgCore, bgAspect, bgBody, magic:{on,source}, bonds:[{name,rel}],
                weapon:{name,type,mods:[],specialty,aspect}, armor:{name,type,mods:[],specialty} }          */
   CAMP.blankDraft = () => ({
-    name: "", age: 30, bio: "", look: { skin: "#c68d62", hairC: "#3a2619", hair: "short", outfit: "#3a4a5c", extra: "none", bg: "#2b2f3a", clothes: "coat", face: "oval", eyes: "plain", eyeC: "#5a3a22", brows: "straight", nose: "straight", mouth: "neutral", facial: "none", marks: "none" }, size: "medium", languages: "",
+    name: "", origin: "", sex: "", age: 30, bio: "", look: { skin: "#c68d62", hairC: "#3a2619", hair: "short", outfit: "#3a4a5c", extra: "none", bg: "#2b2f3a", clothes: "coat", face: "oval", eyes: "plain", eyeC: "#5a3a22", brows: "straight", nose: "straight", mouth: "neutral", facial: "none", marks: "none" }, size: "medium", languages: "",
     coreRank: { body: "good", mind: "specialty", spirit: "mundane" }, aspects: {}, bg: "", bgCore: "body", bgAspect: "strength",
     magic: { on: false, source: "faith" }, bonds: [{ name: "", rel: "" }, { name: "", rel: "" }, { name: "", rel: "" }],
     weapon: { name: "", type: "Ranged One-Handed", mods: [], specialty: "", aspect: "awareness", picks: {} },
@@ -141,7 +141,7 @@
     const sfx = /Ranged/.test(d.weapon.type) ? "gunshot" : d.weapon.type.includes("Two") ? "axe_hit" : "blade_hit";
     const poolMax = { health: 5 + 5 * core.body + size.health + (bg && bg.hp || 0), sanity: 5 + 5 * core.mind, stability: 5 + 5 * core.spirit };
     const a = {
-      id: uid("a"), name: d.name.trim(), short: d.name.trim().split(/\s+/)[0], jp: "", age: d.age, bio: d.bio, look: clone(d.look), portrait: null,
+      id: uid("a"), name: d.name.trim(), short: d.name.trim().split(/\s+/)[0], jp: "", origin: d.origin || "", sex: d.sex || "", age: d.age, bio: d.bio, look: clone(d.look), portrait: null,
       role: bg ? bg.group : "", background: d.bg, bgText: bg ? bg.text : "", size: d.size, languages: d.languages,
       core, special: special ? special[0] : null, aspects, poolMax, vision: "normal",
       weapon: { name: d.weapon.name.trim(), type: d.weapon.type, bonus: wbonus, range: gt.zones || 0, aspect: d.weapon.aspect, mods: [...d.weapon.mods], specialty: d.weapon.specialty, picks: { ...(d.weapon.picks || {}) }, owners: d.weaponOwners != null ? d.weaponOwners : undefined, sfx },

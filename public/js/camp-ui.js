@@ -106,6 +106,19 @@
   const agencyHint = (y) => [C.agenciesIn(y).map((a) => a.short).join(", ") + ` can field agents in ${y}.`];
 
   /* ================================================================== CHARACTER CREATOR */
+  /* where the agent is from and their gender: names, portraits and the "Local tongue" house rule follow them (js/people.js) */
+  ui.originFields = (draft, redraw) => {
+    const P = window.PEOPLE; if (!P) return null;
+    const o = P.get(draft.origin);
+    return el("div", { class: "two origin" },
+      el("label", { class: "field" }, el("span", {}, "From"), el("select", { onchange: (e) => { draft.origin = e.target.value; redraw(); } },
+        el("option", { value: "", selected: !draft.origin ? "selected" : null }, "Choose where they grew up"),
+        ...P.ORIGINS.map((x) => el("option", { value: x.id, selected: draft.origin === x.id ? "selected" : null }, `${x.name} (${x.langs.join(", ")})`)))),
+      el("label", { class: "field" }, el("span", {}, "Gender"), el("select", { onchange: (e) => { draft.sex = e.target.value; redraw(); } },
+        el("option", { value: "", selected: !draft.sex ? "selected" : null }, "Choose"),
+        ...P.SEXES.map(([v, l]) => el("option", { value: v, selected: draft.sex === v ? "selected" : null }, l)))),
+      o ? el("p", { class: "small muted", style: { gridColumn: "1 / -1", margin: "0" } }, `Grew up speaking ${o.langs.join(" and ")}. Rolling picks a name from ${o.name} and a face to match.`) : null);
+  };
   ui.creator = (draft, done) => {
     const c = CAMP.camp;
     draft = draft || CAMP.blankDraft();
@@ -125,12 +138,13 @@
     const fld = (label, ctl) => el("label", { class: "field" }, el("span", {}, label), ctl);
     const grp = (title, open, ...kids) => el("details", { class: "lookgrp", open: open ? "open" : null }, el("summary", {}, title), el("div", { class: "lookgrid" }, ...kids));
     body.append(panel("1 · Who were you?",
+      ui.originFields(draft, redraw),
       el("div", { class: "look" }, prev, el("div", { class: "lookctl" },
         grp("Face", true, fld("Skin", swatch("skin", A.SKIN)), fld("Face shape", pick("face", A.FACES)), fld("Eyes", pick("eyes", A.EYES)), fld("Eye colour", swatch("eyeC", A.EYEC)),
           fld("Eyebrows", pick("brows", A.BROWS)), fld("Nose", pick("nose", A.NOSES)), fld("Expression", pick("mouth", A.MOUTHS)), fld("Marks", pick("marks", A.MARKS))),
         grp("Hair", true, fld("Hair colour", swatch("hairC", A.HAIRC)), fld("Hairstyle", pick("hair", A.HAIRS)), fld("Facial hair", pick("facial", A.FACIAL))),
         grp("Clothes and background", true, fld("Clothes", pick("clothes", A.CLOTHES)), fld("Colour", swatch("outfit", A.OUTFIT)), fld("Accessory", pick("extra", A.EXTRAS)), fld("Background", swatch("bg", A.BGS))))),
-      btn("Roll a name and look", () => { CAMP.rollLook(draft); draft.name = CAMP.rollName(); redraw(); }, "small ghost"),
+      btn("Roll a name and look", () => { CAMP.rollLook(draft); draft.name = CAMP.rollName(draft.origin, draft.sex); redraw(); }, "small ghost"),
       el("div", { class: "two" },
         el("label", { class: "field" }, el("span", {}, "Name"), el("input", { type: "text", maxlength: "40", value: draft.name, oninput: (e) => { draft.name = e.target.value; refreshBar(); } })),
         el("label", { class: "field" }, el("span", {}, "Age"), el("input", { type: "number", min: "16", max: "90", value: String(draft.age), oninput: (e) => { draft.age = +e.target.value || 30; } }))),
@@ -138,7 +152,7 @@
       el("div", { class: "two" },
         el("label", { class: "field" }, el("span", {}, "Size"), el("select", { onchange: (e) => { draft.size = e.target.value; redraw(); } }, ...C.SIZES.map((s) => el("option", { value: s.id, selected: draft.size === s.id ? "selected" : null },
           `${s.name}${s.er ? `, ${s.er > 0 ? "+" : ""}${s.er} ER` : ""}${s.health ? `, ${s.health > 0 ? "+" : ""}${s.health} Health` : ""}${s.br ? `, +${s.br} BR` : ""}${s.attack ? `, +${s.attack} Attack` : ""}`)))),
-        el("label", { class: "field" }, el("span", {}, "Languages besides English"), el("input", { type: "text", value: draft.languages, placeholder: "needs IQ above 3 for more than your native one", oninput: (e) => { draft.languages = e.target.value; } })))));
+        el("label", { class: "field" }, el("span", {}, "Languages besides English"), el("input", { type: "text", value: draft.languages, placeholder: window.PEOPLE && PEOPLE.get(draft.origin) ? `${PEOPLE.get(draft.origin).langs.filter((l) => l !== "English").join(", ") || "English only"} from home; more needs IQ above 3` : "needs IQ above 3 for more than your native one", oninput: (e) => { draft.languages = e.target.value; } })))));
 
     /* ---- 2 core stats and aspects */
     const rankLabel = { specialty: "Specialty (4)", good: "Good (3)", mundane: "Mundane (1)" };
@@ -199,7 +213,7 @@
       ...draft.bonds.map((b, i) => el("div", { class: "two" },
         el("label", { class: "field" }, el("span", {}, `Bond ${i + 1}`), el("input", { type: "text", maxlength: "30", value: b.name, placeholder: "Name", oninput: (e) => { b.name = e.target.value; refreshBar(); } })),
         el("label", { class: "field" }, el("span", {}, "Who are they to you?"), el("input", { type: "text", maxlength: "50", value: b.rel, oninput: (e) => { b.rel = e.target.value; } })),
-        btn("Roll this Bond", () => { CAMP.rollBond(b, !!b.name.trim()); redraw(); }, "small ghost")))));
+        btn("Roll this Bond", () => { CAMP.rollBond(b, !!b.name.trim(), draft); redraw(); }, "small ghost")))));
 
     /* ---- 5 gear */
     const w = draft.weapon, ar = draft.armor;

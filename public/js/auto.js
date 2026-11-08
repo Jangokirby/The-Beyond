@@ -17,22 +17,36 @@
   const RELS = ["Mother", "Father", "Sister", "Brother", "Old friend from school", "Fellow agent who covers for you", "Mentor who trained you", "Partner or spouse", "Childhood neighbour", "Landlady", "Priest or confessor", "Ex-lover you never got over", "Cousin who writes to you", "Bartender who listens", "Doctor who patched you up", "Informant you trust", "Best friend", "Grandmother", "Rival turned friend", "Child you don't see enough", "Old army buddy", "Teacher who believed in you"];
   const BIO_OPEN = ["Something happened that the official report never mentioned.", "A case went wrong, and they were the only one who saw why.", "They answered an ad they should have ignored.", "They saw something once, and no one has believed them since.", "Someone close to them vanished, and the Beyond was the only lead."];
 
-  CAMP.rollName = () => `${pick(FIRST)} ${pick(LAST)}`;
-  CAMP.rollBond = (b, keepName) => {
-    if (!keepName || !b.name.trim()) b.name = pick(FIRST) + (rnd() < 0.5 ? " " + pick(LAST) : "");
+  /* names follow where a person is from and their gender (js/people.js); with no origin, anywhere */
+  const P = () => window.PEOPLE;
+  CAMP.rollName = (origin, sex) => (P() ? P().name(origin, sex) : `${pick(FIRST)} ${pick(LAST)}`);
+  /* a bond is usually from the agent's own world: family share the surname */
+  const bondName = (d, rel) => {
+    if (!P()) return pick(FIRST) + (rnd() < 0.5 ? " " + pick(LAST) : "");
+    const fam = /\b(mother|father|sister|brother|cousin|aunt|uncle|grand\w*|child|son|daughter)\b/i.test(rel || "");
+    const home = d && d.origin && (fam || rnd() < 0.7) ? d.origin : P().randomOrigin();
+    const sex = /mother|sister|aunt|daughter|grandmother|landlady|wife/i.test(rel || "") ? "f" : /father|brother|uncle|son\b|grandfather|husband/i.test(rel || "") ? "m" : "";
+    const first = P().first(home, sex);
+    if (fam && d && d.name && d.name.trim().includes(" ")) return `${first} ${d.name.trim().split(/\s+/).slice(1).join(" ")}`;
+    return rnd() < 0.5 ? `${first} ${P().last(home)}` : first;
+  };
+  CAMP.rollBond = (b, keepName, d) => {
     b.rel = pick(RELS);
+    if (!keepName || !b.name.trim()) b.name = bondName(d, b.rel);
     return b;
   };
   CAMP.rollBonds = (d, keepNames) => {
     const rels = shuffle(RELS).slice(0, 3);
-    d.bonds.forEach((b, i) => { if (!keepNames || !b.name.trim()) b.name = pick(FIRST) + (rnd() < 0.5 ? " " + pick(LAST) : ""); b.rel = rels[i]; });
+    d.bonds.forEach((b, i) => { b.rel = rels[i]; if (!keepNames || !b.name.trim()) b.name = bondName(d, b.rel); });
     return d;
   };
   CAMP.rollLook = (d) => {
-    d.look.skin = pick(ART.SKIN); d.look.hairC = pick(ART.HAIRC); d.look.outfit = pick(ART.OUTFIT); d.look.hair = pick(ART.HAIRS);
+    if (P() && !d.origin) d.origin = P().randomOrigin();
+    if (!d.sex) d.sex = rnd() < 0.5 ? "f" : "m";
+    d.look.skin = P() ? P().skinFor(d.origin) : pick(ART.SKIN); d.look.hairC = pick(ART.HAIRC); d.look.outfit = pick(ART.OUTFIT); d.look.hair = pick(ART.HAIRS);
     d.look.extra = rnd() < 0.55 ? "none" : pick(ART.EXTRAS); d.look.clothes = pick(ART.CLOTHES); d.look.bg = pick(ART.BGS);
     d.look.face = pick(ART.FACES); d.look.eyes = pick(ART.EYES); d.look.eyeC = pick(ART.EYEC); d.look.brows = pick(ART.BROWS); d.look.nose = pick(ART.NOSES); d.look.mouth = pick(ART.MOUTHS);
-    d.look.facial = rnd() < 0.7 ? "none" : pick(ART.FACIAL); d.look.marks = rnd() < 0.6 ? "none" : pick(ART.MARKS);
+    d.look.facial = d.sex === "f" || rnd() < 0.7 ? "none" : pick(ART.FACIAL); d.look.marks = rnd() < 0.6 ? "none" : pick(ART.MARKS);
     return d;
   };
 
@@ -89,9 +103,9 @@
   CAMP.rollDraft = (d) => {
     d = d || CAMP.blankDraft();
     for (let tries = 0; tries < 60; tries++) {
-      d.name = CAMP.rollName();
       d.age = 20 + roll(30) + roll(10);
-      CAMP.rollLook(d); CAMP.rollAspects(d); CAMP.rollBackground(d);
+      CAMP.rollLook(d);
+      d.name = CAMP.rollName(d.origin, d.sex); CAMP.rollAspects(d); CAMP.rollBackground(d);
       d.magic = { on: false, source: pick(["faith", "occult", "ancient"]) };
       const bg = CAMP.bgDef(d.bg);
       if (bg && bg.words) d.magic.on = true;

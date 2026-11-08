@@ -21,6 +21,15 @@
   /* ------------------------------------------------------------ settings */
   FOCUS.max = () => { const c = window.CAMP && CAMP.camp; const n = c && c.rules && c.rules.focus; return n == null ? 4 : n; };
   FOCUS.on = () => FOCUS.max() > 0 && !!G.state;
+  /* "Local tongue" (house rule, camp.rules.lang): where people speak another language, an agent who
+     speaks it talks for the usual 1 Focus; anyone else needs 2, getting by on gestures and a phrasebook. */
+  FOCUS.lang = () => {
+    const c = window.CAMP && CAMP.camp; if (!c || !c.rules || !c.rules.lang || !window.PEOPLE) return null;
+    const M = window.MODULE; if (!M || M.id === "death-of-a-bloodline") return null;
+    return PEOPLE.caseLang((window.ADV && ADV.LIBRARY[M.id]) || M);
+  };
+  FOCUS.costFor = (a, info) => (info.kind === "talk" && info.cost && FOCUS.lang() && a && !PEOPLE.speaks(a, FOCUS.lang()) ? info.cost + 1 : info.cost);
+  FOCUS.costText = (info) => { const L = FOCUS.lang(); return info.kind === "talk" && L ? `Costs 1 Focus (2 without ${L})` : "Costs 1 Focus"; };
   FOCUS.get = (a) => {
     G.state.focus = G.state.focus || {};
     if (!G.state.focus[a.id]) G.state.focus[a.id] = { cur: FOCUS.max(), max: FOCUS.max() };
@@ -83,7 +92,7 @@
   /* ------------------------------------------------------------ who does it */
   FOCUS.pick = async (h, info) => {
     const team = G.active();
-    const fresh = team.filter((a) => FOCUS.get(a).cur > 0);
+    const fresh = team.filter((a) => FOCUS.get(a).cur >= FOCUS.costFor(a, info));
     if (!fresh.length) return (await FOCUS.regroupAsk()) ? FOCUS.pick(h, info) : null;
     if (fresh.length === 1 && team.length === 1) return fresh[0];
     const opts = team.map((a) => {
@@ -91,11 +100,13 @@
       let odds = null;
       if (info.aspect && info.cr && G.checkMods && G.chance) { try { const { mods, cr } = G.checkMods(a, { aspect: info.aspect, cr: info.cr, tags: info.tags }); const b = mods.reduce((x, m) => x + (m.value || 0), 0); odds = `${Rr().ASPECT_LABEL[info.aspect]} ${b >= 0 ? "+" : ""}${b} · ${G.chance(b, cr)}% to succeed`; } catch (e) {} }
       if (!odds && info.aspect) odds = `${Rr().ASPECT_LABEL[info.aspect]} +${Rr().aspect(a, info.aspect)}`;
-      return { id: a.id, label: `${a.short} · Focus ${f.cur}/${f.max}`, hint: f.cur ? (odds || (info.kind === "talk" ? "will do the talking" : "will look")) : "no Focus left", disabled: !f.cur };
+      const cost = FOCUS.costFor(a, info), L = info.kind === "talk" ? FOCUS.lang() : null;
+      const tongue = L ? (PEOPLE.speaks(a, L) ? `speaks ${L}` : `no ${L}: 2 Focus`) : "";
+      return { id: a.id, label: `${a.short} · Focus ${f.cur}/${f.max}`, hint: f.cur >= cost ? [odds || (info.kind === "talk" ? "will do the talking" : "will look"), tongue].filter(Boolean).join(" · ") : f.cur ? `needs ${cost} Focus` : "no Focus left", disabled: f.cur < cost };
     });
     opts.push({ id: "_back", label: "Never mind" });
     U.choicesBox().dataset.kind = "who";
-    const id = await U.choose(`<span class="checkcall">${h.label}</span> · ${info.roll}. Who ${info.kind === "talk" ? "talks" : "looks"}? (1 Focus)`, opts);
+    const id = await U.choose(`<span class="checkcall">${h.label}</span> · ${info.roll}. Who ${info.kind === "talk" ? "talks" : "looks"}? (${info.kind === "talk" && FOCUS.lang() ? `1 Focus, 2 without ${FOCUS.lang()}` : "1 Focus"})`, opts);
     delete U.choicesBox().dataset.kind;
     return id === "_back" ? null : G.agentById(id);
   };
@@ -124,7 +135,8 @@
     G.run(async () => {
       const a = await FOCUS.pick(h, info);
       if (!a) return;
-      FOCUS.get(a).cur -= info.cost; G.refreshParty();
+      const cost = FOCUS.costFor(a, info); FOCUS.get(a).cur -= cost; G.refreshParty();
+      if (cost > info.cost && !G.state._phrasebook) { G.state._phrasebook = true; U.print(`Nobody here has much English, and ${a.short} has no ${FOCUS.lang()}. It's slow going: pointing, drawing in the dust, the same three words said louder.`, "narr"); }
       G._actor = a.id; G._actorKind = info.kind;
       try { if (h.go) await G.goto(h.go); else if (h.run) await h.run(G.api); } finally { G._actor = null; G._actorKind = null; }
     });
@@ -132,11 +144,12 @@
 
   /* ------------------------------------------------------------ drawing spots, tooltip, buttons */
   let tip = null;
-  const tipText = (h) => { const i = h.info || (h.info = describeFn(h)); return [h.label, i.desc, i.roll, i.cost && FOCUS.on() ? "Costs 1 Focus" : "Free"]; };
+  const tipText = (h) => { const i = h.info || (h.info = describeFn(h)); return [h.label, i.desc, i.roll, i.cost && FOCUS.on() ? FOCUS.costText(i) : "Free"]; };
   const showTip = (b, h) => {
     if (!tip) { tip = el("div", { class: "hottip", role: "tooltip" }); document.body.append(tip); }
     const [t, d, r, c] = tipText(h);
-    tip.replaceChildren(el("b", {}, t), el("span", {}, d), el("span", { class: "roll" + (r === "No roll" ? " none" : "") }, r), el("span", { class: "cost" }, c));
+    const pk = window.PROPS && (h.info || {}).kind === "look" ? PROPS.find(t) : null;
+    tip.replaceChildren(pk ? el("img", { class: "tipprop", src: PROPS.src(pk), alt: "" }) : "", el("b", {}, t), el("span", {}, d), el("span", { class: "roll" + (r === "No roll" ? " none" : "") }, r), el("span", { class: "cost" }, c));
     const rc = b.getBoundingClientRect(); tip.hidden = false;
     const tw = tip.offsetWidth, th = tip.offsetHeight;
     let x = rc.left + rc.width / 2 - tw / 2, y = rc.top - th - 10;
@@ -151,11 +164,13 @@
     const lay = (window.LAYOUT || {})[loc.scene] || {};
     for (const h of G.visibleHotspots()) {
       const r = lay[h.id] || h.pos; if (!r) continue;
+      let prop = null;
       const info = h.info || (h.info = describeFn(h));
       const [t, d, rl, c] = tipText(h);
       const b = el("button", { class: `hot k-${info.kind}` + (h.go || info.kind === "exit" ? " exit" : ""), "data-id": h.id, "aria-label": `${t}. ${d}. ${rl}. ${c}.`, title: `${t} · ${rl} · ${c}`, disabled: G.busy,
         style: { left: r.x + "%", top: r.y + "%", width: r.w + "%", height: r.h + "%" }, onclick: () => { hideTip(); G.useHotspot(h); },
         onmouseenter: (e) => showTip(e.currentTarget, h), onmouseleave: hideTip, onfocus: (e) => showTip(e.currentTarget, h), onblur: hideTip },
+        (prop = info.kind === "look" && window.PROPS ? PROPS.find(h.label) : null) ? el("span", { class: "mark prop" }, el("img", { src: PROPS.src(prop), alt: "" })) :
         el("span", { class: "mark" }, el("i", {}, info.kind === "talk" ? "❝" : info.kind === "exit" ? "➜" : info.kind === "fight" ? "✕" : info.aspect || info.roll !== "No roll" ? "?" : "◉")), el("span", { class: "tag" }, h.label));
       b.removeAttribute("title");
       box.append(b);
@@ -202,7 +217,9 @@
     HIDE.tab = function () {
       const box = tab0.apply(this, arguments), foot = box.querySelector(".hfoot"), c = CAMP.camp;
       if (foot && c) foot.append(el("label", { class: "field inline" }, el("span", {}, "Focus per agent (house rule)"),
-        el("select", { onchange: (e) => { c.rules.focus = +e.target.value; CAMP.save(); } }, ...[3, 4, 5, 6, 0].map((n) => el("option", { value: String(n), selected: FOCUS.max() === n ? "selected" : null }, n ? `${n} per case` : "Off")))));
+        el("select", { onchange: (e) => { c.rules.focus = +e.target.value; CAMP.save(); } }, ...[3, 4, 5, 6, 0].map((n) => el("option", { value: String(n), selected: FOCUS.max() === n ? "selected" : null }, n ? `${n} per case` : "Off")))),
+        el("label", { class: "field inline check", title: "Where people speak another language, an agent who speaks it talks for 1 Focus; anyone else needs 2." },
+          el("input", { type: "checkbox", checked: c.rules.lang ? "checked" : null, onchange: (e) => { c.rules.lang = e.target.checked; CAMP.save(); } }), el("span", {}, "Local tongue (house rule)")));
       return box;
     };
     if (CAMP.ui.tabs) CAMP.ui.tabs.hideout = HIDE.tab;

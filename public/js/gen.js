@@ -114,9 +114,12 @@
       sprite: boss.type === "Swarm" ? "swarm" : boss.type === "Construct" || boss.type === "Golem" ? "construct" : "humanoid", hue: boss.hue || 0, attack: 0, dies: "goes still" };
     /* people */
     const [role, sex] = pick(E.roles), [role2, sex2] = pick(E.roles.filter((r) => r[0] !== role));
-    const nm = () => (CAMP.rollName ? CAMP.rollName() : "A local");
-    const wit = { name: nm(), tag: role, look: `${role}. Has been waiting a long time for someone to take this seriously.`, face: { sex } };
-    const surv = { name: nm(), tag: `${role2}, still missing`, look: `${sex2 === "f" ? "She" : "He"} is the last one taken, and the only one who might still be alive.`, face: { sex: sex2 } };
+    /* locals are named for where the job is (js/people.js); unplaced towns get anyone */
+    const home = window.PEOPLE ? PEOPLE.originForPlace(town) : null;
+    const nm = (s) => (window.PEOPLE ? PEOPLE.name(home, s, R) : CAMP.rollName ? CAMP.rollName() : "A local");
+    const tags = home && window.PEOPLE ? PEOPLE.heritageOf(home) : undefined;
+    const wit = { name: nm(sex), tag: role, look: `${role}. Has been waiting a long time for someone to take this seriously.`, face: { sex, tags } };
+    const surv = { name: nm(sex2), tag: `${role2}, still missing`, look: `${sex2 === "f" ? "She" : "He"} is the last one taken, and the only one who might still be alive.`, face: { sex: sex2, tags } };
     const T = (k) => E[k] || "interior";
     const title = threat ? `${threat.name} Returns` : fillT(pick(H.title));
     const id = "gen-" + hash(seed).toString(36);
