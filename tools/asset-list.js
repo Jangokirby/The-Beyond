@@ -65,6 +65,25 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
       "Heritage, wardrobe and medium all date the face: the same person in two eras should look like two different paintings.", "(modern clothes:1.2), (signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v3", ES.STYLE[e.id]);
   });
 
+  /* 1b. fighters: knights and soldiers through the ages (and the Order of Infinite Dark's ceremonial armour) */
+  const FIGHTERS = [
+    ["medieval", "f", "a white European woman knight of a holy order, in mail and a white surcoat marked with a black sun, cropped hair, a scar through one eyebrow, sword hilt at her shoulder"],
+    ["medieval", "m", "a North African man-at-arms in a battered kettle helmet, quilted gambeson and mail, a spear over his shoulder, tired hard eyes"],
+    ["victorian", "f", "a Black African woman in ceremonial plate breastplate worn over a dark Victorian riding habit, a holy order's black-sun badge, a sabre at her side"],
+    ["victorian", "m", "a South Asian soldier of the 1880s in a khaki uniform with a turban and bandolier, a rifle, an older veteran's calm face"],
+    ["wars", "f", "a woman ambulance driver of the Great War in a greatcoat and steel Brodie helmet, a gas-mask bag across her chest, mud on her face"],
+    ["wars", "m", "a 1917 trench soldier wearing improvised steel trench armour plates over his tunic like a modern knight, a Brodie helmet, a trench club, haunted eyes"],
+    ["atomic", "f", "a 1950s Women's Army Corps radio sergeant, olive drab uniform and garrison cap, headphones round her neck, sharp and unafraid"],
+    ["atomic", "m", "a 1950s paratrooper in an M1 helmet with netting, olive fatigues, a cigarette behind his ear, a thousand-yard stare"],
+    ["modern", "f", "a 1990s UN peacekeeper in a blue helmet and flak jacket, desert camouflage, dust in her hair"],
+    ["modern", "m", "a 1990s special-forces soldier in woodland camouflage and a boonie hat, face paint, a radio handset clipped to his vest"],
+    ["now", "f", "a modern holy-order knight: (sleek matte black ceramic plate armour with a black-sun sigil:1.2), tactical webbing, a short sword and a sidearm, hair tied back"],
+    ["now", "m", "a present-day private military contractor in plate carrier and helmet with night-vision mount, rain on his visor, a black-sun patch on the shoulder"]
+  ];
+  FIGHTERS.forEach(([era, sex, d], i) => add("Agent portraits: knights and soldiers", `portraits/agents/${era}-${sex}-${String(23 + (i % 2)).padStart(2, "0")}.png`, SQ, d.split(",")[0],
+    `head-and-shoulders portrait of (${d}:1.3), ${eraWords[era]}, ${ES.BACKDROP[era]}, looking at the viewer, face in the upper middle`,
+    "A fighter from this era. The black sun is the Order of Infinite Dark's emblem (the book's knightly agency).", "(modern clothes, cosplay, costume:1.2), (signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v3", ES.STYLE[era]));
+
   /* 2. named characters */
   const npcRow = (c, n, prefix = "npc") => add(`Characters: ${c.title} (${c.year})`, `portraits/${prefix}/${c.id}-${n.id}.png`, SQ, `${n.name}, ${n.tag}`,
     `head-and-shoulders portrait of ${n.name}, ${n.tag}, ${c.setting}. ${n.look} (Clothing of the ${eraWords[c.era]}:1.2), ${ES.BACKDROP[c.era] || "dim background"}.`, "", "(signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v3", ES.STYLE[c.era]);
