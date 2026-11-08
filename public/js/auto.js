@@ -25,19 +25,21 @@
     if (!P()) return pick(FIRST) + (rnd() < 0.5 ? " " + pick(LAST) : "");
     const fam = /\b(mother|father|sister|brother|cousin|aunt|uncle|grand\w*|child|son|daughter)\b/i.test(rel || "");
     const home = d && d.origin && (fam || rnd() < 0.7) ? d.origin : P().randomOrigin();
-    const sex = /mother|sister|aunt|daughter|grandmother|landlady|wife/i.test(rel || "") ? "f" : /father|brother|uncle|son\b|grandfather|husband/i.test(rel || "") ? "m" : "";
+    const sex = /mother|sister|aunt|daughter|grandmother|landlady|wife/i.test(rel || "") ? "f" : /father|brother|uncle|son\b|grandfather|husband|priest|monk|rabbi|imam/i.test(rel || "") ? "m" : "";
+    bondName.home = home;
     const first = P().first(home, sex);
     if (fam && d && d.name && d.name.trim().includes(" ")) return `${first} ${d.name.trim().split(/\s+/).slice(1).join(" ")}`;
     return rnd() < 0.5 ? `${first} ${P().last(home)}` : first;
   };
   CAMP.rollBond = (b, keepName, d) => {
     b.rel = pick(RELS);
-    if (!keepName || !b.name.trim()) b.name = bondName(d, b.rel);
+    if (!keepName || !b.name.trim()) { b.name = bondName(d, b.rel); b.origin = bondName.home; }
+    b.type = window.BONDS ? BONDS.typeOf({ rel: b.rel }) : undefined;
     return b;
   };
   CAMP.rollBonds = (d, keepNames) => {
     const rels = shuffle(RELS).slice(0, 3);
-    d.bonds.forEach((b, i) => { b.rel = rels[i]; if (!keepNames || !b.name.trim()) b.name = bondName(d, b.rel); });
+    d.bonds.forEach((b, i) => { b.rel = rels[i]; b.type = window.BONDS ? BONDS.typeOf({ rel: b.rel }) : undefined; if (!keepNames || !b.name.trim()) { b.name = bondName(d, b.rel); b.origin = bondName.home; } });
     return d;
   };
   CAMP.rollLook = (d) => {

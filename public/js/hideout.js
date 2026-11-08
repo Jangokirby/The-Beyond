@@ -371,7 +371,7 @@
         { act: "week", label: "Rest a week", hint: "Seven days of Natural Recovery", cost: costTag(7) }
       ],
       out: [
-        ...a.bonds.map((b, i) => ({ act: "visit", bond: i, label: `Visit ${b.name}`, hint: `${b.rel} · bond ${b.value}. Restores some Sanity.`, cost: costTag(1) })),
+        ...a.bonds.map((b, i) => ({ act: "visit", bond: i, label: `Visit ${b.name}`, hint: `${b.rel}${window.BONDS && !BONDS.def(b).rels.includes(b.rel) && BONDS.def(b).label !== b.rel ? ` (${BONDS.def(b).label.toLowerCase()})` : ""} · bond ${b.value}. Restores some Sanity.`, cost: costTag(1) })),
         { act: "contacts", label: "Work contacts", hint: `Call in debts for a Favor. The team has ${CAMP.camp.favors.length}.`, cost: costTag(2) }
       ]
     };
@@ -439,7 +439,10 @@
       CAMP.logAdd(`${a.name} spent a day with ${b.name}.`);
       const res = diff(a, before);
       if (b.value !== bv) res.push({ label: `Bond with ${b.name} ${bv} → ${b.value}` });
-      spec = { bg: "out", title: b.name, jp: "絆", lines: [fill(pick(LINES.visit), ctx(a, { b: b.name, rel: b.rel || "an old friend" }))], results: res, notes };
+      const x = ctx(a, { b: b.name.split(" ")[0], rel: (b.rel || "an old friend").toLowerCase() });
+      const tl = window.BONDS ? BONDS.lines(b, o.activity, pick) : [pick(LINES.visit)];
+      const bf = window.BONDS ? BONDS.face(a, b) : null;
+      spec = { bg: "out", title: b.name, jp: "絆", lines: tl.map((t) => fill(t, x)), results: res, notes, bondFace: bf };
     } else if (act === "contacts") {
       c.favors.push({ wc: 1, from: "Contacts" });
       const notes = CAMP.passDays(2);
@@ -450,10 +453,18 @@
     const left = HIDE.left(a);
     spec.results.push({ label: left === Infinity ? "Downtime: no limit" : left > 0 ? `${left} downtime action${left > 1 ? "s" : ""} left` : "Downtime spent: ready for the next job" });
     CAMP.save();
-    return { ...spec, era, kicker: dayKick(d0, c.day), who: [face(a)] };
+    return { ...spec, era, kicker: dayKick(d0, c.day), who: [face(a), spec.bondFace].filter(Boolean) };
   };
 
+  /* a visit first asks how the day is spent (js/bonds.js); the rules effect is the same whatever is chosen */
+  HIDE.visitMenu = (a, i) => {
+    const b = a.bonds[i]; if (!b || !window.BONDS) return HIDE.run(a, "visit", { bond: i, activity: "_" });
+    const d = BONDS.def(b);
+    chooser(`A day with ${b.name}`, "絆", `${b.rel || d.label} · bond ${b.value}. How do they spend it?`, HIDE.outMenu,
+      BONDS.acts(b).map((x) => ({ label: x.label, hint: "1 action · 1 day", run: () => HIDE.run(a, "visit", { bond: i, activity: x.id }) })));
+  };
   HIDE.run = async (a, act, o = {}) => {
+    if (act === "visit" && !o.activity && window.BONDS) return HIDE.visitMenu(a, o.bond);
     if (HIDE.left(a) <= 0) { U.toast(`${a.short} has used all their downtime. Take the next job from the case board.`); return; }
     const spec = HIDE.apply(a, act, o);
     if (!spec) return;

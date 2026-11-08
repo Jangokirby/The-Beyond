@@ -213,6 +213,10 @@
       ...draft.bonds.map((b, i) => el("div", { class: "two" },
         el("label", { class: "field" }, el("span", {}, `Bond ${i + 1}`), el("input", { type: "text", maxlength: "30", value: b.name, placeholder: "Name", oninput: (e) => { b.name = e.target.value; refreshBar(); } })),
         el("label", { class: "field" }, el("span", {}, "Who are they to you?"), el("input", { type: "text", maxlength: "50", value: b.rel, oninput: (e) => { b.rel = e.target.value; } })),
+        window.BONDS ? el("label", { class: "field" }, el("span", {}, "Kind of bond (shapes your visits)"), el("select", { onchange: (e) => {
+          const was = BONDS.def(b); b.type = e.target.value; const now = BONDS.TYPES[b.type];
+          if (!b.rel.trim() || was.rels.includes(b.rel)) b.rel = now.rels[0]; redraw(); } },
+          ...BONDS.ORDER.map((k) => el("option", { value: k, selected: BONDS.typeOf(b) === k ? "selected" : null }, BONDS.TYPES[k].label)))) : null,
         btn("Roll this Bond", () => { CAMP.rollBond(b, !!b.name.trim(), draft); redraw(); }, "small ghost")))));
 
     /* ---- 5 gear */

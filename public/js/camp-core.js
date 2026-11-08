@@ -149,7 +149,7 @@
       brBonus: (bg && bg.brBonus || 0), mrBonus: bg && bg.mrsr || 0, srBonus: bg && bg.mrsr || 0,
       traits: { ...(bg && bg.trait ? { [bg.trait]: true } : {}), ...(d.armor.specialty === "Torch Bearer" ? { torchBearer: true } : {}), ...(d.armor.specialty === "Last Stand" ? { lastStand: true } : {}) },
       fate: 1 + (bg && bg.extraFate || 0), baseFate: 1 + (bg && bg.extraFate || 0),
-      bonds: d.bonds.map((b) => ({ name: b.name.trim(), rel: b.rel.trim(), value: bg && bg.bonds15 ? 15 : 10 })),
+      bonds: d.bonds.map((b) => ({ name: b.name.trim(), rel: b.rel.trim(), type: window.BONDS ? BONDS.typeOf(b) : undefined, origin: b.origin || d.origin || undefined, value: bg && bg.bonds15 ? 15 : 10 })),
       items: [], injuries: [], noticed: 0, level: 1, missions: 0, levelUps: 0, pending: d.startLevel === 2 ? 1 : 0, solved: 0,
       sp: 7 + (bg && bg.spBonus || 0), promotions: 0, grants: { artifact: bg && bg.artifact ? 1 : 0, patron: bg && bg.patron ? 1 : 0 }, portraitKey: null, assets: [], artifacts: [], patrons: [], questions: [], status: "active", doomed: null, agency: agencyId, since: year
     };
