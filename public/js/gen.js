@@ -77,7 +77,27 @@
       hook: "A machine in {town} keeps working after it is switched off. Last week it started building something.",
       site: ["the workshop", "tech", "Tools laid out in perfect order, every one of them still warm."],
       lair: ["the engine room", "tech", "Pistons, wire and a shape at the centre that is almost, but not quite, a person."],
-      clue1: "Every worker who touched it dreamed of the same blueprint.", clue2: "It is missing one part, and it has been trying to make it out of people.", weak: "Its heart is the oldest part. Jam it and the rest of it stutters." }
+      clue1: "Every worker who touched it dreamed of the same blueprint.", clue2: "It is missing one part, and it has been trying to make it out of people.", weak: "Its heart is the oldest part. Jam it and the rest of it stutters." },
+    /* not everything in the Beyond is a creature: a place, a cursed thing, an hour that repeats.
+       These can be ended with a rite instead of a fight (rite: the group roll that does it). */
+    { id: "place", title: ["Number {N}, {Street}", "The House That Wants", "The {Adj} Address"], types: ["Construct"], rite: { aspect: "willpower", label: "Unmake the house", cr: "challenging" },
+      villain: ["The House on {Street}", "Number {N}", "The {Adj} House"], minion: "A door that opens on you",
+      hook: "A house in {town} has started appearing on maps it was never on. People who go to visit it don't come back, and the house is a little bigger every time.",
+      site: ["the front hall", "room", "A hall too long for the house outside it. Coats on the pegs, still damp. Every door is ajar the same amount."],
+      lair: ["the room at the heart of the house", "room", "The innermost room has no windows, and its walls are breathing."],
+      clue1: "The house is on the maps because somebody keeps drawing it in.", clue2: "The rooms are copies of rooms from the missing people's own homes.", weak: "A house is only a house if someone lives in it. Get every living soul out, close the door from outside, and say the address as if it were a name of the dead." },
+    { id: "object", title: ["The {Adj} Heirloom", "Passed Down", "Whoever Holds It"], types: ["Spirit", "Construct"], rite: { aspect: "faith", label: "Break the curse", cr: "challenging" },
+      villain: ["The {Adj} Music Box", "The Wedding Ring", "The {Adj} Mirror", "Grandmother's Locket"], minion: "Someone who held it before",
+      hook: "An heirloom keeps changing hands in {town}. Every owner is happy for a month, and then nobody can remember who they were.",
+      site: ["the last owner's house", "room", "Everything in the house is labelled in a careful hand, as if someone were trying to remember what things are."],
+      lair: ["the room where it's kept now", "room", "It sits on a lace cloth in an empty room. It is the only thing in {town} that is warm."],
+      clue1: "Nobody buys it or steals it. It is always a gift.", clue2: "Each owner's name is scratched into it, smaller each time, and the newest scratch is fresh.", weak: "A gift can be refused. Hand it back, with every name read out, and it has no one left to hold." },
+    { id: "hour", title: ["The {Adj} Hour", "Half Past Three, Again", "The Day That Won't End"], types: ["Beyond"], rite: { aspect: "iq", label: "Break the loop", cr: "challenging" },
+      villain: ["The {Adj} Hour", "Half Past Three", "The Stopped Clock"], minion: "Someone stuck in the hour",
+      hook: "In one street of {town}, the same hour keeps happening. The people living in it don't notice. Everyone outside it is starting to.",
+      site: ["the street where it repeats", "street", "The same cart rattles past, the same dog barks, the same woman drops the same basket of apples, every few minutes, forever."],
+      lair: ["the moment it started", "room", "A kitchen, a clock stopped at the hour, and something standing where a person was standing when it all went wrong."],
+      clue1: "The loop begins and ends at the same clock, and someone keeps winding it.", clue2: "Something terrible happened here at this hour, and the street has chosen to live it again rather than after.", weak: "Change one thing that happened in the hour, the thing everyone remembers, and the hour has to end." }
   ];
   const SPRITE = { Spirit: "spirit", Undead: "undead", Feral: "beast", Folklore: "beast", Swarm: "swarm", Construct: "construct", Golem: "construct", Beyond: "beyond", Divine: "beyond", Human: "humanoid" };
   const MODS = { Spirit: ["Ethereal", "Psychological Attacks", "Elusive"], Undead: ["Vengeful", "Bloodthirsty"], Feral: ["Quick", "Vicious", "Nimble"], Folklore: ["Disguised", "Mimic", "Elusive"],
@@ -95,7 +115,7 @@
     const base = opts.base != null ? opts.base : Math.floor(R() * 1000), slot = opts.slot || 0;
     const H = (tBuild && hooks.find((h) => h.id === FITS[tBuild.type])) || hooks[(base + slot) % hooks.length];
     const town = E.towns[(base + slot) % E.towns.length], adj = ADJ[(base * 7 + slot * 3) % ADJ.length];
-    const fillT = (s) => s.replace(/\{Adj\}/g, adj).replace(/\{town\}/g, town).replace(/\{Town\}/g, town.replace(/^(the |a |an )/i, "").replace(/^\w/, (m) => m.toUpperCase())).replace(/\{Street\}/g, pick(["Mercer Street", "Ash Lane", "Chapel Row", "the Hill"]));
+    const fillT = (s) => s.replace(/\{N\}/g, String(3 + (base % 47))).replace(/\{Adj\}/g, adj).replace(/\{town\}/g, town).replace(/\{Town\}/g, town.replace(/^(the |a |an )/i, "").replace(/^\w/, (m) => m.toUpperCase())).replace(/\{Street\}/g, pick(["Mercer Street", "Ash Lane", "Chapel Row", "the Hill"]));
     const pull = w.pull || 0, diff = pull >= 7 ? "dangerous" : pull >= 4 ? "challenging" : "medium";
     const threat = opts.threat || null;
     /* the monster: the book's builder, or the open threat's own build */
@@ -192,6 +212,9 @@
           options: [
             { label: "Use what you learned about it", hint: "What the old records said", if: "weak", once: true, steps: [{ check: { aspect: a3, cr: "medium", label: "Turn its weakness against it",
               ok: [...steps(TX.weakOk || ["For the first time, it is the one that's afraid."]), { set: "shaken" }], fail: steps(TX.weakFail || ["It knows you're here now."]) } }] },
+            ...(H.rite ? [{ label: H.rite.label, hint: "Everyone takes part: no fight if it works", if: "weak", once: true, steps: [{ group: { aspect: H.rite.aspect, cr: H.rite.cr, label: H.rite.label, intro: fillS(TX.riteIntro || "Everyone takes their place. It knows what you are doing."),
+              ok: [...steps(TX.riteOk || [`${boss.name} comes apart, not with a fight, but like a word nobody says any more.`]), { objective: "po2" }, { end: "win" }],
+              fail: [...steps(TX.riteFail || ["It holds. And now it's angry."]), { damage: { pool: "sanity", amount: 3 } }] } }] }] : []),
             { label: `Face ${boss.name}`, steps: [{ combat: "fight", surpriseIf: "shaken", win: [
               { say: `${boss.name} ${boss.dies || "is gone"}.` }, ...steps(TX.win || []), { objective: "po2" }, { end: "win" }] }] },
             { label: "Fall back for now", steps: [{ goto: "site" }] }] }

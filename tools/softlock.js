@@ -15,6 +15,7 @@ global.window = { ART: { SKIN: Array(10).fill(0), HAIRC: Array(12).fill(0), OUTF
 window.PACKS = { define(p) { for (const a of p.cases) window.ADV.register(a); } };
 for (const f of ["js/adventures.js", "js/adventures2.js", "js/adventures3.js", "js/tutorial.js", ...fs.readdirSync(path.join(PUB, "packs")).filter((f) => f.endsWith(".js")).map((f) => "packs/" + f)])
   eval(fs.readFileSync(path.join(PUB, f), "utf8"));
+eval(fs.readFileSync(path.join(PUB, "js/rites.js"), "utf8"));
 const LIB = window.ADV.LIBRARY;
 const arr = (x) => (x == null ? [] : Array.isArray(x) ? x : [x]);
 

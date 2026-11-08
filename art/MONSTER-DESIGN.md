@@ -8,6 +8,21 @@ So a monster is never just a creature. It is **the Beyond's copy of something pe
 Underneath each one is a human fear or desire. The era decides what it copies: the thing people of that time
 lived with, worshipped, or were afraid of.
 
+## Not everything is a creature
+
+The book's own types say so: a Construct is *"the chairs, doors, tables, and buildings"*, and Beyond Artifacts are
+cursed things that once belonged to someone. A case's threat can be:
+
+- **A place**: a house that wasn't there last year, a room that copies rooms from your past, a street stuck in one hour.
+  Picture it as architecture that has become a body: doorways for mouths, wallpaper that breathes, windows for eyes.
+- **A cursed object**: an heirloom, a music box, a portrait, a reel of film, a séance board. Picture the object itself,
+  centred, with one thing about it alive or human that shouldn't be.
+- **An event**: a storm, a repeating hour, a broadcast. Picture its shape as a figure: the dust wall with a man's goggles,
+  the clock with too many hands.
+
+In the game these can often be ended with a rite instead of a fight (side jobs: "Unmake the house", "Break the
+curse", "Break the loop"; written cases: Vacancy, The Sitting Room, The Last Picture Show, Quiet Hours).
+
 ## The recipe for every monster prompt
 
 1. **What it copies.** A real, recognisable thing from its time: a saint's statue, a photograph, a telegram, a TV advert, a
