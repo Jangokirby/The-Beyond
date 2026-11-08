@@ -18,7 +18,6 @@
     root.classList.toggle("a-readable", !!S.readable);
     root.classList.toggle("a-colour", !!S.colour);
     root.classList.toggle("a-still", !!S.still);
-    if (window.SCORE) window.SCORE.on = S.periodMusic !== false;
   };
   apply();
   const U = window.UI;
@@ -37,7 +36,6 @@
         chk("Colour-blind friendly bars", () => S.colour, (v) => (S.colour = v)),
         chk("Reduce motion (no shakes or flashes)", () => S.still, (v) => (S.still = v)),
         el("h4", { class: "set-head" }, "Atmosphere"),
-        chk("Period music for each era and place", () => S.periodMusic !== false, (v) => (S.periodMusic = v)),
         chk("Era styles for the screen", () => (window.ERASKIN ? ERASKIN.on() : true), (v) => window.ERASKIN && ERASKIN.set(v)),
         chk("Sanity effects (what low Sanity does to the screen)", () => (window.MADNESS ? MADNESS.on() : true), (v) => window.MADNESS && MADNESS.set(v)),
         c ? chk("Conversation approaches (this campaign)", () => c.rules.approach !== false, (v) => { c.rules.approach = v; CAMP.save(); }) : null

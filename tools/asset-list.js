@@ -7,6 +7,7 @@
 const { chromium } = require("playwright");
 const fs = require("fs"), path = require("path");
 const VIS = require("./scene-prompts.js");
+const ES = require("./era-style.js");
 const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] || path.join(__dirname, "..");
 
 (async () => {
@@ -45,7 +46,7 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
   await b.close();
 
   const rows = [];
-  const add = (group, file, size, subject, prompt, note = "", negative = "", redo = "") => rows.push({ group, file, size, subject, prompt: prompt.replace(/\s+/g, " ").trim(), note, negative, redo });
+  const add = (group, file, size, subject, prompt, note = "", negative = "", redo = "", style = "") => rows.push({ group, file, size, subject, prompt: prompt.replace(/\s+/g, " ").trim(), note, negative, redo, style });
   const NOPEOPLE = "(people, person, figure, crowd, face:1.4)";
   const missing = [];
   const SQ = "1024x1024", WIDE = "1344x768", TALL = "832x1216";
@@ -60,13 +61,13 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
   for (const e of data.eras) for (const sex of ["f", "m"]) LOOKS[sex].forEach((lk, i) => {
     const n = String(i + 1).padStart(2, "0");
     add("Agent portraits (character creator)", `portraits/agents/${e.id}-${sex}-${n}.png`, SQ, `${e.name}: ${sex === "f" ? "woman" : "man"} ${n}`,
-      `head-and-shoulders portrait of a ${lk}, clothing and hairstyle of the ${eraWords[e.id]}, investigator of the supernatural, plain dark background, looking at the viewer`,
-      "Vary ethnicity and build across the set.");
+      `head-and-shoulders portrait of (a ${ES.HERITAGE[i]} ${lk}:1.3), (wearing ${ES.WARDROBE[e.id][sex]}:1.2), ${eraWords[e.id]}, investigator of the supernatural, ${ES.BACKDROP[e.id]}, looking at the viewer, face in the upper middle`,
+      "Heritage, wardrobe and medium all date the face: the same person in two eras should look like two different paintings.", "(modern clothes:1.2), (signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v3", ES.STYLE[e.id]);
   });
 
   /* 2. named characters */
   const npcRow = (c, n, prefix = "npc") => add(`Characters: ${c.title} (${c.year})`, `portraits/${prefix}/${c.id}-${n.id}.png`, SQ, `${n.name}, ${n.tag}`,
-    `head-and-shoulders portrait of ${n.name}, ${n.tag}, ${c.setting}. ${n.look} Plain dark background.`);
+    `head-and-shoulders portrait of ${n.name}, ${n.tag}, ${c.setting}. ${n.look} (Clothing of the ${eraWords[c.era]}:1.2), ${ES.BACKDROP[c.era] || "dim background"}.`, "", "(signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v3", ES.STYLE[c.era]);
   for (const c of [data.dob, ...data.cases]) { for (const a of c.agents || []) npcRow(c, a, "npc"); for (const n of c.npcs) npcRow(c, n); }
 
   /* 3. monsters */
@@ -83,14 +84,14 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
     for (const sc of c.scenes) {
       const v = VIS[`${c.id}/${sc.id}`]; if (!v) missing.push(`${c.id}/${sc.id}`);
       add(`Places: ${c.title} (${c.year})`, `scenes/${c.id}-${sc.id}.png`, WIDE, `${sc.name}`,
-        v ? `${v[0]}, ${eraWords[c.era]}, wide establishing view, atmospheric, empty of people` : `${sc.name}, ${c.setting}. ${sc.desc} Wide establishing view, atmospheric, no people in the foreground.`,
-        "The right third is partly covered by character portraits; keep it calm.", [NOPEOPLE, v && v[1]].filter(Boolean).join(", "), "yes");
+        v ? `${v[0]}, ${eraWords[c.era]}, (${ES.MARKERS[c.era]}:1.1), wide establishing view, atmospheric, empty of people` : `${sc.name}, ${c.setting}. ${sc.desc} Wide establishing view, atmospheric, no people in the foreground.`,
+        "The right third is partly covered by character portraits; keep it calm.", [NOPEOPLE, v && v[1]].filter(Boolean).join(", "), "yes", ES.STYLE[c.era]);
     }
     for (const f of c.fights) {
       const v = VIS[`${c.id}/fight:${f.id}`]; if (!v) missing.push(`${c.id}/fight:${f.id}`);
       add(`Places: ${c.title} (${c.year})`, `scenes/${c.id}-fight-${f.id}.png`, WIDE, `${f.name} (fight)`,
-        v ? `${v[0]}, ${eraWords[c.era]}, wide view, dramatic light, empty of people` : `${f.name}, ${c.setting}. ${f.desc} Wide view, room to read three areas left to right, no figures.`,
-        "Fight backdrop: three zones are laid over it left to right; keep the bottom third fairly plain.", [NOPEOPLE, v && v[1]].filter(Boolean).join(", "), "yes");
+        v ? `${v[0]}, ${eraWords[c.era]}, (${ES.MARKERS[c.era]}:1.1), wide view, dramatic light, empty of people` : `${f.name}, ${c.setting}. ${f.desc} Wide view, room to read three areas left to right, no figures.`,
+        "Fight backdrop: three zones are laid over it left to right; keep the bottom third fairly plain.", [NOPEOPLE, v && v[1]].filter(Boolean).join(", "), "yes", ES.STYLE[c.era]);
     }
   }
   const DOB = { street: "a rain-soaked Tokyo backstreet at night outside an old two-storey apartment block, 1976", station: "a police interview room, Kanda Station, 1976, fluorescent light", hall1: "ground floor hallway of a shabby 1970s Tokyo apartment building, doors along one side", hall2: "second floor hallway, same building, a door at the end left ajar", hall3: "third floor hallway, same building, dim and silent", doorway: "an apartment doorway seen from the hall, a neighbour's door half open", apt2b_living: "a small Tokyo apartment living room, tatami, a low table, everything too neat", apt2b_kitchen: "a narrow apartment kitchen, dishes in the sink, a calendar on the wall", apt2b_bedroom: "a small bedroom with futon rolled away, a child's drawings on the wall", apt2b_storage: "a cramped storage cupboard full of boxes and folded paper", apt2a: "a young courier's messy apartment, posters, a motorbike helmet", basement: "a dark boiler-room basement under the building, pipes and a locked door", paper_guest: "a guest room made entirely of folded white paper, uncanny", paper_dojo: "a dojo made entirely of folded paper, white lilies drifting", paper_study: "a study made of folded paper, shelves of paper books", paper_hall: "an apartment hallway made of folded paper, lilies on the floor", paper_2b: "the apartment living room rebuilt in folded paper, a figure-shaped space at its centre", title: "title art: a rainy Tokyo night street, one lit window, folded paper lilies floating in puddles", end_banish: "ending: dawn light through paper walls as they dissolve into lilies", end_kill: "ending: a ruined paper room, ash and torn lilies, rain outside" };
@@ -101,13 +102,13 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
   const FITS = { trench: ["wars"], future: ["now"], drive: ["atomic", "modern"], modern: ["modern", "now"], castle: ["medieval", "victorian"], train: ["victorian", "wars", "atomic", "modern", "now"], lab: ["victorian", "wars", "atomic", "modern", "now"] };
   for (const [t, d] of Object.entries(THEMES)) for (const e of data.eras) {
     if (FITS[t] && !FITS[t].includes(e.id)) continue;
-    add("Places: generic (side jobs and your own cases)", `scenes/generic/${t}-${e.id}.png`, WIDE, `${t}, ${e.name}`, `${d}, ${eraWords[e.id]}, at night or in gloom. Wide establishing view, atmospheric, no people.`);
+    add("Places: generic (side jobs and your own cases)", `scenes/generic/${t}-${e.id}.png`, WIDE, `${t}, ${e.name}`, `${d}, ${eraWords[e.id]}, (${ES.MARKERS[e.id]}:1.2), at night or in gloom, wide establishing view, atmospheric, no people`, "", "(people, person, figure:1.4), (signature, text, watermark:1.5)", "v3", ES.STYLE[e.id]);
   }
 
   /* 6. the hideout, one per era */
   for (const e of data.eras) add("Hideout", `hideout/${e.id}.png`, WIDE, `The agency hideout, ${e.name}`,
-    `interior of a secret investigators' headquarters in the ${eraWords[e.id]}. Left to right: a case board pinned with photos and string; a weapons rack; a door; a telephone on the wall; tall shelves of files; a safe or strongbox; a doorway to a garage or stable. In front: a common table with chairs, a small desk with a logbook, an infirmary cot. Warm lamp light, slightly cluttered.`,
-    "Keep the objects roughly in that left-to-right order; I'll place the clickable spots on them.");
+    `interior of a secret investigators' headquarters in the ${eraWords[e.id]}, (${ES.MARKERS[e.id]}:1.1). Left to right: a case board pinned with photos and string; a weapons rack; a door; a telephone on the wall; tall shelves of files; a safe or strongbox; a doorway to a garage or stable. In front: a common table with chairs, a small desk with a logbook, an infirmary cot. Warm lamp light, slightly cluttered.`,
+    "Keep the objects roughly in that left-to-right order; I'll place the clickable spots on them.", "(people:1.3), (signature, text, watermark:1.5)", "v3", ES.STYLE[e.id]);
 
   /* 7. patrons */
   for (const d of data.patrons) add("Patrons", `patrons/${slug(d.name)}.png`, WIDE, d.name, `${d.name}, a patron deity of the Beyond: ${d.text} Shown as an idol or presence on a dark altar, candlelight, awe and dread.`,
@@ -138,7 +139,7 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
 
   if (missing.length) console.log("NO VISUAL PROMPT for", missing.join(", "));
   /* write */
-  fs.writeFileSync(path.join(out, "asset-list.csv"), "group,file,size,subject,prompt,negative,redo,note\n" + rows.map((r) => ["group", "file", "size", "subject", "prompt", "negative", "redo", "note"].map((k) => `"${String(r[k]).replace(/"/g, '""')}"`).join(",")).join("\n") + "\n");
+  fs.writeFileSync(path.join(out, "asset-list.csv"), "group,file,size,subject,style,prompt,negative,redo,note\n" + rows.map((r) => ["group", "file", "size", "subject", "style", "prompt", "negative", "redo", "note"].map((k) => `"${String(r[k]).replace(/"/g, '""')}"`).join(",")).join("\n") + "\n");
   const groups = [...new Set(rows.map((r) => r.group))];
   let md = `# The Beyond: picture list for an illustrated edition\n\n${rows.length} images. Every row in \`asset-list.csv\` is one picture, with its file name, size and a description to turn into a prompt.\n\n`;
   md += `## Version 2: what changed\n\n- **Places in the written cases are described by what they look like**, not by what happens there (tools/scene-prompts.js). The first pictures were painted from story text, so the generator made ordinary rooms and fields: the crater chapel got a roof, the trench had no trench. Every case place and fight backdrop is marked **[redo]**.\n- **A negative column.** Each row lists what must stay out of that picture (people, a roof, a cabin...). Add it to your usual negative prompt.\n- **Items are new** (**[new]**): gear and the things you click in scenes (periscope, telephone, letter...). Until they exist the game shows drawn icons.\n- \`asset-list-v2-todo.csv\` holds only the [redo] and [new] rows: that is the batch to run. Same file names as before, so the new pictures drop straight in.\n\n## How to make them\n\n- **One style for everything.** Decide the style once (for example: painted, ink-and-wash, muted colour, film grain) and put the same style words at the start of every prompt. The descriptions below only say what's in each picture.\n- **No text, logos, watermarks, signatures or frames** in any picture.\n- **Sizes:** portraits and monsters are square (1024x1024), places are wide (1344x768). PNG, JPG or WEBP are all fine; keep each file under about 1 MB if you can.\n- **Portraits:** head and shoulders, the face in the upper middle, plain dark background. They are shown in circles and small cards, so faces must read at small size.\n- **Monsters:** full figure, centred, with space around it; they appear as round tokens in fights.\n- **Places:** wide establishing views without people in the foreground. The right third of the picture is often covered by character portraits.\n- **File names matter.** Save each image with exactly the file name in the list, keeping the folders (for example \`portraits/agents/victorian-f-01.png\`). Then zip the whole folder and send it over; I'll wire everything in as its own edition, next to the drawn and photo editions.\n- Anything you skip falls back to the drawn art, so you can deliver in batches. A good first batch: the agent portraits for one era, the characters and places of one case, and a few monsters.\n\n## Counts\n\n| Group | Images |\n|---|---|\n`;
@@ -150,9 +151,9 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
   }
   fs.writeFileSync(path.join(out, "ASSET-LIST.md"), md);
   /* the batch for the generator: only what has to be made again or is new */
-  const todo = rows.filter((r) => r.redo);
-  fs.writeFileSync(path.join(out, "asset-list-v2-todo.csv"), "group,file,size,subject,prompt,negative,redo,note\n" + todo.map((r) => ["group", "file", "size", "subject", "prompt", "negative", "redo", "note"].map((k) => `"${String(r[k]).replace(/"/g, '""')}"`).join(",")).join("\n") + "\n");
-  console.log(todo.length, "to make in asset-list-v2-todo.csv");
+  const todo = rows.filter((r) => r.redo && !/^Monsters|^Items|^Patrons|^Title/.test(r.group));
+  fs.writeFileSync(path.join(out, "asset-list-v3-todo.csv"), "group,file,size,subject,style,prompt,negative,redo,note\n" + todo.map((r) => ["group", "file", "size", "subject", "style", "prompt", "negative", "redo", "note"].map((k) => `"${String(r[k]).replace(/"/g, '""')}"`).join(",")).join("\n") + "\n");
+  console.log(todo.length, "to make in asset-list-v3-todo.csv");
   console.log(rows.length, "images in", groups.length, "groups");
   for (const g of groups) console.log(" ", rows.filter((r) => r.group === g).length, g);
 })();

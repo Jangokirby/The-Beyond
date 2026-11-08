@@ -108,6 +108,11 @@ module.exports = {
   "quiet-hours/core": ["(server room that stretches impossibly far:1.4), (endless aisle of server racks with blinking status lights:1.3), at the far end the lights form a vague face, cold blue light", ""],
   "quiet-hours/fight:floor13": ["(endless server room aisle:1.3), every status light blinking, cables hanging, cold light, raised floor tiles across the bottom", ""],
 
+  /* ---- Training: The First Night, 1925 */
+  "tutorial/hall": ["(tall cold front hall of an old English townhouse, 1925:1.3), gas lamps turned low, a grandfather clock, polished floorboards, a coat stand, a roll-top desk in a study doorway, stairs going up into darkness", ""],
+  "tutorial/cellar": ["(brick cellar with a single bare bulb on a string:1.3), damp walls, twelve wooden steps down, (a heavy wooden coal-store door with iron straps:1.3), coal dust on the floor in a wide smooth circle", ""],
+  "tutorial/fight:coal": ["(coal store in a cellar:1.3), a great heap of coal against the back wall, coal dust hanging in the air, a bare bulb swinging, brick floor across the bottom", ""],
+
   /* ---- The Lamp-Black arc: Chelsea, Manchester, Bloomsbury 1889-91 */
   "lb-1-portraits/surgery": ["(small Victorian doctor's surgery:1.3), gaslight, (a desk with four patient files and small engraved portraits pinned beside them:1.3), medicine cabinet, rain running down the window, empty waiting chairs", ""],
   "lb-1-portraits/vere": ["(Victorian sickroom, curtains drawn at noon:1.3), a large four-poster bed with pillows, (a grand oil portrait of a young woman hanging over the mantel:1.4), thick carpet, medicine bottles", ""],

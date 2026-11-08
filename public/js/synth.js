@@ -1,5 +1,5 @@
 /* ============================================================================
-   SYNTH — music, ambience and sound effects made in code.
+   SYNTH — ambience and sound effects made in code (music is recordings only, see js/score.js).
 
    Whenever an audio file listed in manifest.js can't be loaded, the player asks
    this file to build the sound instead, so the game is never silent. Drop real
@@ -256,6 +256,7 @@
     try { return await origLoad(src); }
     catch (e) {
       const k = keyOf(src); if (!k || !window.OfflineAudioContext) throw e;
+      if (k[0] === "music") throw e;   // music is recordings only (js/score.js); sound effects and ambience can still be made here
       if (!SYN.made[src]) SYN.made[src] = SYN.make(k[0], k[1]);
       const buf = await SYN.made[src];
       A.buffers[src] = Promise.resolve(buf);

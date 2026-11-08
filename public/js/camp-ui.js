@@ -39,6 +39,7 @@
           btn("GM workshop", () => ui.gmHome(), "ghost"),
           btn("Live table", () => window.LIVE && window.LIVE.entry(), "ghost"),
           btn("Settings", () => { AudioMan.unlock(); G.settingsModal(); }, "ghost"),
+          window.SHOW_CREDITS ? btn("Credits", () => window.SHOW_CREDITS(), "ghost") : null,
           window.BEYOND_INSTALL && !BEYOND_INSTALL.installed() && (BEYOND_INSTALL.available() || BEYOND_INSTALL.iosHint())
             ? btn("Install the game", async () => { if (BEYOND_INSTALL.available()) { if (await BEYOND_INSTALL.prompt()) U.toast("Installed. Open The Beyond from your home screen or app list."); }
               else U.modal({ title: "Install on iPhone or iPad", body: "<p>Tap the Share button in Safari, then <b>Add to Home Screen</b>. The game then opens full-screen like an app.</p>", buttons: [{ id: "ok", label: "OK", cls: "primary" }] }); }, "ghost") : null),
