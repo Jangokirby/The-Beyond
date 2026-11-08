@@ -6,7 +6,7 @@ The same game as the web version, packaged as a Windows, Mac or Linux app. Playe
 Set your server's address in `../public/js/config.js`:
 
 ```js
-window.BEYOND_CONFIG = Object.assign({ relay: "https://the-beyond.onrender.com", appName: "The Beyond" }, window.BEYOND_CONFIG || {});
+window.BEYOND_CONFIG = Object.assign({ relay: "https://the-beyond-yvb3.onrender.com", appName: "The Beyond" }, window.BEYOND_CONFIG || {});
 ```
 
 Invite links the app makes then point at that server, so friends without the app can join from a browser.
