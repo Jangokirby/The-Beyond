@@ -738,7 +738,9 @@
         for (const id of [...G.state.clues].reverse()) {
           const c = M.clues[id];
           const pk = window.PROPS ? PROPS.find(c.t + " " + (c.x || "").slice(0, 60)) : null;
-          pane.append(el("div", { class: "clue" + (pk ? " withprop" : "") }, pk ? el("img", { class: "clueprop", src: PROPS.src(pk), alt: "" }) : "", el("b", {}, c.t), el("small", {}, c.s), el("p", {}, c.x)));
+          pane.append(el("div", { class: "clue" + (pk ? " withprop" : "") + (window.HANDOUT ? " opens" : ""), role: window.HANDOUT ? "button" : null, tabindex: window.HANDOUT ? "0" : null, title: window.HANDOUT ? "Read the document" : null,
+            onclick: () => window.HANDOUT && HANDOUT.show(c, M), onkeydown: (e) => { if (e.key === "Enter" && window.HANDOUT) HANDOUT.show(c, M); } },
+            pk ? el("img", { class: "clueprop", src: PROPS.src(pk), alt: "" }) : "", el("b", {}, c.t), el("small", {}, c.s), el("p", {}, c.x)));
         }
       } else if (t === "lore") {
         if (!G.state.lore.length) pane.append(el("p", { class: "muted" }, "No history recovered yet."));

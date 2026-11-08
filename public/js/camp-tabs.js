@@ -303,9 +303,15 @@
     return wrap;
   };
 
+  /* the rulebook's own pictures of each artifact and its last owner (assets/book/artifacts) */
+  const bookArt = (name, owner) => { if (!name) return ""; const p = `assets/book/artifacts/${String(name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}${owner ? "-owner" : ""}.jpg`; return (window.BOOK_DATA && window.BOOK_DATA[p]) || p; };
+  ui.bookArt = bookArt;
   const artifactCard = (a, ar) => {
     const d = CAMP.artifactData(ar), mem = (d.memories || []);
-    const sec = el("div", { class: "artcard" + (ar.equipped ? " on" : "") },
+    const pics = ar.custom ? null : el("div", { class: "artpics" },
+      el("figure", { class: "polaroid" }, el("img", { src: bookArt(d.name), alt: d.name, onerror: (e) => e.target.closest("figure").remove() })),
+      ar.memories >= 1 ? el("figure", { class: "polaroid owner" }, el("img", { src: bookArt(d.name, true), alt: "Its last owner", onerror: (e) => e.target.closest("figure").remove() }), el("figcaption", {}, "Its last owner")) : null);
+    const sec = el("div", { class: "artcard" + (ar.equipped ? " on" : "") }, pics,
       el("h4", {}, d.name, ar.custom ? el("span", { class: "tag" }, "custom") : null), el("p", { class: "small" }, ph(d.text || "")),
       el("p", { class: "small" }, el("b", {}, "Effect: "), ph(d.effects || "")), el("p", { class: "small warn" }, el("b", {}, "Drawback: "), ph(d.drawback || "")));
     sec.append(el("div", { class: "memlist" }, ...mem.slice(0, ar.memories).map((m) => el("blockquote", {}, el("b", {}, `Memory ${m.n}`), " ", ph(m.text))), ar.memories < 5 ? el("p", { class: "small muted" }, `${5 - ar.memories} memor${5 - ar.memories === 1 ? "y" : "ies"} still sealed.`) : el("p", { class: "small good" }, "All five memories unlocked.")));
@@ -348,7 +354,7 @@
   const claimPanel = (a) => {
     const have = new Set(CAMP.camp.chars.flatMap((x) => x.artifacts.map((y) => y.name)));
     const list = [...GD.artifacts, ...(CAMP.camp.spoils || [])].filter((x) => !have.has(x.name));
-    const box = el("div", { class: "bggrid" }, ...list.map((x) => el("button", { class: "bgcard", onclick: () => { CAMP.giveArtifact(a, x); a.grants.artifact -= 1; redraw(); } }, el("b", {}, x.name), el("small", {}, x.spoils ? "The Beyond has not said what it does." : ph(x.effects).slice(0, 130) + "…"))));
+    const box = el("div", { class: "bggrid" }, ...list.map((x) => el("button", { class: "bgcard", onclick: () => { CAMP.giveArtifact(a, x); a.grants.artifact -= 1; redraw(); } }, x.spoils ? null : el("img", { class: "bgthumb", src: bookArt(x.name), alt: "", onerror: (e) => e.target.remove() }), el("b", {}, x.name), el("small", {}, x.spoils ? "The Beyond has not said what it does." : ph(x.effects).slice(0, 130) + "…"))));
     return panel(`Claim an artifact (${a.grants.artifact} available)`, box, forge(a));
   };
 

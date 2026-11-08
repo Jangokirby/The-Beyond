@@ -243,3 +243,45 @@ body.fightfx .floatnum { font-size: 1.6rem; top: -14px; }
 .fo-text b { font-family: var(--display); font-size: clamp(1.6rem, 5vw, 3.2rem); line-height: 1; text-shadow: 0 3px 10px #000; }
 .fo-hint { font-family: var(--mono); font-size: .68rem; opacity: .6; margin-top: .3rem; }
 @media (prefers-reduced-motion: reduce) { .faceoff, .fo-foe, .fo-slash, .fbanner span, .fhit, .fdie, .token.fstruck, #scene.fshake, #scene.fshake2 { animation-duration: .01s !important; } }
+
+/* ---------------------------------------------------------------- period handouts (js/handouts.js) */
+.clue.opens { cursor: pointer; } .clue.opens:hover b { text-decoration: underline; }
+.homodal .modal-body, .homodal .body { background: #2a2622; }
+.handout { position: relative; margin: .4rem auto; max-width: 560px; padding: 1.4rem 1.6rem 1.8rem; color: #2a2118; box-shadow: 0 10px 30px rgba(0,0,0,.55); line-height: 1.5; transform: rotate(-.6deg); }
+.handout.paper-parch { background: radial-gradient(ellipse at 50% 40%, #f0dfb4, #d5b77c 85%); }
+.handout.paper-laid { background: repeating-linear-gradient(0deg, #f2e9d4 0 3px, #eee4cc 3px 4px); }
+.handout.paper-aged { background: linear-gradient(180deg, #eee2c3, #e2d2ab); }
+.handout.paper-office { background: #f4f1e8; }
+.handout.paper-print { background: #fbfbf8; }
+.ho-hand { font-family: "Caveat", "Segoe Script", "Bradley Hand", cursive; font-size: 1.35rem; line-height: 1.3; color: #1f2a4a; }
+.ho-addr { text-align: right; font-style: italic; font-size: .85rem; margin-bottom: 1rem; }
+.ho-sig { text-align: right; margin-top: 1rem; font-family: "Caveat", "Segoe Script", cursive; font-size: 1.3rem; }
+.ho-telegram, .handout.ho-telegram { background: #f2e2a6; font-family: "Special Elite", "Courier New", monospace; transform: rotate(.8deg); }
+.ho-tg-head { display: flex; justify-content: space-between; font-weight: 700; letter-spacing: .15em; border-bottom: 2px solid #6b5a2a; padding-bottom: .3rem; margin-bottom: .8rem; }
+.ho-tg-head span { font-weight: 400; font-size: .8rem; letter-spacing: 0; }
+.ho-tg-body { background: #fffbe6; padding: .6rem .8rem; letter-spacing: .05em; box-shadow: inset 0 0 0 1px #d9c47e; }
+.ho-tg-foot { margin-top: .6rem; font-size: .75rem; }
+.ho-news { font-family: Georgia, "Times New Roman", serif; }
+.ho-mast { font-family: "UnifrakturMaguntia", "Old English Text MT", "Times New Roman", serif; font-size: 2rem; text-align: center; border-bottom: 3px double #222; }
+.ho-dateline { text-align: center; font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; border-bottom: 1px solid #222; padding: .15rem 0; margin-bottom: .6rem; }
+.ho-head { font-family: Georgia, serif; font-size: 1.4rem; text-align: center; margin: .3rem 0 .6rem; text-transform: uppercase; }
+.ho-cols { column-count: 2; column-gap: 1.2rem; text-align: justify; font-size: .9rem; hyphens: auto; }
+.ho-cols::first-letter { font-size: 2.2rem; float: left; line-height: .9; margin-right: .2rem; }
+.handout.ho-photo { background: #f7f3ea; padding: .8rem .8rem 1.2rem; max-width: 460px; transform: rotate(1.5deg); }
+.ho-photo img { width: 100%; aspect-ratio: 4/3; object-fit: cover; filter: sepia(.55) contrast(1.1) brightness(.9); display: block; }
+.ho-caption { font-family: "Caveat", cursive; font-size: 1.3rem; text-align: center; margin-top: .5rem; }
+.ho-back { margin-top: .8rem; padding-top: .6rem; border-top: 1px dashed #998; font-size: .88rem; font-style: italic; }
+.ho-diary-date { font-family: "Caveat", cursive; font-size: 1.3rem; text-decoration: underline; margin-bottom: .6rem; }
+.handout.ho-diary { background: repeating-linear-gradient(180deg, #f5efdc 0 27px, #a9c0d6 27px 28px); border-left: 3px solid #d07a7a; padding-left: 2.2rem; }
+.ho-form { font-family: "Special Elite", "Courier New", monospace; font-size: .92rem; }
+.ho-form table, .ho-form th, .ho-form td { color: #2a2118; background: transparent; }
+.ho-form-head { display: flex; justify-content: space-between; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; border-bottom: 2px solid #333; margin-bottom: .6rem; }
+.ho-form table { width: 100%; border-collapse: collapse; margin-bottom: .8rem; } .ho-form th, .ho-form td { border: 1px solid #555; padding: .2rem .4rem; text-align: left; vertical-align: top; } .ho-form th { width: 6rem; font-size: .72rem; text-transform: uppercase; }
+.ho-typed { white-space: normal; }
+.ho-stamp { position: absolute; right: 1.4rem; bottom: 1.2rem; color: rgba(170,30,30,.72); border: 3px solid rgba(170,30,30,.72); padding: .1rem .6rem; font-weight: 700; letter-spacing: .2em; transform: rotate(-12deg); font-family: var(--mono), monospace; }
+.handout.ho-parchment { font-family: "IM Fell English", "Palatino Linotype", Georgia, serif; font-style: italic; font-size: 1.05rem; }
+.ho-illum { float: left; font-size: 3.4rem; line-height: .9; margin: 0 .5rem .2rem 0; color: #8f2a22; font-family: Georgia, serif; font-style: normal; text-shadow: 1px 1px 0 #c9a24a; }
+.ho-seal { width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #c2453a, #7a1d16 70%); margin: 1rem 0 0 auto; box-shadow: 0 2px 4px rgba(0,0,0,.4); }
+.ho-notes-head { font-family: var(--mono), monospace; text-transform: uppercase; font-size: .8rem; letter-spacing: .1em; margin-bottom: .4rem; }
+.ho-notes-src { margin-top: .6rem; font-size: .75rem; font-style: italic; }
+.handout.ho-notes { background: repeating-linear-gradient(180deg, #fbf7e4 0 25px, #c9d6e3 25px 26px); }

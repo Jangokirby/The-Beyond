@@ -189,6 +189,7 @@
           return ADV.exec([line], g, M);
         };
         const k = (i) => `conv:${npcId}:${cv.id || ""}:${i}`;
+        if (window.APPROACH && !(await window.APPROACH.open(g, M, npcId))) return false;
         if (!(cv.id && g.flag(`conv:${npcId}:${cv.id}:opened`))) { for (const l of cv.open || []) await speak(l); if (cv.id) g.set(`conv:${npcId}:${cv.id}:opened`); }
         else if (cv.again) await speak(cv.again);
         for (;;) {

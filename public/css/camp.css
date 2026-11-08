@@ -183,3 +183,11 @@ blockquote { margin: .4rem 0; padding-left: .8rem; border-left: 2px solid var(--
 .flowkey { display: flex; gap: 1rem; flex-wrap: wrap; margin: .2rem 0 .6rem; }
 .flowkey .k::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 2px solid; margin-right: .35rem; vertical-align: -2px; }
 .flowkey .start::before { border-color: #e3a447; } .flowkey .dead::before { border-color: #b29be0; } .flowkey .lost::before { border-color: #d0644c; }
+/* artifact pictures from the rulebook */
+.artcard .artpics { float: right; display: flex; gap: .5rem; margin: 0 0 .5rem .75rem; }
+.polaroid { margin: 0; background: #efe8d8; padding: 6px 6px 18px; box-shadow: 0 4px 10px rgba(0,0,0,.45); transform: rotate(2deg); display: grid; justify-items: center; }
+.polaroid.owner { transform: rotate(-3deg); }
+.polaroid img { width: 120px; height: 130px; object-fit: cover; display: block; }
+.polaroid figcaption { font-family: var(--mono); font-size: .6rem; color: #3a3026; margin-top: 3px; }
+@media (max-width: 600px) { .artcard .artpics { float: none; margin: 0 0 .5rem; } .polaroid img { width: 96px; height: 104px; } }
+.bgcard .bgthumb { width: 100%; height: 120px; object-fit: cover; border-radius: 3px; margin-bottom: .35rem; filter: sepia(.2); }
