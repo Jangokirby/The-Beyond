@@ -1,5 +1,7 @@
 # The Beyond — web game with live tables
 
+> This repository also holds **Afterglow** (`afterglow/`), a separate local-AI dating-app sim. See `afterglow/README.md`.
+
 A static game (everything in `public/`) plus a tiny Node server (`server.js`) that relays live tables.
 Characters and campaigns are saved in each player's own browser; the server only holds the live table
 (who is seated, what the host's screen shows, players' taps). No accounts, no database.
