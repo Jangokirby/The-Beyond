@@ -6,12 +6,13 @@
 (function () {
   const R = {};
 
-  /* Challenge Ratings. The adventure module uses 7/10/14/18; the rulebook's
-     own table is 5/8/12/16. Switch CR_SCALE to "rulebook" to use those. */
+  /* Challenge Ratings. The rulebook (2025 layout, "Challenge Ratings"): Easy 7, Medium 10,
+     Challenging 14, Dangerous 18, Hopeless 20. An older draft used 5/8/12/16; it stays
+     available in Settings for tables that started with it ("rulebook" is that old key). */
   R.CR_SCALE = "module";
   R.CR_TABLES = {
-    module:   { easy: 7, medium: 10, challenging: 14, dangerous: 18 },
-    rulebook: { easy: 5, medium: 8, challenging: 12, dangerous: 16 }
+    module:   { easy: 7, medium: 10, challenging: 14, dangerous: 18, hopeless: 20 },
+    rulebook: { easy: 5, medium: 8, challenging: 12, dangerous: 16, hopeless: 18 }
   };
   R.cr = (name) => (typeof name === "number" ? name : R.CR_TABLES[R.CR_SCALE][name]);
   R.crName = (n) => {

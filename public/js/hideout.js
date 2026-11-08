@@ -279,7 +279,7 @@
   const partyCard = (a, sel) => {
     const [m, cls] = mood(a);
     return el("button", { class: "pcard" + (sel ? " on" : ""), "aria-pressed": sel ? "true" : "false", onclick: () => { U.click(); CAMP.sel = a.id; ui.hub(); } },
-      el("img", { class: "pface", src: ui.portraitSrc(a), alt: "" }),
+      el("span", { class: "pfacewrap" }, el("img", { class: "pface", src: ui.portraitSrc(a), alt: "" }), window.SCARS ? SCARS.marks(a) : null),
       el("div", { class: "pinfo" },
         el("div", { class: "pname" }, el("b", {}, a.name), el("small", {}, `Lv ${a.level} · ${a.background || a.role || "Agent"}`)),
         el("div", { class: "pools" }, ...POOLS.map((k) => ui.bar(a.pools[k], k))),

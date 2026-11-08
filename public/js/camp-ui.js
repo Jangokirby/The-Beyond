@@ -34,6 +34,7 @@
         el("div", { class: "title-actions" },
           list.length ? btn("Continue campaign", () => ui.campaigns(), "primary") : null,
           btn("New campaign", () => ui.newCampaign(), list.length ? "" : "primary"),
+          window.TUTORIAL ? el("button", { id: "learn", class: "btn ghost", onclick: () => { AudioMan.unlock(); window.TUTORIAL.start(); } }, "Learn to play") : null,
           btn("Rules library", () => ui.library(() => ui.title()), "ghost"),
           btn("GM workshop", () => ui.gmHome(), "ghost"),
           btn("Live table", () => window.LIVE && window.LIVE.entry(), "ghost"),

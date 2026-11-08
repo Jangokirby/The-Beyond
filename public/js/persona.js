@@ -47,7 +47,7 @@
   P.write = (a, r, M) => {
     const tr = P.ensure(a), voice = T[tr[0]], second = T[tr[1]];
     const hurt = a.pools && a.pools.health.cur < a.pools.health.max * 0.5, shaken = a.pools && a.pools.sanity.cur < a.pools.sanity.max * 0.5;
-    const outcome = r.solved ? pick([`We finished it at ${M.setting || "the scene"}.`, `${M.title} is closed.`, "It's over. We stopped it."]) : pick([`We didn't finish it at ${M.setting || "the scene"}.`, `${M.title} beat us, this time.`, "We got out. That's all I'll claim."]);
+    const outcome = r.solved ? pick([`We finished it at ${String(M.setting || "the scene").split("·")[0].trim()}.`, `${M.title} is closed.`, "It's over. We stopped it."]) : pick([`We didn't finish it at ${String(M.setting || "the scene").split("·")[0].trim()}.`, `${M.title} beat us, this time.`, "We got out. That's all I'll claim."]);
     const body = [outcome, voice.journal];
     if (hurt) body.push(pick(["Stitches again. The doctor has stopped asking questions.", "Every step up the stairs reminds me where I was hit."]));
     if (shaken) body.push(pick(["I'm not sleeping. When I close my eyes it's still there.", "My hands won't stop. I'm writing this slowly so it's legible."]));

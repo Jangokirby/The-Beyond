@@ -670,7 +670,7 @@
     for (const a of all) {
       const card = el("button", { class: "agent" + (a.dead ? " dead" : "") + (a.out ? " out" : "") + (a.marked ? " marked" : ""), "data-id": a.id,
         onclick: () => { U.click(); G.sheet(a); } },
-        el("span", { class: "chip", style: { backgroundImage: `url(${U.img(a.portrait, "portraits")})` } }),
+        el("span", { class: "chip", style: { backgroundImage: `url(${U.img(a.portrait, "portraits")})` } }, window.SCARS ? SCARS.marks(a) : null),
         el("div", { class: "meta" }, el("b", {}, a.short), el("span", { class: "fate", title: "Fate Points" }, "◆".repeat(Math.max(0, a.fate)) || "·"),
           ...["health", "sanity", "stability"].map((k) => bar(a.pools[k], k)),
           a.statuses && a.statuses.length ? el("div", { class: "st" }, a.statuses.map((s) => el("span", { class: "s " + s.id }, s.label || s.id))) : null));
@@ -784,7 +784,8 @@
       sel("set-labels", "Hotspot labels", "labels", [["auto", "Wide screens only"], ["always", "Always"], ["off", "Off"]], () => G.state && G.renderHotspots()),
       el("label", { class: "set check" }, el("input", { type: "checkbox", id: "set-quick", checked: s.quick ? "checked" : null, onchange: (e) => { s.quick = e.target.checked; G.saveSettings(); } }),
         el("span", {}, "Roll at once when there's nothing to choose")),
-      sel("set-cr", "Challenge Ratings", "cr", [["module", "Module (7 / 10 / 14 / 18)"], ["rulebook", "Rulebook (5 / 8 / 12 / 16)"]], () => { R.CR_SCALE = s.cr; }),
+      sel("set-cr", "Challenge Ratings", "cr", [["module", "Rulebook (7 / 10 / 14 / 18 / 20)"], ["rulebook", "Older draft (5 / 8 / 12 / 16)"]], () => { R.CR_SCALE = s.cr; }),
+      ...(window.MORESET ? MORESET.controls() : []),
       G.state && (G.state.phase === "explore") ? el("button", { class: "btn danger", onclick: () => G.confirmRestart() }, "Abandon the mission") : null,
       G.state && (G.state.phase === "explore") ? el("button", { class: "btn", onclick: () => { U.closeModal(); window.CAMP.suspend(); } }, "Save and return to HQ") : null);
     U.modal({ title: "Settings", jp: "設定", body });
