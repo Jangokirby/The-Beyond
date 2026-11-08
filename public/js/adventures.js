@@ -224,19 +224,39 @@
     start: "trench",
     scenes: {
       trench: { name: "Sector Nine, fire trench", theme: "trench", mood: "calm", cast: ["maddox", "iain"], weather: "rain", onEnter: [{ once: "a", steps: [
-        { say: "Duckboards, wet wool, the smell of old tobacco and older fear. Sergeant Maddox meets you with a mug of something that is not quite tea." },
-        { talk: { npc: "maddox", text: "Two a.m. every night. It's a hymn, and it's perfect. Four of my boys have walked out into it. Private Lowell went last night. Lowell couldn't carry a tune in a bucket." } }, { clue: "c_song" }, { clue: "c_lowell" }] }],
+        { say: "The Somme, autumn. Duckboards half-sunk in brown water, sandbags rotting, the smell of wet wool and cordite and something underneath both that nobody mentions. Flares go up every few minutes over no-man's land and hang there, white and fizzing, before they drop." },
+        { say: "Sergeant Maddox meets you at the end of the communication trench with a mug of something that isn't quite tea. Mud to the eyebrows, a mouth like a ruled line. Behind him a young chaplain sits on an ammunition box, holding a cracked prayer book shut with both hands." }] }],
         options: [
-          { label: "Talk to Padre Iain", steps: [{ talk: { npc: "iain", text: "They were the ones who sang loudest in church. I think it chose them. I think it's lonely." } }, { clue: "c_walked" }] },
+          { label: "Talk to Sergeant Maddox", hint: "He's held this sector since June", steps: [{ converse: { npc: "maddox", id: "main",
+            open: ["You'll be the ones from the Bureau. I asked for a priest and a psychiatrist and they sent you. Fine. Sit, keep your head down below the sandbags. Jerry's got a sniper who never sleeps."],
+            topics: [
+              { ask: "What happens at two o'clock?", lines: ["Singing. Out there, in no-man's land, every night at two on the dot. A hymn. Four parts, perfect harmony, like a cathedral choir.", "There's no choir that size within twenty miles. And Jerry hears it too; I've heard 'em shouting at it from their side."], then: [{ clue: "c_song" }] },
+              { ask: "Who's gone missing?", lines: ["Four of my lads. Walked out into it. Didn't take rifles, didn't take tin hats. Just climbed the ladder and walked out singing, and the wire opened up in front of 'em like a gate.", "Nobody fired. Not us, not Jerry. You don't, somehow."] },
+              { ask: "Tell me about Lowell", lines: [{ say: "Maddox looks at the mug in his hand for a while." }, "Private Lowell. Volunteered for the listening post last night because he's tone-deaf. Reckoned it couldn't get him. Lowell couldn't carry a tune in a bucket.", "Found his boots at dawn, laces tied, at the bottom of the post ladder. And this morning at stand-to, every man on the fire step swears they heard him out there, singing tenor. Beautifully."], then: [{ clue: "c_lowell" }] },
+              { ask: "What do you need from us?", lines: ["I need my men back, or I need it stopped before it takes the rest of the platoon. I don't much care which order.", "And I need it done before the brass find out, because the brass will call it desertion and shoot whoever comes back."] }],
+            bye: ["The listening post's forward of the wire. Mind the third duckboard; it's not there."] } }] },
+          { label: "Talk to Padre Iain", hint: "The chaplain, shaking", steps: [{ converse: { npc: "iain", id: "main",
+            open: [{ say: "He stands up too fast and nearly hits his head on a revetment. A Highland accent, a boy's face, hands that won't keep still until he pushes them into his pockets." }, "Thank God. I mean that. I've been praying for someone to come, and I'd started to wonder who was listening."],
+            topics: [
+              { ask: "Who were the men who walked out?", lines: ["Good lads. Every one of them was in my little choir at Sunday service. The ones who sang loudest. Davies had a voice like a Welsh chapel.", "They didn't go over in fear. They went over smiling, as if somebody they loved was calling them home for supper."], then: [{ clue: "c_walked" }] },
+              { ask: "What do you think it is?", lines: ["I think it's a choir that's lost its singers. I think it's been out there a long time, since long before this war. Since before there were trenches here, maybe.", { say: "He touches the cracked prayer book." }, "I think it's lonely. That's the worst thing I can say about anything, and I believe it."] },
+              { ask: "Have you heard it yourself?", lines: ["Every night. It's the most beautiful thing I've ever heard. That's how I know it's not of God.", "God doesn't need to be beautiful to make you come. He just waits."] },
+              { ask: "Will you come with us?", lines: ["I'll come as far as the wire. I'm not brave enough to go past it. If I hear them singing up close, I think I'd join them."] }],
+            bye: ["Go with God. And if you see Davies, tell him the padre's sorry he couldn't hold the note."] } }] },
           { label: "Take the listening post", steps: [{ goto: "post" }] }] },
       post: { name: "The listening post", theme: "trench", mood: "dread", lighting: "shadow", weather: "rain",
-        onEnter: [{ say: "A sap, forward of the wire, with a periscope and a bucket. At two the singing begins: soft, close, perfectly in tune." }],
+        onEnter: [{ once: "post", steps: [
+          { say: "A narrow sap dug forward of the wire, roofed with corrugated iron and a layer of sandbags. A periscope, a bucket, a field telephone with a cut line, and a pair of boots at the foot of the ladder, laces tied." },
+          { say: "At two o'clock, exactly, the singing begins. Soft at first, then close, then all around you: a hymn in four parts, perfectly in tune, so beautiful your eyes sting. Somewhere in it, a tenor who sounds very much like a man who couldn't carry a tune in a bucket." }] }],
         options: [
           { label: "Search no-man's land with the periscope", once: true, steps: [{ check: { aspect: "awareness", cr: "medium", label: "Find the singers", ok: [{ say: "Candlelight in a shell hole three hundred yards out. A roofless chapel, nave and altar standing in the mud." }, { clue: "c_chapel" }, { objective: "po1" }], fail: [{ say: "Mud, wire, the glow of a distant flare. You can't see them, but you listen too long, and the song gets into you. When you come to, you're halfway up the ladder, facing a shell hole three hundred yards out where candles are burning." }, { damage: { pool: "sanity", amount: 4 } }, { clue: "c_chapel" }, { objective: "po1" }] } }] },
           { label: "Go over the top toward the chapel", if: { clue: "c_chapel" }, steps: [{ say: "You slip over the parapet. The wire is already cut." }, { combat: "wire", win: [{ say: "The rats scatter. Ahead, the candles flicker in a roofless chapel." }, { goto: "chapel" }] }] },
           { label: "Back to the fire trench", steps: [{ goto: "trench" }] }] },
       chapel: { name: "The crater chapel", theme: "church", mood: "weird", lighting: "shadow",
-        onEnter: [{ say: "Eleven men in the choir stalls, singing. Their uniforms are different years, some older than the war. Private Lowell stands at the end of the front row, boots off, mouth open, silent." }],
+        onEnter: [{ once: "ch", steps: [
+          { say: "The chapel has no roof, no village, and no business being here. Its nave stands in the mud of a crater, its altar lit with candles that the rain doesn't touch." },
+          { say: "Eleven men stand in the choir stalls, singing. Their uniforms are wrong in different ways: khaki and field grey, a French blue from 1914, a red coat from a war a hundred years gone, a mail shirt. Their faces are calm and pale and wet. Private Lowell stands at the end of the front row, barefoot, mouth open, singing tenor without a sound." },
+          { say: "Before them, on the altar steps, a tall figure in a mud-black surplice conducts with a baton of bone. It turns its head to you without stopping the beat." }] }],
         options: [
           { label: "Pull Lowell out of the choir", once: true, steps: [{ check: { aspect: "strength", cr: "medium", label: "Drag Lowell clear", ok: [{ say: "He comes, limp, humming. At the chapel door the humming stops and he vomits a mouthful of candle wax." }, { objective: "so1" }], fail: [{ say: "The choir's note rises, and Lowell will not be moved." }, { damage: { pool: "stability", amount: 2 } }] } }] },
           { label: "Face the Chorus Master", steps: [{ combat: "chapel", win: [{ say: "The Master's baton snaps. The chorus gives one last sustained note, and then the only sound is rain on the old stone." }, { objective: "po2" }, { end: "win" }] }] },
@@ -273,19 +293,43 @@
     start: "platform",
     scenes: {
       platform: { name: "Ueno Station, platform 9", theme: "train", mood: "calm", cast: ["sato"], onEnter: [{ once: "a", steps: [
-        { say: "The night train for Aomori idles at the platform, steam drifting under the lamps. The conductor looks at you, at his watch, at you." },
-        { talk: { npc: "sato", text: "I've counted the doors a dozen times. Six cars on my manifest, seven doors at night. Last stop's not on my line. And a little girl walked into the thing already." } }, { clue: "c_manifest" }] }],
-        options: [{ label: "Board the train", steps: [{ goto: "cars" }] }] },
-      cars: { name: "Sleeper cars 3 to 6", theme: "train", mood: "dread", cast: ["hase"], lighting: "shadow",
-        onEnter: [{ once: "c", steps: [{ say: "Curtains drawn, bunks creaking, a thousand sleepers dreaming along the same long dark. At the end of car 6, a door that was not on the manifest." }] }],
+        { say: "Ueno at eleven at night, autumn 1957. The night express for Aomori idles at platform 9, steam drifting under the platform lamps, salarymen with their collars up hurrying for the sleeper cars." },
+        { say: "Conductor Satō is waiting by the last car, pale and stiff in his uniform. He looks at you, at his pocket watch, at you, at his watch. He has been checking it every thirty seconds since you arrived." }] }],
         options: [
-          { label: "Speak with the girl's mother", steps: [{ talk: { npc: "hase", text: "She went through that door when I looked away. She had her ticket. I don't remember buying it." } }, { clue: "c_ticket" }] },
+          { label: "Talk to Conductor Satō", hint: "Japan National Railways", steps: [{ converse: { npc: "sato", id: "main",
+            open: ["You're the ones. Good. Please. I'm not a superstitious man. I've worked this line nineteen years."],
+            topics: [
+              { ask: "What's wrong with the train?", lines: ["Six cars on my manifest. I count them at Ueno: six. I count them at Sendai: six.", { say: "He opens his watch. Shuts it." }, "And somewhere between Sendai and Morioka, every night this month, I walk the train and count seven doors. The extra one is at the end of car six. It's not in the plans. It's not on any train this railway owns."], then: [{ clue: "c_manifest" }] },
+              { ask: "What's behind the door?", lines: ["I don't know. I've stood in front of it with my hand on the handle every night for three weeks. I can't make my hand turn it.", "Sometimes I hear a voice through it, announcing stations. Very politely. It says the names of stations that aren't on this line. Then it says <i>last stop</i>."] },
+              { ask: "Has anyone gone through?", lines: [{ say: "His face crumples for a moment, then he gets it under control." }, "Last night. A little girl, Ayame Hasegawa, seven years old, travelling with her mother in car four. She walked through it at two in the morning holding a ticket I never punched.", "Her mother is still on the train. She won't get off without her."] },
+              { ask: "Why check your watch so often?", lines: ["Because the train is always on time. Every night. To the second.", "No train in Japan is ever exactly on time. Something is keeping this one to a schedule. I want to know whose."] }],
+            bye: ["We leave in four minutes. Please. Car four. Mrs. Hasegawa."] } }] },
+          { label: "Board the train", steps: [{ goto: "cars" }] }] },
+      cars: { name: "Sleeper cars 3 to 6", theme: "train", mood: "dread", cast: ["hase"], lighting: "shadow",
+        onEnter: [{ once: "c", steps: [
+          { say: "The train pulls out into the dark. You walk it end to end as it rocks north through the night: green curtains drawn over the sleeper bunks, shoes lined up in the aisle, a hundred people breathing slowly in the same rhythm, dreaming along the same long dark." },
+          { say: "In car four, one bunk curtain is open. A woman in a plain kimono sits on the edge of the bunk, upright, hands clasped hard in her lap, staring at the empty bunk opposite." },
+          { say: "At the end of car six there's a door. Varnished wood, a brass handle, a frosted window with a lantern-glow behind it. Satō was right: it isn't on the plan pinned by the toilet. When you look away and back, it's still there." }] }],
+        options: [
+          { label: "Speak with the girl's mother", hint: "Mrs. Hasegawa, car four", steps: [{ converse: { npc: "hase", id: "main",
+            open: [{ say: "She doesn't look up when you sit down opposite. Her voice is very quiet and very even, the voice of someone holding a great weight very still." }, "You've come about Ayame. The conductor said someone would."],
+            topics: [
+              { ask: "What happened last night?", lines: ["She woke me at two. She said a man had come by in white gloves and given her a ticket. She was so pleased. She showed it to me.", "I was half asleep. I said, that's nice, go back to bed. And when I opened my eyes again she was walking down the aisle toward the end of the car, holding it in front of her like a present."] },
+              { ask: "What did the ticket say?", lines: ["<i>Last station. One way.</i> Printed, very neat. Railway paper.", { say: "Her hands tighten." }, "I don't remember buying it. I keep thinking I must have. That I bought it and forgot, and that's how he could take her."], then: [{ clue: "c_ticket" }] },
+              { ask: "What was Ayame like?", lines: [{ say: "For the first time, something like a smile." }, "Is. She is. Seven. Very stubborn. Afraid of nothing except thunder. She won't eat pickles and she sings to her doll in a voice like a little bell.", "If anyone can refuse to get off at the wrong station, it's my daughter."] },
+              { ask: "We'll bring her back", lines: ["Please. Tell her Mother is waiting in car four. Tell her she can have her own bunk with the window, like she wanted."] }],
+            bye: ["Car four. I won't move from here."] } }] },
           { label: "Count the doors", once: true, steps: [{ check: { aspect: "awareness", cr: "easy", label: "Count the doors", ok: [{ say: "Six cars. Seven doors. The extra stands between six and the engine." }, { objective: "po1" }], fail: [{ say: "You lose count twice." }] } }] },
           { label: "Step through the extra door", steps: [{ goto: "car7" }] }] },
       car7: { name: "Car 7", theme: "train", mood: "weird", lighting: "shadow", cast: ["station"],
-        onEnter: [{ once: "k", steps: [{ say: "Tatami, rice-paper walls, a long line of paper lanterns sway in a draft you cannot feel. A voice softly, politely announces the next station. There is no name. The speaker leans in: 'Last stop.'" }, { clue: "c_lantern" }] }],
+        onEnter: [{ once: "k", steps: [
+          { say: "The door opens onto a car that cannot fit inside the train. Tatami matting runs away into distance, between walls of rice paper lit from behind. A long line of paper lanterns sways overhead in a draft you can't feel, and the windows show no landscape, only a soft grey nothing rushing past." },
+          { say: "Passengers sit in neat rows on their heels, very still, tickets held out in front of them. Their clothes are from every decade of the century. Some of them have been travelling a very long time." },
+          { say: "A voice from somewhere ahead, soft and polite, announces the next station. There is no name. Then a figure leans out of the next compartment: white gloves, black cap, a face you can't keep hold of." },
+          { talk: { npc: "station", text: "Tickets, please. Ah. You don't have tickets. How unusual. Never mind; there's room for everyone at the last stop." } },
+          { say: "Beside the door you came through hangs a single paper lantern, burning steadily, and you understand without being told that it's the only thing keeping this car attached to the train." }, { clue: "c_lantern" }] }],
         options: [
-          { label: "Find Ayame in the rear compartment", once: true, steps: [{ check: { aspect: "charisma", cr: "medium", label: "Coax the child out", ok: [{ say: "She takes your hand and tears her paper ticket in half. 'I don't want to go there.'" }, { objective: "so1" }], fail: [{ say: "She stares through you." }, { damage: { pool: "sanity", amount: 2 } }] } }] },
+          { label: "Find Ayame in the rear compartment", once: true, steps: [{ check: { aspect: "charisma", cr: "medium", label: "Coax the child out", ok: [{ say: "You find her in the very last compartment, a small girl in a red cardigan sitting very straight, ticket held out in both hands like a good passenger." }, { say: "You crouch beside her and tell her that her mother is waiting in car four, that she can have the bunk with the window. Her eyes come slowly back from wherever they were." }, { say: "\"Mother didn't buy this,\" she says, looking at the ticket. \"The man did. I don't want to go there.\" And she tears it in half, very neatly, along the perforation." }, { objective: "so1" }], fail: [{ say: "She stares through you." }, { damage: { pool: "sanity", amount: 2 } }] } }] },
           { label: "Confront the Station Master", steps: [{ combat: "car7", win: [{ say: "The Station Master removes his cap, bows, and is gone. The lanterns gutter out, one by one. The train brakes hard. Outside, the lights of Aomori." }, { objective: "po2" }, { end: "win" }] }] },
           { label: "Go back to the sleepers", steps: [{ goto: "cars" }] }] }
     }
@@ -320,16 +364,38 @@
     start: "lot",
     scenes: {
       lot: { name: "The Starlite Drive-In", theme: "drive", mood: "calm", cast: ["dunn"], onEnter: [{ once: "a", steps: [
-        { say: "Cars in tidy rows, dim lights in the windows, heads tipped toward the huge white screen. It is dusk, 9:15. The screen is already lit." },
-        { talk: { npc: "dunn", text: "Eight couples last week didn't go home. Nobody's complained. Not one. Just, they're not found. The cars are there at morning and the seats are warm." } }] }],
-        options: [{ label: "Visit the concession stand", steps: [{ goto: "stand" }] }, { label: "Walk to the projection booth", steps: [{ goto: "booth" }] }, { label: "Inspect the sleeping audience", once: true, steps: [{ check: { aspect: "awareness", cr: "easy", label: "Look closely at the audience", ok: [{ say: "No one is breathing. Every window is fogged. Every face is lit by the screen, and every face is smiling." }], fail: [{ say: "They look like they're sleeping." }] } }] }] },
+        { say: "Humboldt County, California, summer of '58. The Starlite Drive-In sits in a bowl of dry hills off Route 101, its huge white screen glowing against a sky still pink at the edges. It's 9:15. The picture shouldn't start till dark. The screen's already lit." },
+        { say: "Cars stand in tidy rows, Chevys and Fords and a Studebaker with fins, speakers hooked on every window. Every window is fogged. Heads tip toward the screen inside, very still." },
+        { say: "Sheriff Dunn is leaning on his cruiser by the ticket booth, hat pushed back, sunburnt and heavy and tired. He's been here a lot lately." }] }],
+        options: [
+          { label: "Talk to Sheriff Dunn", hint: "Humboldt County", steps: [{ converse: { npc: "dunn", id: "main",
+            open: ["You the federal people? Funny-looking feds. Never mind. I'm past caring who helps."],
+            topics: [
+              { ask: "What's been happening here?", lines: ["Eight couples last week didn't go home. Kids, mostly. High school sweethearts, a couple of honeymooners from Eureka.", "Nobody's complained. That's the thing. Not one mother, not one boss. Just, they're not found. The cars are still here at sunup, seats warm, speaker still on the window, and nobody in 'em."] },
+              { ask: "Who runs this place?", lines: ["Fella named Vale. Alden Vale. Projectionist and owner both. Keeps to the booth. Never seen him in daylight.", "Funny thing: he's been letting folks in free since June. Couples only. Says it's a promotion."] },
+              { ask: "Have you watched the picture?", lines: [{ say: "Dunn looks at the screen and then quickly away from it." }, "I watched about a minute, Tuesday. It's this lot, from above. These cars. Folks walking up to the screen holding hands, real slow.", "I got back in my car and drove home and slept fourteen hours. Haven't looked at it since."] },
+              { ask: "Why not shut it down?", lines: ["On what charge? Showing a picture? The county attorney laughed me out of his office.", "And between you and me, I came out here twice with a padlock and both times I found myself sitting in my car at dawn with the padlock in my lap. I don't remember sitting down."] }],
+            bye: ["I'll be here. Somebody's got to count the cars in the morning."] } }] },{ label: "Visit the concession stand", steps: [{ goto: "stand" }] }, { label: "Walk to the projection booth", steps: [{ goto: "booth" }] }, { label: "Inspect the sleeping audience", once: true, steps: [{ check: { aspect: "awareness", cr: "easy", label: "Look closely at the audience", ok: [{ say: "No one is breathing. Every window is fogged. Every face is lit by the screen, and every face is smiling." }], fail: [{ say: "They look like they're sleeping." }] } }] }] },
       stand: { name: "Concession stand", theme: "drive", mood: "calm", cast: ["ruby"],
-        onEnter: [{ say: "The popcorn machine hums, a stack of cups waits unused." }],
-        options: [{ label: "Talk to Ruby", steps: [{ talk: { npc: "ruby", text: "Mr. Vale says it's the best picture we've ever run. I'm not supposed to watch it. I put my fingers in my ears when the lights go down." } }, { clue: "c_free" }] },
+        onEnter: [{ once: "st", steps: [
+          { say: "The concession stand is a pool of yellow light in the dark lot: the popcorn machine humming and popping to itself, a stack of paper cups waiting, a cash register that hasn't opened in weeks. Moths batter the bulbs." },
+          { say: "Behind the counter a girl in a paper hat is wiping a clean counter, over and over. She has her back to the screen, and she's careful to keep it that way." }] }],
+        options: [{ label: "Talk to Ruby", hint: "Concession stand", steps: [{ converse: { npc: "ruby", id: "main",
+            open: [{ say: "She smiles the customer smile automatically, then sees your faces and lets it drop." }, "You're not here for popcorn. Nobody's here for popcorn any more."],
+            topics: [
+              { ask: "What's the picture?", lines: ["Mr. Vale says it's the best picture we've ever run. He made it himself.", "I'm not supposed to watch it. He told me, special, the first night. <i>Not you, Ruby. You keep the lights on.</i> I put my fingers in my ears when the lights go down."] },
+              { ask: "Who comes to see it?", lines: ["Couples. Only couples. He lets them in free; he's not charged a dime since June. Says love's the best ticket.", "They park, and they look at the screen, and they don't come back for popcorn, and they don't leave before the credits. There aren't any credits."], then: [{ clue: "c_free" }] },
+              { ask: "What's Mr. Vale like?", lines: [{ say: "She glances up at the booth window at the back of the lot. A white shape moves behind the glass." }, "Polite. Real polite. He wears white gloves, always, even in August. I asked him once why and he said his hands got cold.", "His gloves are sewn on at the wrists. I saw the stitches."] },
+              { ask: "Why do you stay?", lines: ["Because if I leave, there's nobody to keep the lights on. And I think the lights are the only reason I'm still me."] }],
+            bye: ["If you go up to the booth, don't look at the beam. Look at the floor."] } }] },
           { label: "Ask about Vale's past", once: true, steps: [{ check: { aspect: "charisma", cr: "medium", label: "Get Ruby to talk", ok: [{ say: "'The old booth burned in '49,' she whispers. 'They never found his hands.'" }, { clue: "c_vale" }, { objective: "so1" }], fail: [{ say: "She shakes her head and busies herself with the cups." }] } }] },
           { label: "Back to the lot", steps: [{ goto: "lot" }] }] },
       booth: { name: "The projection booth", theme: "interior", mood: "dread", lighting: "shadow",
-        onEnter: [{ say: "Seven film cans on a shelf, dates in white grease pencil. Beyond the little window, the lot lies like a graveyard." }],
+        onEnter: [{ once: "bo", steps: [
+          { say: "The projection booth is a concrete box at the back of the lot, hot as an oven, loud with the clatter of the projector. The beam goes out through a little square window, full of dust, toward the screen." },
+          { say: "Seven film cans stand on a shelf, dates written on them in white grease pencil. The walls are papered with photographs of the lot taken from above, night after night, the same rows of cars, fewer each time." },
+          { say: "A thin man in a white coat is threading a reel with great care. He doesn't turn round. His gloves are sewn on at the wrists." },
+          { talk: { npc: "vale", text: "Booth's closed to the public. But since you're here: wouldn't you like to see yourselves in pictures? Everybody wants to be in pictures." } }] }],
         options: [{ label: "Read the reels", once: true, steps: [{ check: { aspect: "iq", cr: "easy", label: "Check the reel labels", investigate: true, ok: [{ say: "Seven nights, six titled. Tonight's reel has no title, only a time stamp, 11:42, and a photograph of the lot taken from above." }, { clue: "c_reels" }, { objective: "po1" }], fail: [{ say: "Dates and smudges." }] } }] },
           { label: "Seize the projector", steps: [{ combat: "booth", win: [{ say: "The projector shudders and stops. On the lot, one by one, the windows clear. Somewhere a woman gasps. The screen goes white, and then dark." }, { objective: "po2" }, { end: "win" }] }] },
           { label: "Back to the lot", steps: [{ goto: "lot" }] }] }
