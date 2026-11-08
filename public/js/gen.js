@@ -118,7 +118,11 @@
     const home = window.PEOPLE ? PEOPLE.originForPlace(town) : null;
     const nm = (s) => (window.PEOPLE ? PEOPLE.name(home, s, R) : CAMP.rollName ? CAMP.rollName() : "A local");
     const tags = home && window.PEOPLE ? PEOPLE.heritageOf(home) : undefined;
-    const wit = { name: nm(sex), tag: role, look: `${role}. Has been waiting a long time for someone to take this seriously.`, face: { sex, tags } };
+    let wit = { name: nm(sex), tag: role, look: `${role}. Has been waiting a long time for someone to take this seriously.`, face: { sex, tags } };
+    /* sometimes the one who sent for you is someone you've met before (js/world.js contacts), from a case in the same era */
+    const known = ((w.contacts || []).filter((k) => { const src0 = ADV.LIBRARY[k.adv]; return src0 && !src0.generated && C.eraOf(src0.year).id === era.id && k.name; }));
+    let met = null;
+    if (known.length && R() < 0.35) { met = known[Math.floor(R() * known.length)]; wit = { name: met.name, tag: met.tag || role, look: `${met.tag || role}. You met in ${met.case}.`, portraitKey: met.portrait || null, face: { sex } }; }
     const surv = { name: nm(sex2), tag: `${role2}, still missing`, look: `${sex2 === "f" ? "She" : "He"} is the last one taken, and the only one who might still be alive.`, face: { sex: sex2, tags } };
     const T = (k) => E[k] || "interior";
     const title = threat ? `${threat.name} Returns` : fillT(pick(H.title));
@@ -165,7 +169,9 @@
         arrive: { name: town.replace(/^\w/, (m) => m.toUpperCase()), theme: T("street"), mood: "calm", cast: ["wit"],
           onEnter: [{ once: "intro", steps: [...(threat ? [{ say: hookText }] : []), ...steps(TX.arrive || [hookText])] }],
           options: [
-            { label: `Talk to ${wit.name}`, hint: `${role}. They sent for you`, steps: [{ converse: { npc: "wit", id: "main", open: deep(TX.open || []), again: `Ask me anything. I've had a lot of time to think about it.`, topics, bye: deep(TX.bye || []) } }] },
+            { label: `Talk to ${wit.name}`, hint: met ? `You know them: ${met.case}` : `${role}. They sent for you`, steps: [{ converse: { npc: "wit", id: "main", open: [...(met ? [{ say: met.attitude === "friendly"
+                ? pick([`${wit.name} grips your hand and doesn't let go. "You came. After ${met.case}, I knew you would."`, `"I told them you'd come," ${wit.name.split(" ")[0]} says. "I told them what you did, in ${met.case}. They didn't believe me either."`])
+                : pick([`${wit.name} doesn't offer a hand. "Last time you lot turned up was ${met.case}. I haven't forgotten."`, `"You," ${wit.name.split(" ")[0]} says flatly. "After ${met.case}, I swore I'd never send for you. And here we are."`]) }] : []), ...deep(TX.open || [])], again: `Ask me anything. I've had a lot of time to think about it.`, topics, bye: deep(TX.bye || []) } }] },
             { label: "Look into the history of the place", hint: `Read ${src}`, once: true, steps: [{ check: { aspect: a3 === "faith" ? "iq" : a3, cr: "medium", label: `Search ${src}`, investigate: true,
               ok: [...steps(TX.doc || [H.weak]), { clue: "c3" }, { set: "weak" }],
               fail: steps(TX.docFail || ["Dead ends and mouldy pages. Whatever this is, nobody wrote it down properly."]) } }] },

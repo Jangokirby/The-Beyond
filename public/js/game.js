@@ -716,7 +716,7 @@
   /* ================================================================== case file */
   G.caseFile = (tab = "obj") => {
     AudioMan.sfx("ui_open");
-    const tabs = [["obj", "Objectives"], ["clues", "Clues"], ["lore", "Lore"], ["rules", "Rules"]];
+    const tabs = [["obj", "Objectives"], ["clues", "Clues"], ...(window.CORK && CORK.on() ? [["theory", "Theory"]] : []), ["lore", "Lore"], ["rules", "Rules"]];
     const body = el("div", { class: "casefile" });
     const nav = el("div", { class: "tabs", role: "tablist" });
     const pane = el("div", { class: "pane" });
@@ -742,6 +742,8 @@
             onclick: () => window.HANDOUT && HANDOUT.show(c, M), onkeydown: (e) => { if (e.key === "Enter" && window.HANDOUT) HANDOUT.show(c, M); } },
             pk ? el("img", { class: "clueprop", src: PROPS.src(pk), alt: "" }) : "", el("b", {}, c.t), el("small", {}, c.s), el("p", {}, c.x)));
         }
+      } else if (t === "theory") {
+        pane.append(window.CORK.pane(M, () => show("theory")));
       } else if (t === "lore") {
         if (!G.state.lore.length) pane.append(el("p", { class: "muted" }, "No history recovered yet."));
         for (const id of G.state.lore) pane.append(el("details", { class: "lore" }, el("summary", {}, M.lore[id].t), el("div", { class: "docpaper", html: M.lore[id].x })));

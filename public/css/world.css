@@ -285,3 +285,46 @@ body.fightfx .floatnum { font-size: 1.6rem; top: -14px; }
 .ho-notes-head { font-family: var(--mono), monospace; text-transform: uppercase; font-size: .8rem; letter-spacing: .1em; margin-bottom: .4rem; }
 .ho-notes-src { margin-top: .6rem; font-size: .75rem; font-style: italic; }
 .handout.ho-notes { background: repeating-linear-gradient(180deg, #fbf7e4 0 25px, #c9d6e3 25px 26px); }
+
+/* ---------------------------------------------------------------- era styles (js/eraskin.js) */
+html[data-era="medieval"] { --night: #120d08; --night-2: #1d150d; --night-3: #2c2014; --washi: #e8d7ad; --washi-2: #d6bf8d; --sumi: #2b1d10; --sumi-2: #5a4630; --hanko: #8f2a22; --hanko-2: #6d1d17; --sodium: #c9a24a; --fog: #b3a283; --bone: #f1e6c8;
+  --display: "UnifrakturMaguntia", "Old English Text MT", serif; --serif: "IM Fell English", "Palatino Linotype", Georgia, serif; }
+html[data-era="victorian"] { --night: #0f0c10; --night-2: #1a1519; --night-3: #2a2228; --washi: #ece2cc; --washi-2: #dccdb0; --sumi: #231a14; --sumi-2: #594a3d; --hanko: #7a1f2b; --hanko-2: #5c1620; --sodium: #d9b46a; --fog: #a99f98;
+  --display: "Playfair Display", Georgia, serif; --serif: "IM Fell English", Georgia, serif; }
+html[data-era="wars"] { --night: #11120d; --night-2: #1b1d15; --night-3: #2a2c20; --washi: #dad3b6; --washi-2: #c7bf9d; --sumi: #22241c; --sumi-2: #50523f; --hanko: #8a3a24; --hanko-2: #6a2b1a; --sodium: #c2a050; --fog: #a3a48f;
+  --display: "Special Elite", "Courier New", monospace; --serif: Georgia, "Times New Roman", serif; --mono: "Special Elite", "Courier New", monospace; }
+html[data-era="atomic"] { --night: #0d1418; --night-2: #162026; --night-3: #213039; --washi: #f1ead6; --washi-2: #e2d7b9; --sumi: #1d2226; --sumi-2: #4a5157; --hanko: #c8452f; --hanko-2: #9b3322; --sodium: #e8b04a; --siren: #4fa3c7; --fog: #9fb0b8;
+  --display: "Oswald", "Bebas Neue", sans-serif; --serif: Georgia, serif; }
+html[data-era="modern"] { --night: #050806; --night-2: #0a120d; --night-3: #13221a; --washi: #0c1611; --washi-2: #12221a; --sumi: #a8f0bf; --sumi-2: #6fbf8a; --hanko: #e0564a; --hanko-2: #b0423a; --sodium: #7cf09a; --fog: #6f9f80; --bone: #c8f7d6; --grid: #1f3b2b;
+  --display: "VT323", "Courier New", monospace; --serif: "Courier Prime", "Courier New", monospace; --mono: "VT323", "Courier New", monospace; }
+html[data-era="modern"] #story { text-shadow: 0 0 6px rgba(124,240,154,.35); }
+html[data-era="modern"] #story::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); }
+html[data-era="now"] { --night: #07090c; --night-2: #10141a; --night-3: #1b212a; --washi: #f3f4f6; --washi-2: #e3e6ea; --sumi: #15181c; --sumi-2: #4c535c; --hanko: #e0453a; --hanko-2: #b2342b; --sodium: #4fb3ff; --siren: #4fb3ff; --fog: #8b96a3;
+  --display: "Oswald", system-ui, sans-serif; --serif: system-ui, -apple-system, "Segoe UI", sans-serif; }
+html[data-era="medieval"] .stitle, html[data-era="medieval"] h1, html[data-era="medieval"] h2 { letter-spacing: .01em; font-weight: 400; }
+html[data-era="wars"] #story, html[data-era="atomic"] #story { background-image: none; }
+/* the paper texture takes the era's paper colour (multiply), so dark eras get dark paper */
+html[data-era] #panel, html[data-era] .modal, html[data-era] .brief, html[data-era] .dossier, html[data-era] .wpin { background-blend-mode: multiply; }
+html[data-era="modern"] #panel, html[data-era="modern"] .modal { background-image: none; }
+html[data-era="medieval"] #panel { background-image: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,.25), rgba(120,80,30,.18) 90%), url("../assets/img/ui/washi_light.png"); }
+/* ---------------------------------------------------------------- madness (js/madness.js) */
+.mflick { color: var(--hanko); text-shadow: 0 0 6px rgba(184,50,42,.6); animation: mflick .12s steps(2) 4; }
+.mflick.back { color: inherit; text-shadow: none; transition: color .6s; }
+@keyframes mflick { 50% { opacity: .2; transform: translateX(1px); } }
+#story .madness { color: var(--hanko); opacity: .85; transition: opacity 2.2s, filter 2.2s; }
+#story .madness.gone { opacity: 0; filter: blur(3px); }
+html[data-era="modern"] #choices { background: var(--washi-2); }
+/* ---------------------------------------------------------------- persona (js/persona.js) */
+.persona select { width: auto; }
+.journal summary { cursor: pointer; font-family: var(--mono); font-size: .8rem; margin: .4rem 0; }
+.jentry { border-left: 3px solid var(--hanko); padding: .2rem .7rem; margin: .5rem 0; }
+.jentry small { font-family: var(--mono); color: var(--fog); }
+.jentry p { font-family: "Caveat", "Segoe Script", cursive; font-size: 1.25rem; line-height: 1.3; margin: .2rem 0; outline: none; }
+.jentry p:focus { background: rgba(227,164,71,.08); }
+/* ---------------------------------------------------------------- corkboard (js/cork.js) */
+.corkboard { display: flex; flex-wrap: wrap; gap: .7rem; padding: .9rem; margin: .5rem 0 .8rem; border-radius: 4px; background: #a8784a radial-gradient(circle at 20% 30%, rgba(0,0,0,.08) 1px, transparent 2px) 0 0/9px 9px; box-shadow: inset 0 0 0 6px #6b4a2a, inset 0 0 20px rgba(0,0,0,.4); }
+.pinnote { position: relative; width: 150px; min-height: 80px; text-align: left; padding: .9rem .6rem .5rem; background: #f6efd8; color: #2a2118; border: 0; box-shadow: 0 3px 6px rgba(0,0,0,.35); cursor: pointer; display: grid; gap: .2rem; font: inherit; }
+.pinnote b { font-size: .82rem; line-height: 1.2; } .pinnote small { font-size: .68rem; color: #6b5a44; }
+.pinnote::before { content: ""; position: absolute; top: 5px; left: 50%; width: 11px; height: 11px; margin-left: -5px; border-radius: 50%; background: #9a9a9a; box-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.pinnote.on { background: #fff7cf; outline: 2px solid var(--hanko); } .pinnote.on::before { background: var(--hanko); }
+.seg.wrap { flex-wrap: wrap; }

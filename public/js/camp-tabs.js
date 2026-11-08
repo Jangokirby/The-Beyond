@@ -76,6 +76,7 @@
         a.doomed != null ? el("p", { class: "warn small" }, `Marked for death: ${a.doomed} days left.`) : null,
         el("div", { class: "pools" }, ...["health", "sanity", "stability"].map((k) => bar(a.pools[k], k))))));
     if (a.pending) w.append(btn(`Level up (${a.pending})`, () => ui.levelUp(a), "primary"));
+    if (window.PERSONA) w.append(panel("Who they are", PERSONA.panel(a, () => ui.hub("agents"))));
     w.append(panel("Core Stats and Aspects", el("p", { class: "mono" }, `Body ${a.core.body} · Mind ${a.core.mind} · Spirit ${a.core.spirit}`),
       el("div", { class: "aspchips" }, ...Object.keys(C.ASPECT_NAMES).map((k) => el("span", { class: "achip" + (a.special === k ? " star" : ""), title: C.ASPECT_HELP[k] }, `${C.ASPECT_NAMES[k]} ${R.aspect(a, k)}`))),
       el("p", { class: "small muted" }, `BR ${R.br ? R.br(a) : "—"} · ER ${R.er ? R.er(a) : "—"} · MR ${R.mr(a)} · SR ${R.sr(a)}`)));

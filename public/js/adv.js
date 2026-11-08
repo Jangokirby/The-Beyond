@@ -213,7 +213,7 @@
     const M = { id: a.id, title: a.title, jp: a.jp || "", flavor: a.flavor || "", downtime: a.downtime, agency: a.agencies.join(" / "), setting: a.setting, year: a.year, summary: a.summary,
       agents: [], items: {}, npcs: {}, clues: a.clues || {}, lore: {}, objectives: a.objectives, text: { intro: a.intro || a.summary }, interviews: {},
       enemies: {}, encounters: {}, locations: {}, start: a.start, modText: {}, src: a };
-    for (const [id, n] of Object.entries(a.npcs || {})) M.npcs[id] = { name: n.name, jp: "", tag: n.tag || "", look: n.look || "", portrait: window.ART.portrait(n.face || {}) };
+    for (const [id, n] of Object.entries(a.npcs || {})) M.npcs[id] = { name: n.name, jp: "", tag: n.tag || "", look: n.look || "", portrait: n.portraitKey && (window.ASSETS.portraits || {})[n.portraitKey] ? n.portraitKey : window.ART.portrait(n.face || {}) };
     for (const [id, e] of Object.entries(a.enemies || {})) {
       const d = e.build ? ADV.buildMonster(e.build) : { ...e };
       d.sprite = window.ART.sprite(d.sprite || "humanoid", d.hue || 0);
