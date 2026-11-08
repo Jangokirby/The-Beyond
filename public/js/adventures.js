@@ -41,32 +41,57 @@
     start: "road",
     scenes: {
       road: { name: "The road to Saint-Rémy", theme: "village", mood: "dread", weather: "rain", onEnter: [{ once: "arrive", steps: [
-        { say: "Dusk. The Order's letter said little: a monastery village, a new bell, and the entire parish gone strange at night. Your horse will go no further than the last milestone." }] }],
+        { say: "Dusk on the Dijon road, and a thin cold rain that gets under every cloak. The Order's letter said little: a monastery village, a new bell, and the whole parish gone strange at night." },
+        { say: "Your horse will go no further than the last milestone. It stands with its ears flat, trembling, facing the abbey tower on the hill above Saint-Rémy, and nothing you do will make it take another step." },
+        { say: "From here you can see the village below the abbey walls: a huddle of roofs, smoke from no chimneys, and not a single light." }] }],
         options: [
           { label: "Walk into the village", steps: [{ goto: "village" }] },
           { label: "Study the abbey tower from the road", once: true, steps: [{ check: { aspect: "awareness", cr: "easy", label: "Watch the tower", ok: [{ say: "No one is in the belfry window, yet the rope moves, steady as breathing." }, { clue: "c_sleep" }], fail: [{ say: "Too much rain, too little light." }] } }] }] },
       village: { name: "Saint-Rémy village", theme: "village", mood: "dread", weather: "rain", cast: ["mathilde"],
-        onEnter: [{ once: "vill", steps: [{ say: "Doors stand open. Men, women and children stand inside them, barefoot, facing the abbey. None blink. The village is quiet except for the rain and one small, hostile voice from a hayloft: 'Don't go near them!'" }, { clue: "c_sleep" }] }],
+        onEnter: [{ once: "vill", steps: [
+          { say: "Every door in Saint-Rémy stands open. In every doorway someone is standing: men in their nightshirts, women with their hair down, children barefoot on the cold stone. All of them face uphill, toward the abbey. None of them blink. Rain runs down their faces and they let it." },
+          { say: "You speak to the nearest man. He doesn't answer. You touch his arm and it's cold and patient, like the arm of a statue that has been waiting a long time." },
+          { say: "Then, from a hayloft across the square, a small and furious voice:" },
+          { talk: { npc: "mathilde", text: "Don't go near them! Don't touch them! They follow you if you touch them!" } }, { clue: "c_sleep" }] }],
         options: [
-          { label: "Talk to Mathilde", steps: [{ talk: { npc: "mathilde", text: "Mother stopped talking when the new bell came. I stuffed my ears with candle wax and it stopped working on me. It sings. At night. You can feel it in your teeth." } }, { clue: "c_wax" }] },
+          { label: "Talk to Mathilde", hint: "The only one awake", steps: [{ converse: { npc: "mathilde", id: "main",
+            open: [{ say: "She climbs halfway down the ladder and no further, a crook in one hand like a spear. She talks too loudly, the way deaf people do." }, "You're not from here. Good. Everyone from here is asleep."],
+            topics: [
+              { ask: "What happened to the village?", lines: ["The new bell came at Martinmas. The first night it rang at the third watch, and Mother sat up in bed and stopped talking.", "She got up and went and stood in the door. Everybody did. They stand there till the bell stops, then they go up to the chapel and kneel till dawn. In the day they sleep. They don't eat. Mother's gone so thin."] },
+              { ask: "Why aren't you asleep?", lines: [{ say: "She tugs a lump of yellow candle wax out of one ear, quickly, then pushes it back in." }, "Wax. From the chapel candles. I put it in after Mother stopped talking, because I didn't want to stop talking too.", "It still gets in a bit. You feel it in your teeth. Like singing. Like someone singing very close to your face."], then: [{ clue: "c_wax" }] },
+              { ask: "What do you know about the bell?", lines: ["The old one cracked. The abbot had a new one made. Gerard the founder cast it in the field behind the mill. I saw him put something in the metal. Something shiny, from the abbey.", "Brother Odo rings it. He's asleep too. He rings it asleep."] },
+              { ask: "Will you help us?", lines: ["I'll show you the way up to the abbey. I won't go in. It's loudest in the chapel.", "And if you wake Mother, I'll give you my best ewe. That's a promise."] }],
+            bye: ["Don't take your eyes off them. They turn round when you're not looking."] } }] },
           { label: "Search the sleepers' houses for what changed", once: true, steps: [{ check: { aspect: "iq", cr: "medium", label: "What changed in autumn?", investigate: true, ok: [{ say: "A tithe ledger: the abbey sold the old bell for scrap, and paid a founder named Gerard in coin and a 'relic of no use.'" }, { clue: "c_recast" }], fail: [{ say: "Ledgers, rosaries, sleeping faces. Nothing leaps out." }] } }] },
           { label: "Go up to the abbey", steps: [{ goto: "chapel" }] }] },
       chapel: { name: "Abbey chapel", theme: "church", mood: "weird", cast: ["anselm"], lighting: "shadow",
-        onEnter: [{ once: "chap", steps: [{ say: "Rows of villagers kneel in perfect silence. Candles burn low. Abbot Anselm leans on the altar rail, awake and shaking." }] }],
+        onEnter: [{ once: "chap", steps: [
+          { say: "The abbey chapel is full. Rows and rows of villagers kneel on the cold flags in perfect silence, hands folded, eyes open, facing the altar. The candles have burned down to stubs and nobody has replaced them." },
+          { say: "At the altar rail, alone among them, one man is awake: Abbot Anselm, grey and gaunt, gripping the rail with both hands as if it's the only thing keeping him upright. He has not slept in six nights, and it shows." },
+          { talk: { npc: "anselm", text: "You're from the Order. Thank God. I wrote to Rome and Rome sent me a letter about patience. Come here, quickly, before the third watch." } }] }],
         options: [
-          { label: "Question the Abbot", steps: [
-            { talk: { npc: "anselm", text: "The old bell cracked at Michaelmas. Gerard the founder said he'd need silver for the tone. I gave him Brother Jean's reliquary from the crypt. God forgive me: it was only bones." } }, { clue: "c_recast" }, { clue: "c_novice" },
-            { objective: "po1" }] },
+          { label: "Question the Abbot", hint: "Awake, and guilty", steps: [{ converse: { npc: "anselm", id: "main",
+            topics: [
+              { ask: "When did this begin?", lines: ["The night the new bell was hung. Martinmas. I heard it ring at the third watch and I knew at once it was wrong. Too sweet. Like a voice, not bronze.", "By morning half the brothers were kneeling here with their eyes open. By the end of the week, the village."] },
+              { ask: "Why are you still awake?", lines: [{ say: "He shows you his palms. They are raw, scored with the marks of his own fingernails." }, "I don't let myself sleep. I pray, and when I can't pray I hurt myself, and when that stops working I walk the cloister. Six nights.", "I think it lets me stay awake. I think it wants me to watch."] },
+              { ask: "What happened to the old bell?", lines: ["It cracked at Michaelmas. Gerard the founder came from Dijon to recast it. He said the tone would be dull without silver in the metal, and we had none to spare.", { say: "His voice drops." }, "So I gave him silver. From the crypt. Brother Jean's reliquary. God forgive me: it was only a box of bones. It sat in a niche for fifty years and nobody prayed at it."], then: [{ clue: "c_recast" }] },
+              { ask: "Who was Brother Jean?", if: { clue: "c_recast" }, lines: ["A novice. Before my time. They say he had the finest voice in Burgundy; the old monks used to weep at Vespers when he sang.", "He drowned in the Cure one spring, swimming against a dare. They put his bones in silver because of the voice. As if a voice could be kept in a box."], then: [{ clue: "c_novice" }, { objective: "po1" }] }],
+            bye: ["Go, then. The third watch is soon. I'll be here. I'm always here, now."] } }] },
           { label: "Try to wake a sleeper", once: true, steps: [{ check: { aspect: "faith", cr: "medium", label: "Call a soul back", ok: [{ say: "A woman gasps, blinks, and begins to cry. For three breaths she is herself. Then the pull returns, and she kneels again." }], fail: [{ say: "Nothing answers. Something under the floor hums as you try." }, { damage: { pool: "sanity", amount: 2 } }] } }] },
           { label: "Go down to the crypt", steps: [{ goto: "crypt" }] },
           { label: "Climb to the bell tower", steps: [{ goto: "tower" }] }] },
       crypt: { name: "The crypt", theme: "cellar", mood: "dread", lighting: "shadow",
-        onEnter: [{ say: "Cold stone, old names. One niche stands open, its silver reliquary gone, the little carved lid left on the floor." }],
+        onEnter: [{ once: "crypt", steps: [
+          { say: "Twenty steps down, the air turns cold and still and smells of old stone and older water. Niches line the walls, each with a name cut above it, abbots and brothers in their hundreds." },
+          { say: "One niche stands open and empty. Its silver reliquary is gone; the little carved lid lies face-down on the floor where someone dropped it in a hurry. The stone inside is wet, though nothing else down here is, and a bead of water rolls down it as you watch." }] }],
         options: [
-          { label: "Search the niche", once: true, steps: [{ check: { aspect: "awareness", cr: "medium", label: "Search the empty niche", ok: [{ say: "Wedged behind the stone, a scrap of vellum: the novice's psalter. Wet, though the crypt is dry. The last line is a name and a river, 'La Cure.'" }, { clue: "c_novice" }, { objective: "so1" }], fail: [{ say: "Dust and cold." }] } }] },
+          { label: "Search the niche", once: true, steps: [{ check: { aspect: "awareness", cr: "medium", label: "Search the empty niche", ok: [{ say: "Your fingers find a gap at the back of the niche. Wedged behind the stone, a scrap of vellum: a page torn from a novice's psalter, soaked through, though the crypt is dry." }, { say: "The hand is young and careful. The last line isn't a psalm. It's a name, <i>Jean</i>, and under it a river, <i>la Cure</i>, as if he'd written his own epitaph, or his own address." }, { clue: "c_novice" }, { objective: "so1" }], fail: [{ say: "Dust, cold stone and the wet patch that won't dry. You put your hand flat against it and for a moment, distinctly, you feel a pulse, slow as a sleeper's. You take your hand away and don't put it back." }, { damage: { pool: "sanity", amount: 2 } }] } }] },
           { label: "Back up to the chapel", steps: [{ goto: "chapel" }] }] },
       tower: { name: "The bell tower", theme: "church", mood: "boss", lighting: "shadow", cast: ["odo"],
-        onEnter: [{ say: "Brother Odo hauls the rope with blank, unhurried arms. The bell is new, dark, almost wet in the candlelight. It does not make a sound when it swings. The sound is inside your head." }],
+        onEnter: [{ once: "tower", steps: [
+          { say: "A hundred and twelve worn steps, spiralling up through the dark, and every one of them louder than the last, though nothing is making a sound you can hear with your ears." },
+          { say: "At the top, the belfry. Brother Odo hauls on the rope with slow, blank, patient arms, eyes open, lips moving. Above him swings the new bell: dark metal with a sheen like wet stone, beaded with water in the candlelight." },
+          { say: "It doesn't make a sound when it swings. The sound is inside your head: a boy's voice, impossibly pure, singing one long note that never needs to take a breath." }] }],
         options: [
           { label: "Ring the bell yourself with the old Office of the Dead", if: { clue: "c_novice" }, once: true, steps: [{ check: { aspect: "faith", cr: "challenging", label: "Sing the Office against the Cantor", ok: [{ say: "Your voice is thin against the bell's note, but it is a human voice, and the Cantor, a chorister, turns toward it. For a moment he is only listening." }, { set: "cantor_calmed" }], fail: [{ say: "The bell wins. Your voice stumbles out of your mouth and into the stone." }, { damage: { pool: "stability", amount: 3 } }] } }] },
           { label: "Seize the rope and silence Odo", steps: [{ combat: "tower", surpriseIf: "cantor_calmed", win: [
@@ -108,29 +133,58 @@
     start: "yard",
     scenes: {
       yard: { name: "Wapping High Street", theme: "fog", mood: "calm", weather: "rain", cast: ["crewe"], onEnter: [{ once: "a", steps: [
-        { say: "Half past four in the morning, and you can barely see the other side of the street. Inspector Crewe waits under a lamp that burns dim and blue." },
-        { talk: { npc: "crewe", text: "It comes off the river at four. By dawn there's a dozen of 'em stood in the street wearing the faces of their dead. I don't know what it is, but I know it wants something. And I know a man called Tam knows more than he's telling." } }, { clue: "c_faces" }] }],
+        { say: "Half past four in the morning, and you can barely see the other side of the street. Wapping is wet brick and warehouse cranes and the slap of the Thames somewhere close, and over all of it, a fog the colour of old mustard that tastes of copper on your tongue." },
+        { say: "Inspector Crewe waits under a gas lamp that burns dim and blue, collar up, a damp bowler pulled low. He doesn't offer his hand. He's looking past you, into the fog, the way a man watches a dog he doesn't trust." },
+        { talk: { npc: "crewe", text: "You'll be the Association. Good. I've run out of people who'll listen to me without sending for a doctor." } }] }],
         options: [
+          { label: "Talk to Inspector Crewe", hint: "Scotland Yard, out of his depth", steps: [{ converse: { npc: "crewe", id: "main",
+            topics: [
+              { ask: "What's been happening here?", lines: ["It comes off the river at four, regular as a clock. Rolls up the stairs and along the high street and into every house that's got a crack under the door.", "By dawn there's a dozen of 'em stood in the street. Ordinary people. Dockers, a baker, a girl from the match factory. Stood there, blank as slates, wearing the faces of their dead."], then: [{ clue: "c_faces" }] },
+              { ask: "Wearing the faces of their dead?", lines: [{ say: "Crewe takes his hat off, turns it in his hands, puts it back on." }, "Mrs. Annie Doyle, forty-one, stood in her doorway at dawn on Thursday with her drowned son's face on. His face. Freckles and all.", "By noon she was herself again and didn't remember a thing. Three of 'em haven't come back at all. They just walked down the stairs into the river, still wearing someone else."] },
+              { ask: "Who else knows about this?", lines: ["The lamplighters. One in particular, Tam Rudd. He knows more than he's telling; he's started carrying his pole like a pikestaff.", "And there's a widow on Pier Head, a Mrs. Pell. Her neighbours say her husband's come home. He drowned in March."] },
+              { ask: "What do you think it is?", lines: ["I'm a Presbyterian and a policeman, so I don't think anything at all.", { say: "He lowers his voice." }, "But I've stood out here every night for a fortnight, and I'd swear on my mother it's looking for something. It goes into every house like it's checking the beds."] }],
+            bye: ["Mind the fog. If you see someone you know in it, keep walking."] } }] },
           { label: "Find Tam the lamplighter", steps: [{ goto: "lamps" }] },
           { label: "Visit Mrs. Pell", steps: [{ goto: "pell" }] },
           { label: "Walk down to Wapping Old Stairs", steps: [{ goto: "stairs" }] }] },
       lamps: { name: "Lamplighters' yard", theme: "street", mood: "calm", cast: ["tam"], lighting: "shadow",
-        onEnter: [{ say: "Tam is trimming a lamp wick with a tiny pair of silver scissors as if nothing in the world could be more important. Possibly nothing can." }],
+        onEnter: [{ once: "lmp", steps: [
+          { say: "A cobbled yard under a railway arch, stacked with ladders and lamp glasses and drums of oil. A brazier burns in the middle, and around it the fog stops, as if at a wall." },
+          { say: "Tam Rudd sits on an upturned bucket trimming a lamp wick with a tiny pair of silver scissors, as if nothing in the world could be more important. Possibly, tonight, nothing can. He doesn't look up." }] }],
         options: [
-          { label: "Ask about the gas", steps: [{ talk: { npc: "tam", text: "The mains in the lower quarter are drawn down every night. Somebody's siphoning at the Gas Works on Wapping Wall. And the fog keeps clear of a good flame, I've seen it." } }, { clue: "c_gas" }, { clue: "c_light" }] },
+          { label: "Talk to Tam", hint: "Lamplighter, and wary", steps: [{ converse: { npc: "tam", id: "main",
+            open: ["Crewe sent you. He thinks I know something.", { say: "Snip. A curl of black wick drops into the brazier." }, "He's right, worse luck."],
+            topics: [
+              { ask: "What's wrong with the gas?", lines: ["Every lamp in the lower quarter's burning low. I trim 'em at dusk and by midnight they're half what they should be. Blue and sickly.", "The pressure's being drawn off. Somebody's siphoning at the Gas Works on Wapping Wall. Only the works has been shut since Christmas, and the gasometer's empty. I've looked."], then: [{ clue: "c_gas" }] },
+              { ask: "Why does the fog stay away from your yard?", lines: [{ say: "He holds up the lamp he's been trimming. Its flame stands straight and gold and perfectly still." }, "Because I keep a true flame. Wick trimmed square, glass clean, oil not gas. My dad taught me: a true flame's a kind of prayer.", "The fog won't touch it. I've watched. It comes up to the edge of the light and stops, and sort of sulks."], then: [{ clue: "c_light" }] },
+              { ask: "Have you seen faces in the fog?", lines: ["Once.", { say: "He's quiet for a while." }, "My sister. Died of the cholera in '66. She was stood at the end of Pier Head in her Sunday frock, and she called me Tommy, which nobody's called me since.", "I held my lamp up and she went. I've not been to Pier Head since."] },
+              { ask: "Will you help us?", lines: ["I'm a lamplighter, not a hero. But I'll lend you a lamp, trimmed true, and I'll tell you how to keep it.", "Don't let it gutter. That's all. Don't let it gutter, whatever you see."] }],
+            bye: ["Watch the river side. It always comes up from the river."] } }] },
           { label: "Borrow a lamplighter's pole", once: true, steps: [{ say: "Tam lets you take a trimmed lamp. 'Don't let it gutter,' he says." }, { set: "has_lamp" }] },
           { label: "Back to the high street", steps: [{ goto: "yard" }] }] },
       pell: { name: "Mrs. Pell's kitchen", theme: "interior", mood: "weird", cast: ["pell"], lighting: "shadow",
-        onEnter: [{ say: "A set table, two cups. A man sits at the far end. He looks like a man. He is not breathing, and the fog moves faintly around his feet like a dog." }],
+        onEnter: [{ once: "pk", steps: [
+          { say: "A narrow house on Pier Head, scrubbed clean, a copper kettle on the range. Mrs. Pell lets you in without a word and goes back to her chair." },
+          { say: "The table is set for two. Two cups, two saucers, bread and dripping on a plate. At the far end sits a man in a docker's jacket, hands flat on the cloth. He looks like a man. He isn't breathing. The fog moves around his boots, faintly, like a dog at its master's feet." }] }],
         options: [
-          { label: "Talk to Mrs. Pell", steps: [{ talk: { npc: "pell", text: "He came back Tuesday. I know he's not my Walter. But he sat down, and I made him tea. What else is a body to do?" } }, { clue: "c_pell" }] },
+          { label: "Talk to Mrs. Pell", hint: "A widow with company", steps: [{ converse: { npc: "pell", id: "main",
+            topics: [
+              { ask: "Who is that at the table?", lines: [{ say: "She doesn't look at him." }, "My Walter. Drowned at the West India Dock in March, under a cargo of Demerara sugar. They brought him home on a door.", "He came back Tuesday. Walked in out of the fog and sat in his chair and waited for his tea."], then: [{ clue: "c_pell" }] },
+              { ask: "Do you believe it's him?", lines: ["I'm not soft. I know he's not my Walter. Walter never sat still in his life.", "But he sat down, and I made him tea. What else is a body to do? You don't leave a man without his tea.", { say: "Her red hands twist in her apron." }, "He's more solid every night. Tuesday I could see the clock through him. Tonight I can't."] },
+              { ask: "Has he said anything?", lines: ["Once. Last night. He said <i>She's lonely, Maggie.</i> Not in Walter's voice. In a woman's voice, very soft.", "Then he said it again in his own voice, like he was learning it."] },
+              { ask: "Do you want us to take him away?", lines: [{ say: "For a long time she says nothing at all." }, "Yes. God help me. Take him out to the light, where he can go proper. I can't do it. I've tried. I get to the door and I can't."] }],
+            bye: ["Be gentle with him. Whatever he is, he's wearing my husband's face."] } }] },
           { label: "Lead the thing at the table out into the lamplight", once: true, steps: [{ check: { aspect: "charisma", cr: "medium", label: "Coax it into the light", ok: [{ say: "It rises, polite, and lets itself be walked out. In the lamplight it thins to nothing, with a sound like a sigh. Mrs. Pell sits down and weeps, but she is herself." }, { objective: "so1" }], fail: [{ say: "It does not move. The room feels crowded." }, { damage: { pool: "sanity", amount: 2 } }] } }] },
           { label: "Leave", steps: [{ goto: "yard" }] }] },
       stairs: { name: "Wapping Old Stairs", theme: "fog", mood: "tense", lighting: "shadow",
-        onEnter: [{ once: "ws", steps: [{ say: "The fog is here now, thick as wool. Something steps out of it wearing the face of someone you once loved." }, { combat: "street", win: [{ say: "The wisps tear in the lamplight. Behind them, downriver, a high brick chimney pulls the fog into itself." }, { clue: "c_gas" }] }] }],
+        onEnter: [{ once: "ws", steps: [
+          { say: "The Old Stairs run down slick and green to the river, and the fog is here now, thick as wool, pouring up the steps like water running the wrong way." },
+          { say: "Something steps out of it, a few yards off. It's wearing the face of someone you once loved, and it's smiling, and it says your name in their voice, exactly as they used to say it." }, { combat: "street", win: [{ say: "The wisps tear in the lamplight. Behind them, downriver, a high brick chimney pulls the fog into itself." }, { clue: "c_gas" }] }] }],
         options: [{ label: "Follow the fog to the Gas Works", steps: [{ goto: "works" }] }, { label: "Back up the street", steps: [{ goto: "yard" }] }] },
       works: { name: "Wapping Gas Works", theme: "fog", mood: "dread", lighting: "shadow",
-        onEnter: [{ once: "w", steps: [{ say: "The gasometer is full of nothing. A valve wheel, cold to the touch, opens onto a stairway down to a cistern the plans never showed. You can hear water lapping." }, { objective: "po1" }] }],
+        onEnter: [{ once: "w", steps: [
+          { say: "The gas works on Wapping Wall have been shut since Christmas. Chains on the gate, and the great iron gasometer standing empty against the sky like the ribcage of something huge." },
+          { say: "But the fog is pouring in here, not out: down from the street, across the yard, into a valve house at the foot of the gasometer. Inside, a valve wheel, cold to the touch, opens onto a stairway that isn't on any plan, going down to a cistern under the works. You can hear water lapping. And very faintly, a woman humming a lullaby." }, { objective: "po1" }] }],
         options: [
           { label: "Descend to the cistern", steps: [{ say: "The air is warm and wet, and it smells of the river and of old perfume." }, { combat: "cistern", surpriseIf: "lit_stair", win: [{ say: "The Fog Mother comes apart with a sound like a thousand sighs. The valve wheel turns easily now. At the top of the stairs, the first grey light of dawn." }, { objective: "po2" }, { end: "win" }] }] },
           { label: "Light the lamp at the cistern mouth first", if: "has_lamp", once: true, steps: [{ say: "You trim the wick and hold the lamp high. The fog sulks away from the circle of true light, and the cistern stairs are lit." }, { set: "lit_stair" }] },
