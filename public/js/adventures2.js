@@ -42,21 +42,41 @@
     start: "road",
     scenes: {
       road: { name: "The road into Hollebeke", theme: "village", mood: "dread", weather: "rain", onEnter: [{ once: "arrive", steps: [
-        { say: "A plague cart stands abandoned at the crossroads, its horse long gone. Beyond it, Hollebeke: thatch, smoke, and the church tower. The Order's letter came from the parish priest. It said only: 'Our dead will not stay where we put them.'" }] }],
+        { say: "Flanders, the plague summer of 1349. The road from Ypres is empty of everything but crows. Half the farms you passed had a white cross daubed on the door, and the other half had no one left to daub it." },
+        { say: "A plague cart stands abandoned at the crossroads, its horse long gone, its load covered with straw and lime. Beyond it lies Hollebeke: thatch, chimney smoke, and a square church tower. The Order's letter came from the parish priest. It said only: <i>Our dead will not stay where we put them.</i>" }] }],
         options: [
           { label: "Walk into the village", steps: [{ goto: "square" }] },
           { label: "Search the plague cart", once: true, steps: [{ check: { aspect: "awareness", cr: "easy", label: "Search the cart", ok: [{ say: "Under the straw: a heel of bread, hollowed out, crust whole. Something ate the inside and left the shell, neat as a snail." }, { clue: "c_bread" }], fail: [{ say: "Straw, lime, and the smell. Nothing useful." }, { damage: { pool: "sanity", amount: 1 } }] } }] }] },
       square: { name: "Hollebeke square", theme: "village", mood: "dread", weather: "rain", cast: ["grietje"],
-        onEnter: [{ once: "sq", steps: [{ say: "The evening bell rings. All along the street, doors open. Families step back from their tables. And from the direction of the churchyard, without hurry, the dead walk home." }, { clue: "c_tables" }] }],
+        onEnter: [{ once: "sq", steps: [
+          { say: "You reach the square as the evening bell rings for Vespers. All along the street, doors open. Inside every house you can see a table laid for supper, bread cut, ale poured, and the families standing back from it against the walls, very quiet, the way people stand when a lord comes in." },
+          { say: "And from the direction of the churchyard, without hurry, the dead walk home. A weaver in his burial shroud. A girl with lime on her hair. An old man leaning on nothing. They walk into the open doors, and sit down at the tables, and the families serve them, and nobody screams." },
+          { say: "From the well, a small voice: \"Don't stare. They don't like it when you stare at their food.\"" }, { clue: "c_tables" }] }],
         options: [
-          { label: "Talk to the goose girl", steps: [{ talk: { npc: "grietje", text: "The mill boys came first. Jan and Pieter. They walked right in and sat down, and their mam just cut the bread like nothing was wrong. Then everyone's came back. Mine didn't. I'm glad." } }, { clue: "c_mill" }] },
+          { label: "Talk to the goose girl", hint: "Eleven, and fearless", steps: [{ converse: { npc: "grietje", id: "main",
+            open: [{ say: "A girl of eleven sits on the well's edge with a grey goose under one arm, mud to the knees, eating an apple. She looks at you as if you're the strangest thing she's seen all week, which is saying something." }, "You're not from the bishop. The bishop wouldn't come here. Are you from God?"],
+            topics: [
+              { ask: "When did the dead start coming home?", lines: ["After the second burying, at Saint John's. Father Wouter was sick with the fever and couldn't say the words, so they just put everybody in the pit with lime and went home.", "That night the mill boys came first. Jan and Pieter, the widow's sons. They walked right in and sat down at supper, and their mam just cut the bread like nothing was wrong. Then everyone's came back."], then: [{ clue: "c_mill" }] },
+              { ask: "Did yours come back?", lines: [{ say: "She strokes the goose's neck and doesn't look at you." }, "My da. No. He didn't.", "I'm glad. He wasn't nice when he was alive. I don't want him at the table being not-nice and dead."] },
+              { ask: "What do the dead do?", lines: ["They sit. They look at the bread. They don't eat it, not with their mouths. But in the morning the bread's hollow. Just the crust left, like a shell.", "And every week there's more of them, and less food, and people are getting thin, and nobody says anything because it's their mams and their husbands."] },
+              { ask: "Who's not afraid of them?", lines: ["The widow at the mill. She's happy. She's the only happy person in Hollebeke.", "She sets four places at supper. There's only three of them, with the boys. I've counted. I count everything."] }],
+            bye: ["If you're from God, tell Him to hurry up. We're running out of bread."] } }] },
           { label: "Sit at a table with the dead", once: true, steps: [{ check: { aspect: "willpower", cr: "medium", label: "Hold a dead man's gaze", ok: [{ say: "You sit across from a dead weaver. His eyes are on the bread, not on you. When you move it toward him, the corner of his mouth moves too. It is hunger, but it isn't his." }, { set: "saw_hunger" }], fail: [{ say: "You get up too fast and knock the bench over. The dead don't look at you. That's worse." }, { damage: { pool: "sanity", amount: 3 } }] } }] },
           { label: "Go to the church", steps: [{ goto: "church" }] },
           { label: "Go to the mill", steps: [{ goto: "mill" }] }] },
       church: { name: "Saint Medard's church", theme: "church", mood: "calm", cast: ["wouter"], lighting: "shadow",
-        onEnter: [{ once: "ch", steps: [{ say: "Candles, damp straw on the floor, and one sick man in a chair by the altar with a ledger in his lap." }] }],
+        onEnter: [{ once: "ch", steps: [
+          { say: "Saint Medard's is cold and smells of damp straw and tallow. The candles on the altar have been left to burn down to puddles. There's no one at prayer." },
+          { say: "One man sits in a chair by the altar rail, wrapped in blankets, a ledger open in his lap: Father Wouter, thin as a rake, the fever-marks still dark on his neck. He's reading the same page over and over, moving his lips." }] }],
         options: [
-          { label: "Question Father Wouter", steps: [{ talk: { npc: "wouter", text: "Forty-one names in this book, and every one of them sits at supper. I was in fever when they were buried. I never said a word over them. Perhaps that is my fault. But it began at the mill. Ask the widow why she sets four places." } }, { clue: "c_rite" }, { clue: "c_mill" }] },
+          { label: "Question Father Wouter", hint: "The priest who wrote to the Order", steps: [{ converse: { npc: "wouter", id: "main",
+            open: ["The Order came. I prayed you would and I was afraid you would. Both, God forgive me."],
+            topics: [
+              { ask: "What's in the ledger?", lines: [{ say: "He turns it toward you. Columns of names in a careful clerk's hand, each with a date." }, "Forty-one names. Every soul we buried this summer. I keep it so I won't forget them.", "Every one of them sits at supper in Hollebeke tonight."] },
+              { ask: "Why didn't they stay buried?", lines: ["Because I never buried them. Not truly. I was in the fever when they went into the pit; I couldn't stand, let alone say the Office.", "They went into the earth with lime and no words. No rite. Nobody told them they were dead and that they could rest. Perhaps that is my fault.", { say: "His voice cracks." }, "If someone read the names over the pit, with the proper words, perhaps they would know to stay."], then: [{ clue: "c_rite" }] },
+              { ask: "Where did it begin?", lines: ["At the mill. The widow Aleidis lost her husband in June and both her boys in July. She came to me after and asked if there was any way to have them home.", "I told her to pray. I think she found someone else to pray to. Ask her why she sets four places."], then: [{ clue: "c_mill" }] },
+              { ask: "Will you help us?", lines: ["I can barely stand. But give me your arm, and I'll come to the pit, and I'll read every name if it kills me. It may."] }],
+            bye: ["Go with God. And be careful at the mill. The widow is the kindest woman in Hollebeke, and that's what frightens me."] } }] },
           { label: "Go to the churchyard", steps: [{ goto: "pit" }] },
           { label: "Back to the square", steps: [{ goto: "square" }] }] },
       pit: { name: "The plague pit", theme: "forest", mood: "dread", weather: "rain", lighting: "shadow",
@@ -68,13 +88,20 @@
           { label: "Look for tracks", once: true, steps: [{ check: { aspect: "awareness", cr: "medium", label: "Read the turned earth", investigate: true, ok: [{ say: "Most tracks go to the village and back. Two small sets go only one way, toward the mill, and never come back to the pit at all." }, { clue: "c_mill" }], fail: [{ say: "Mud, rain and footprints over footprints." }] } }] },
           { label: "Back to the church", steps: [{ goto: "church" }] }] },
       mill: { name: "The widow's mill", theme: "interior", mood: "weird", cast: ["aleidis", "boys"], lighting: "shadow",
-        onEnter: [{ once: "mill", steps: [{ say: "Warm, floury, and far too tidy. A table is set for four: the widow, her two dead sons, and an empty place at the head with the best bread on it." }] }],
+        onEnter: [{ once: "mill", steps: [
+          { say: "The mill wheel turns in the stream with a sound like slow breathing. Inside it's warm and floury and far too tidy: floor swept, pots scoured, flowers in a jug on the table." },
+          { say: "The table is set for four. Two small boys sit at it, perfectly still, soil in their hair, hands folded. The widow Aleidis stands behind them with a bread knife, calm and pleasant, and smiles at you as if you're neighbours dropping by." },
+          { say: "The fourth place is at the head of the table. It has the best bread on it, the white loaf, and the best cup. Nobody sits there. Every few seconds the widow's eyes go to the loft ladder, and back." }] }],
         options: [
           { label: "Ask Aleidis about the empty place", steps: [
-            { talk: { npc: "aleidis", text: "That's for my husband. He'll be home soon." } },
+            { talk: { npc: "aleidis", text: "That place? That's for my husband. He'll be home soon. He's always home for supper." } },
+            { say: "She cuts a slice of bread for each of the boys and sets it in front of them. They don't move. She smooths Pieter's hair, and soil falls out of it onto the cloth." },
             { read: { cr: "medium", lying: true, liar: "She's lying, and she knows you know. Her eyes go to the loft ladder and back.", ok: [{ set: "aleidis_caught" }] } }] },
           { label: "Tell her what it costs the village", if: "aleidis_caught", once: true, steps: [
-            { talk: { npc: "aleidis", text: "I said the rhyme. I fed the Guest at my own table, and it gave me my boys. I didn't know it would want more. It always wants one more place set. It's up there now, waiting for supper." } },
+            { say: "You tell her about the hollow loaves, the thin children, the forty-one at forty-one tables. She listens with the knife in her hand. Then she puts it down very carefully, and sits, for the first time, at her own table." },
+            { talk: { npc: "aleidis", text: "My mother taught me a rhyme. For the hungry times. You set a place for the Guest, the one who comes when the dead are hungry, and you say the words, and it brings them home to eat with you." } },
+            { talk: { npc: "aleidis", text: "I said the rhyme. I fed the Guest at my own table, and it gave me my boys. Look at them. Look how good they are." } },
+            { talk: { npc: "aleidis", text: "I didn't know it would want more. It always wants one more place set. One more village. It's up there in the loft now, waiting for its supper. It's been waiting all day." } },
             { clue: "c_guest" }, { objective: "po1" }] },
           { label: "Climb to the loft", steps: [{ goto: "loft" }] },
           { label: "Back to the square", steps: [{ goto: "square" }] }] },
@@ -125,28 +152,55 @@
     start: "station",
     scenes: {
       station: { name: "Bray's filling station", theme: "desert", mood: "calm", cast: ["hollis"], onEnter: [{ once: "arrive", steps: [
-        { say: "Boise City, Oklahoma. Fences buried to the top wire, a sky the colour of an old bruise, and a filling station with wet sheets hung over every window." }] }],
+        { say: "Boise City, Oklahoma, 1935. The Dust Bowl. Fences buried to the top wire in drifts of fine red-brown dirt, a sky the colour of an old bruise, and the wind never quite stopping. Everything you touch is gritty. Your teeth are gritty." },
+        { say: "Bray's filling station stands alone on the county road, one pump, a Coca-Cola sign, and wet bedsheets hung over every window to keep the dust out. Hollis Bray watches you pull in through a gap in the sheets with a shotgun across his knees, and doesn't get up until he's sure of your faces." }] }],
         options: [
-          { label: "Ask Hollis about the storms", steps: [{ talk: { npc: "hollis", text: "Sunday, four o'clock, regular as church. Starts right over the Pruitt place, out of a sky you could paint blue. Took my brother Earl two weeks back. Earl came home Monday. That wasn't Earl." } }, { clue: "c_sunday" }] },
+          { label: "Talk to Hollis Bray", hint: "Filling station owner", steps: [{ converse: { npc: "hollis", id: "main",
+            open: ["You're the government people. Don't look like government. Look like folks who've seen a thing or two. Coffee's got dust in it. Everything's got dust in it."],
+            topics: [
+              { ask: "Tell me about the storms", lines: ["We get dusters all spring. Everybody does. But this one's different. Sunday, four o'clock, regular as church.", "Starts right over the Pruitt place, out of a sky you could paint blue. Black as the inside of a cow. Rolls a mile wide and moves like it knows where it's going."], then: [{ clue: "c_sunday" }] },
+              { ask: "What happened to your brother?", lines: [{ say: "He takes his hat off and turns it in his hands." }, "Earl went out to bring the cows in two Sundays back. Storm come over. We found the cows in the morning, smothered, every one.", "Earl came home Monday. Walked in the door and sat down and asked for supper. Talked just like Earl. Smiled just like Earl.", "That wasn't Earl. Earl never smiled at me in his life."] },
+              { ask: "Where's the thing that came back?", lines: ["Gone back into it. Next Sunday, when the storm came, it walked out into the field to meet it, smiling. Left a little pile of dust on the porch where it'd been standing.", "Ruth Pruitt's the same. Tom's got her stood at his fence right now. He won't let her in. Good for Tom."] },
+              { ask: "Who else might know something?", lines: ["Pastor Jessup's moved his whole flock into the storm cellar under the church. Says he's heard voices in the dust.", "And Tom Pruitt dug a new well this spring. Deeper than anybody ever dug in this county. Storms started the week after."] }],
+            bye: ["Today's Sunday. You've got till four. I'd be indoors by then, if I were you."] } }] },
           { label: "Drive out to the Pruitt farm", steps: [{ goto: "farm" }] },
           { label: "Go to the Baptist church", steps: [{ goto: "cellar" }] }] },
       farm: { name: "The Pruitt farm", theme: "desert", mood: "dread", cast: ["tom", "ruth"],
-        onEnter: [{ once: "farm", steps: [{ say: "The house is shut tight. Out by the fence a woman stands in the dust, smiling at the windows. Tom Pruitt watches her from the porch with a rifle across his knees." }] }],
+        onEnter: [{ once: "farm", steps: [
+          { say: "The Pruitt place is half buried: dust drifted up to the windowsills on the west side, the barn roof sagging under its weight, a tractor nose-down in a dune like a drowned animal." },
+          { say: "Out by the fence a woman stands in a feed-sack dress, perfectly still, smiling at the house. The wind blows dust through her hair and she doesn't blink. Every so often a little trickle of dust runs out of her sleeve." },
+          { say: "Tom Pruitt sits on his porch with a rifle across his knees, watching her. He hasn't slept, by the look of him, since she came back." }] }],
         options: [
-          { label: "Talk to Tom Pruitt", steps: [{ talk: { npc: "tom", text: "That's not Ruth. Ruth hums when she's nervous. That thing doesn't hum. It leaves dust on the doorknob, fine as flour, and it says grace backwards. She went out to the new well the Sunday it took her." } }, { clue: "c_double" }, { clue: "c_well" }] },
+          { label: "Talk to Tom Pruitt", hint: "Widowed, he thinks", steps: [{ converse: { npc: "tom", id: "main",
+            open: [{ say: "He doesn't take his eyes off the woman at the fence." }, "You come about Ruth. That's not Ruth. I want that said first."],
+            topics: [
+              { ask: "How do you know it isn't her?", lines: ["Ruth hums when she's nervous. Hymns, mostly. Hummed all through our wedding. That thing doesn't hum.", "It leaves dust on the doorknob, fine as flour, every time it tries the door. And when I let it in the first night, it said grace backwards. Every word, backwards, smiling."], then: [{ clue: "c_double" }] },
+              { ask: "When did she go?", lines: ["Three Sundays back. Storm come over at four, and she was out at the new well, drawing water. I yelled for her to come in. She looked up at the sky like it was calling her name.", "Then it was dark as midnight, and when it cleared there was a little pile of dust by the well, and her bucket, and nothing else."], then: [{ clue: "c_well" }] },
+              { ask: "Tell me about the new well", lines: ["Dug it in March. Two hundred and forty feet, deeper than anybody ever dug around here. We were desperate. Hit water at two-forty, and something else.", { say: "His knuckles go white on the rifle." }, "Cold air came up out of it. Still does. You can stand by the casing in August and see your breath. And the storms started the week after."] },
+              { ask: "Why not shoot it?", lines: ["Because it's got her face.", { say: "He says it very quietly." }, "I've had it in my sights forty times. It looks at me with her face, and I can't."] }],
+            bye: ["If you go out to the well, go before four. Please. I don't want another one of you at my fence."] } }] },
           { label: "Speak to 'Ruth' at the fence", once: true, steps: [
             { talk: { npc: "ruth", text: "Tom won't let me in. Won't you tell him, mister? I just want to come home. It's so dry out here." } },
             { read: { cr: "medium", lying: true, liar: "Every word is wrong somehow, like a song you know sung in the wrong key. It isn't her. It's a very good guess at her.", fail: [{ damage: { pool: "sanity", amount: 2 } }] } }] },
           { label: "Walk out to the new well", steps: [{ goto: "well" }] },
           { label: "Back to the filling station", steps: [{ goto: "station" }] }] },
       cellar: { name: "The church storm cellar", theme: "cellar", mood: "tense", cast: ["jessup"], lighting: "shadow",
-        onEnter: [{ once: "cel", steps: [{ say: "The whole congregation lives underground now: cots, canned peaches, children reading by lamplight. Pastor Jessup meets you at the bottom of the steps." }] }],
+        onEnter: [{ once: "cel", steps: [
+          { say: "Under the Baptist church on Main Street, a storm cellar dug for tornadoes now holds forty people: cots in rows, crates of canned peaches, a washtub of drinking water with a cloth over it, children reading by kerosene lamp. Somebody has pinned a hymn sheet to the earth wall." },
+          { say: "Pastor Jessup meets you at the bottom of the steps with a Bible in one hand and a lamp in the other. A big man gone thin, with a voice made for revival tents and eyes that haven't slept." }] }],
         options: [
-          { label: "Ask Pastor Jessup what he's heard", steps: [{ talk: { npc: "jessup", text: "When it passes over, you can hear them. Earl Bray. The Henley girl. Ruth Pruitt. Calling for each other, lost in it. They aren't in heaven, friend. They're in the storm. Lost." } }, { clue: "c_ruth" }] },
+          { label: "Talk to Pastor Jessup", hint: "He's moved his flock underground", steps: [{ converse: { npc: "jessup", id: "main",
+            topics: [
+              { ask: "Why move everyone underground?", lines: ["Because the storm takes them that are out in it, and gives back something wearing their skin. I won't lose another soul from this flock to that.", "We come up for water and to bury the stock. Otherwise we stay below, and we sing, loud, so the children don't hear it pass."] },
+              { ask: "What do you hear when it passes?", lines: [{ say: "He sits down heavily on a crate." }, "Voices. When it rolls over the church, you can hear them through the boards, plain as I hear you. Earl Bray. The Henley girl. Ruth Pruitt.", "Calling for each other. Lost in it. Like folks in a blizzard who can't find the barn rope.", "They aren't in heaven, friend. They're in the storm. They're lost, and it keeps them."], then: [{ clue: "c_ruth" }] },
+              { ask: "Do you think they can be saved?", lines: ["I've preached forty years that nothing is beyond saving. I'd like to go on believing it.", "If you can find where that storm comes from and stop it up, I believe they'll come down. Like rain."] }],
+            bye: ["God be with you out there. Be back underground by four, whatever you do."] } }] },
           { label: "Steady the frightened congregation", once: true, steps: [{ check: { aspect: "charisma", cr: "medium", label: "Give them some hope", ok: [{ say: "You tell them it can be fought. A few look at you like you're mad. More look at you like they want to believe it." }, { heal: { pool: "sanity", amount: 3 } }], fail: [{ say: "Nobody believes you. You aren't sure you do." }] } }] },
           { label: "Back to the filling station", steps: [{ goto: "station" }] }] },
       well: { name: "The new well", theme: "desert", mood: "weird",
-        onEnter: [{ say: "A steel casing out past the barn, a windmill with no wind, and a column of cold air standing up out of the ground. You can feel it on your face from ten yards off." }],
+        onEnter: [{ once: "wl", steps: [
+          { say: "Out past the barn, the new well: a steel casing a foot across, a windmill above it with its vanes still in the hot wind, and Ruth's bucket on its side in the dust where she left it." },
+          { say: "A column of cold air stands up out of the ground. You can feel it on your face from ten yards off, like opening an icebox. Down the casing, very far below, you hear the wind, and in the wind, faintly, someone humming a hymn." }] }],
         options: [
           { label: "Lower a lantern and listen", once: true, steps: [{ check: { aspect: "awareness", cr: "challenging", label: "Listen down the well", investigate: true, ok: [{ say: "Three hundred feet down, past the water table, past the rock, something slow and huge breathes out. Each breath lifts the dust a little higher." }, { clue: "c_breath" }, { objective: "po1" }], fail: [{ say: "The lantern goes out halfway down. Something below breathes in, and your lungs go with it. You come to on your knees by the casing, coughing black dust, sure now of what lives down there." }, { damage: { pool: "health", amount: 5 } }, { clue: "c_breath" }, { objective: "po1" }] } }] },
           { label: "Cap the well before Sunday", if: { clue: "c_breath" }, once: true, steps: [
@@ -199,13 +253,23 @@
     start: "briefing",
     scenes: {
       briefing: { name: "A car on Candlemaker Row", theme: "modern", mood: "calm", weather: "rain", cast: ["morag"], onEnter: [{ once: "brief", steps: [
-        { say: "Rain on the windscreen. Greyfriars kirkyard to your left. Morag Lindsay hands you a phone with the listing open: a sunny flat with fairy lights and two hundred five-star reviews." }] }],
+        { say: "Edinburgh, November 2016. Rain on the windscreen of a hire car parked on Candlemaker Row, the Old Town climbing away above you in black stone, the railings of Greyfriars kirkyard dripping on your left. Somewhere a piper is busking for nobody." },
+        { say: "In the driver's seat, Morag Lindsay of the WCA: rain jacket, two phones, and the tired calm of someone who has done this for twenty years. She hands you one of the phones. On it, a holiday listing: a sunny Old Town flat with fairy lights, a welcome basket, and two hundred five-star reviews." }] }],
         options: [
-          { label: "Ask Morag what she knows", steps: [{ talk: { npc: "morag", text: "Eleven missing persons, all tourists, all booked through this listing. Police went in and found three floors and no Flat 4. The listing's been taken down six times. It comes back with the reviews intact. Every booking gets the same check-in time: 3:33 in the morning. One guest is still messaging: Priya Nair. Day nine." } }, { clue: "c_priya" }, { clue: "c_hour" }] },
+          { label: "Talk to Morag", hint: "Your WCA handler", steps: [{ converse: { npc: "morag", id: "main",
+            open: ["Right. Here's what we've got, which isn't much, and none of it makes sense, which is why it's ours."],
+            topics: [
+              { ask: "Who's gone missing?", lines: ["Eleven people since April. All tourists, all booked through this listing. Flat 4, 9 Candlemaker Row. A Canadian couple, two students from Lyon, a retired dentist from Leeds, a hen party of four.", "Police went in after the third. Number 9 has three floors and three flats. There is no Flat 4. They knocked on every door and the man in Flat 1 made them tea."] },
+              { ask: "Why hasn't the listing been shut down?", lines: ["It has. Six times. The platform deletes it and it comes back next morning, same photos, reviews intact. Even the new ones.", { say: "She scrolls with her thumb." }, "There's one from yesterday. The Leeds dentist. Missing since August. <i>Still lovely. Still here. Can't find the door.</i>"] },
+              { ask: "Is anyone still alive?", lines: ["Maybe. Priya Nair, twenty-three, backpacker from Leicester. Checked in nine days ago. She's still answering the host's messages.", "Her last one, this morning: <i>there are more rooms every night. the others are in the far ones.</i>"], then: [{ clue: "c_priya" }] },
+              { ask: "Anything odd about the bookings?", lines: ["Everything. But here's the thing I can't stop looking at.", { say: "She holds up a printout of a booking confirmation." }, "Every confirmation email gives the same check-in time. Book for a Tuesday afternoon, book for a Saturday night, doesn't matter. Check-in is 3:33 a.m."], then: [{ clue: "c_hour" }] }],
+            bye: ["Go in, have a look, come back and tell me I'm wrong. I'd love to be wrong."] } }] },
           { label: "Read through the reviews", once: true, steps: [{ check: { aspect: "iq", cr: "medium", label: "Read two hundred reviews", investigate: true, ok: [{ say: "Sort them by guest instead of date and the pattern jumps out: everybody writes twice. Once to say it's lovely, and once, much later, to say they're still there." }, { clue: "c_reviews" }, { clue: "c_hour" }], fail: [{ say: "Lovely flat. Great location. Lovely flat. The words start to swim." }, { damage: { pool: "sanity", amount: 1 } }] } }] },
           { label: "Go into number 9", steps: [{ goto: "stairwell" }] }] },
       stairwell: { name: "9 Candlemaker Row", theme: "interior", mood: "tense", weather: "building", lighting: "shadow",
-        onEnter: [{ say: "A worn stone turnpike stair, a timer light that clicks off too soon, and a smell of other people's dinners." }],
+        onEnter: [{ once: "sw", steps: [
+          { say: "The street door of number 9 is open, as Old Town stair doors always are. Inside: a worn stone turnpike stair spiralling up, a timer light that clicks off too soon, three doors on three landings, and the smell of other people's dinners." },
+          { say: "There's a bike chained to the banister and a pile of junk mail on the bottom step. You pick some up. Half of it is addressed to Flat 4." }] }],
         options: [
           { label: "Knock at Flat 1", steps: [{ goto: "calder" }] },
           { label: "Climb the stair at 3:33 a.m.", if: { clue: "c_hour" }, steps: [
@@ -214,10 +278,14 @@
           { label: "Climb the stair now", once: true, steps: [{ say: "Three floors, three landings, a skylight full of rain. Nothing odd at all, which somehow makes your skin crawl." }] },
           { label: "Back to the car", steps: [{ goto: "briefing" }] }] },
       calder: { name: "Flat 1", theme: "interior", mood: "weird", cast: ["calder"],
-        onEnter: [{ once: "cal", steps: [{ say: "Mr. Calder opens the door before you knock. 'You'll be here about the flat upstairs. Come in, come in. Tea?'" }] }],
+        onEnter: [{ once: "cal", steps: [
+          { say: "Mr. Calder opens the door of Flat 1 before you knock. Cardigan, slippers, reading glasses on a chain, and a smile like a hotel lobby: warm, bright, and with nobody behind the desk." },
+          { talk: { npc: "calder", text: "You'll be here about the flat upstairs. Everyone is. Come in, come in. Tea? I've always got the kettle on. You never know who'll be arriving." } },
+          { say: "His hall is lined with hooks, and on the hooks hang coats. Far too many coats, for one old man. A child's anorak. A pink feather boa. A dentist's tunic." }] }],
         options: [
           { label: "Ask who owns Flat 4", steps: [
-            { talk: { npc: "calder", text: "Oh, I just look after things. Keys, linens. The owner's very hands-off. I've never actually met them, now you mention it." } },
+            { talk: { npc: "calder", text: "Oh, I just look after things. Keys, linens, the welcome baskets. The owner's very hands-off. Very generous." } },
+            { talk: { npc: "calder", text: "I've never actually met them, now you mention it. Isn't that funny? Thirty years. It leaves notes. Lovely handwriting." } },
             { read: { cr: "challenging", lying: false, ok: [{ say: "Everything he's said is true, and that's what frightens him. He's never met them either." }, { set: "calder_honest" }] } }] },
           { label: "Look in his hall drawer", once: true, steps: [{ check: { aspect: "agility", cr: "medium", label: "Open the drawer while he makes tea", ok: [{ say: "Forty identical keys on cheap plastic fobs, every one marked 4. Some are still warm." }, { clue: "c_calder" }, { if: "calder_honest", then: [{ objective: "po1" }] }], fail: [{ say: "The drawer squeaks. Mr. Calder smiles at you from the kitchen doorway and says nothing at all." }, { damage: { pool: "sanity", amount: 2 } }] } }] },
           { label: "Tell him the truth about the guests", if: "calder_honest", once: true, steps: [
