@@ -10,6 +10,14 @@
   const U = window.UI, el = U.el, CAMP = window.CAMP, ui = CAMP.ui, GD = window.GD;
   const P = (window.PATRONS = {});
   window.ASSETS.patrons = window.ASSETS.patrons || {};
+  /* the rulebook's own illustrations, one per patron (assets/book/) */
+  const bookSrc = (p) => (window.BOOK_DATA && window.BOOK_DATA[p]) || p;   // the hosted test pages carry the art packed into one file
+  const slugOf = (n) => String(n).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  for (const d of (window.GD && GD.deities) || []) if (!window.ASSETS.patrons[d.name]) window.ASSETS.patrons[d.name] = bookSrc(`assets/book/${slugOf(d.name)}.jpg`);
+  /* and the book's agents-against-the-dark piece on the title screen */
+  window.ASSETS.scenes["book:title"] = bookSrc("assets/book/title.jpg");
+  const scene0 = window.ART.scene;
+  window.ART.scene = (theme, seed = "") => (seed === "title" ? "book:title" : scene0(theme, seed));
   const ph = (t) => (t || "").replace(/\s+/g, " ").trim();
   const def = (name) => GD.deities.find((d) => d.name === name);
   const tint = (node, c) => { node.style.setProperty("--pc", c); return node; };
@@ -177,6 +185,7 @@
         if (lines.length) {
           const pick = lines[(CAMP.camp.day || 0) % lines.length];
           const note = tint(el("button", { class: "pstir", onclick: () => { CAMP.sel = pick.a.id; ui.hub("patrons"); } },
+            el("img", { class: "pstirimg", src: P.idol(pick.p.deity), alt: "" }),
             el("small", {}, `${pick.a.short}'s patron stirs`), el("span", {}, pick.q), pick.d.demands ? el("small", { class: "pdem" }, ph(pick.d.demands).slice(0, 140) + (ph(pick.d.demands).length > 140 ? "…" : "")) : null), P.color(pick.p.deity));
           const team = box.querySelector("h3.sect"); if (team) team.before(note); else box.append(note);
         }
