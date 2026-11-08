@@ -430,14 +430,25 @@
     start: "office",
     scenes: {
       office: { name: "Priya's ISP office", theme: "lab", mood: "calm", cast: ["priya"], onEnter: [{ once: "a", steps: [
-        { say: "A cramped ISP office above a kebab shop, cables across the ceiling like vines. Priya has pinned eleven names to the wall." },
-        { talk: { npc: "priya", text: "They all dialled the same number the same night. Nobody runs it. The greeting says your name. Some of them are sleeping like logs, and their screens are all showing the same blinking prompt." } }, { clue: "c_bbs" }] }],
+        { say: "Rotterdam, December 1999. Everyone is talking about the Millennium Bug. Rain on the harbour cranes, Christmas lights on the Witte de Withstraat, and above a kebab shop a cramped ISP office where cables run across the ceiling like vines and three modems screech at once." },
+        { say: "Priya Das has pinned eleven names to the wall, each with a printout and a polaroid of a sleeping face. She's on her fourth coffee and her hands shake when she isn't typing." }] }],
         options: [
+          { label: "Talk to Priya", hint: "ISP technician", steps: [{ converse: { npc: "priya", id: "main",
+            open: ["Finally. My manager thinks I'm having a breakdown. My manager might be right. Sit anywhere that isn't a cable."],
+            topics: [
+              { ask: "What's Threshold?", lines: ["A bulletin board. Dial-up, old school, green text on black. It's not on any list. There's no sysop. The number's not even in our routing tables.", "When you connect, it says hello. By name. Not your handle: your real name. Sometimes a name you haven't used since you were a kid. It said hello to me as <i>Pree-Pree</i>. That's what my grandmother called me."], then: [{ clue: "c_bbs" }] },
+              { ask: "What happened to the eleven?", lines: ["They all dialled it the same night, December 3rd, between midnight and two. All my customers. I checked the logs.", { say: "She points at the polaroids." }, "Next morning their families find them asleep at their desks. Not dead. Asleep. Breathing, pulse, everything. They just don't wake up.", "And their screens are all showing the same thing: a blinking green cursor. Waiting for them to type."] },
+              { ask: "Did you call it yourself?", lines: ["Once. Before I knew. It said hello, Pree-Pree, and asked how my grandmother was. She died in 1987.", "I pulled the phone cable out of the wall with my bare hands. My modem still lights up at three in the morning, all by itself. I've unplugged it. It still lights up."] },
+              { ask: "Who was the sysop?", lines: ["There's a handle in the old logs: <i>LAZARUS</i>. Ran a board on the same number back in '94, '95. Then nothing.", "Hendrik Vos. Found dead at his keyboard in 1996. Heart failure. He was twenty-six."] }],
+            bye: ["Whatever you do, don't connect to it twice. I don't know why I know that. I just do."] } }] },
           { label: "Examine one victim's terminal", once: true, steps: [{ check: { aspect: "iq", cr: "medium", label: "Dig through the logs", investigate: true, ok: [{ say: "A final message from the board's own sysop, scrolling on a dead man's screen." }, { clue: "c_sysop" }, { objective: "so1" }], fail: [{ say: "Garbled characters, then a long grey nothing." }] } }] },
           { label: "Trace the number", once: true, steps: [{ check: { aspect: "iq", cr: "challenging", label: "Trace the line", investigate: true, ok: [{ say: "The call is routed through Exchange 31, closed in 1971. And still switched on." }, { clue: "c_exchange" }, { objective: "po1" }], fail: [{ say: "The trace folds back on itself, and your own phone number appears in the logs." }, { damage: { pool: "sanity", amount: 2 } }, { say: "Then your phone rings. The caller ID reads EXCHANGE 31, a building closed in 1971. It keeps ringing until you write the address down." }, { clue: "c_exchange" }, { objective: "po1" }] } }] },
           { label: "Go to Exchange 31", if: { clue: "c_exchange" }, steps: [{ goto: "exchange" }] }] },
       exchange: { name: "Telephone Exchange 31", theme: "lab", mood: "weird", lighting: "normal",
-        onEnter: [{ say: "Relays chatter in the dark like a thousand cicadas. Every handset in the building has been lifted off its hook." }],
+        onEnter: [{ once: "ex", steps: [
+          { say: "Exchange 31 is a squat brick building on a dead-end street in Delfshaven, windows bricked up, a KPN sign rusted to illegibility. The door opens when you touch it." },
+          { say: "Inside, the old switching hall: rack after rack of electromechanical relays in the dark, chattering like a thousand cicadas, though the building has had no power since 1971. Every handset on every test bench has been lifted off its hook and laid on its side, and from each one a thin voice is talking." },
+          { say: "You know some of the voices. They're the eleven. They're saying hello to each other, over and over, in green-text cadence: <i>hello. hello. are you there. hello.</i>" }] }],
         options: [
           { label: "Pull the main trunk cable", steps: [{ combat: "exchange", win: [{ say: "The trunk comes loose in a spray of sparks. Across the city, eleven monitors go dark, and eleven people sit up in bed, gasping." }, { objective: "po2" }, { end: "win" }] }] },
           { label: "Back to Priya's office", steps: [{ goto: "office" }] }] }
@@ -475,16 +486,36 @@
     start: "camp",
     scenes: {
       camp: { name: "BFV forward camp", theme: "forest", mood: "calm", cast: ["lin"], onEnter: [{ once: "a", steps: [
-        { say: "A tent, a generator, a laptop on a crate. The last frame of the drone's footage is frozen on the screen: a figure looking up at the lens. Lin is the figure." },
-        { talk: { npc: "lin", text: "That's me. I haven't been there. I haven't moved from this crate. I've been right here, drinking tea, since lunch." } }, { clue: "c_footage" }] }],
-        options: [{ label: "Hike up the terrace road", steps: [{ goto: "road" }] }] },
+        { say: "Yunnan, 2024. Mist in the valleys, terraced hills folding away into blue distance, the whine of the generator. The Black Fang Vanguard's forward camp is a tent, a solar panel and a laptop on an ammunition crate." },
+        { say: "Lin Wei, the drone pilot, has frozen the last frame of the footage on screen: a terraced village at dusk, lanterns lit, and in the middle of the street a figure looking straight up at the lens." },
+        { say: "The figure is Lin." }] }],
+        options: [
+          { label: "Talk to Lin", hint: "BFV drone pilot", steps: [{ converse: { npc: "lin", id: "main",
+            open: [{ say: "His hands won't stop moving over the controller in his lap, though the drone has been lost for six hours." }, "That's me. You can see it's me. I haven't been there."],
+            topics: [
+              { ask: "What happened to the drone?", lines: ["Routine survey. Mapping the valley for the dam project. It crossed the second ridge at 14:12 and lost signal.", "Then it started sending footage. The same forty-one seconds, over and over. Nine times. A village on no map, at dusk, though it was two in the afternoon."], then: [{ clue: "c_footage" }] },
+              { ask: "How can you be in the footage?", lines: ["I can't. I've been right here on this crate since lunch, drinking tea. Ask anyone.", { say: "He scrolls back through the frames with a shaking finger." }, "In loop one, the street's empty. Loop five, there's someone at the end of the street. Loop nine, it's me, looking up. Like I've been walking toward the camera for a long time."] },
+              { ask: "Do the locals know the place?", lines: ["There's an old woman in the last village who talks about Lüshui. A village that had a good harvest every year, until one year it decided it didn't want the harvest to end.", "She says nobody's seen it since her grandmother's time. She says if you see it, don't go in, and if you go in, don't look in the mirrors."] },
+              { ask: "Will you come with us?", lines: [{ say: "He looks at the frozen frame for a long time." }, "No. I think I already went. I think part of me is still walking up that street. I'll stay here and keep the camp lit, in case you need a way back."] }],
+            bye: ["Follow the ridge road. And if you see me up there, don't let me talk to you."] } }] },
+          { label: "Hike up the terrace road", steps: [{ goto: "road" }] }] },
       road: { name: "The terrace road", theme: "forest", mood: "tense", lighting: "shadow",
         onEnter: [{ once: "r", steps: [{ say: "The map shows nothing. The bamboo thickens as the sun drops. Then the smell of rice smoke, impossible this far from any town." }, { combat: "road", win: [{ say: "The last wolf drops. A faint light shows through the bamboo ahead: terraces, lanterns, the roofs of a village." }, { objective: "po1" }] }] }],
         options: [{ label: "Enter the village", steps: [{ goto: "village" }] }, { label: "Back to camp", steps: [{ goto: "camp" }] }] },
       village: { name: "Lüshui village", theme: "village", mood: "weird", cast: ["mei"], lighting: "shadow",
-        onEnter: [{ say: "Lanterns, drying rice, a dog barking in a hollow. Everyone smiles. Everyone is mid-chore." }],
+        onEnter: [{ once: "vi", steps: [
+          { say: "Lüshui is lovely. That's the first thing. Wooden houses with curling eaves, paper lanterns lit along the street, rice spread on mats to dry, a dog barking somewhere in a hollow. Smoke and woodsmoke and the smell of supper." },
+          { say: "Everyone is smiling. Everyone is in the middle of a chore: sweeping, carrying water, turning rice with a wooden rake. You watch a man lift a bucket, and lift it, and lift it. Above every door hangs a small round mirror in a red frame." },
+          { say: "An old woman in a blue apron looks up from her rice and beams at you as if she's been waiting all day." }] }],
         options: [
-          { label: "Talk to Auntie Mei", steps: [{ talk: { npc: "mei", text: "Today is the day the rice is drying." }}, { clue: "c_loop" }] },
+          { label: "Talk to Auntie Mei", hint: "Smiling, and smiling", steps: [{ converse: { npc: "mei", id: "main",
+            open: ["Visitors! On the day the rice is drying. How lucky."],
+            topics: [
+              { ask: "What day is it today?", lines: ["Today is the day the rice is drying.", { say: "She turns the rice with her rake. Her smile doesn't move." }, "Today is the day the rice is drying.", { say: "She coughs, once, into her hand. Then she says it again, and coughs again, in exactly the same place." }], then: [{ clue: "c_loop" }] },
+              { ask: "How long have you lived here?", lines: ["Oh, always. Since this morning. Since the harvest. The harvest was so good this year.", { say: "For one moment her eyes go wide and frightened and very old, as if someone underneath the smile is looking out at you." }, "Please. Please, it's been such a long day."] },
+              { ask: "Have you seen a young man with a controller?", lines: ["Lin? Oh, Lin is a good boy. He's walking up the street. He's always walking up the street. Today is the day the rice is drying."] },
+              { ask: "What are the mirrors for?", lines: ["For the Mother. So she can see us and keep us. She loves us so much. She doesn't want the day to end.", "Don't look in them too long. She'll love you too."] }],
+            bye: ["Today is the day the rice is drying. Come back tomorrow!", { say: "She laughs, and the laugh catches in her throat like a sob." }] } }] },
           { label: "Study the round mirrors above the doors", once: true, steps: [{ check: { aspect: "awareness", cr: "medium", label: "Watch the mirrors", ok: [{ say: "At dusk, every mirror turns on its own, a few degrees at a time, to face the hill." }, { clue: "c_mirror" }], fail: [{ say: "Your own face, looking tired. You stare too long, and when you blink it's dusk, and every mirror in the street has turned to face the hill. So has your reflection. You haven't moved." }, { damage: { pool: "sanity", amount: 3 } }, { clue: "c_mirror" }] } }] },
           { label: "Search the street for the drone", once: true, steps: [{ check: { aspect: "iq", cr: "easy", label: "Find the crashed drone", ok: [{ say: "In a ditch, black and bent: the drone. Its black box is still warm." }, { objective: "so1" }], fail: [{ say: "Nothing but rice and shadows." }] } }] },
           { label: "Climb to the shrine on the hill", if: { clue: "c_mirror" }, steps: [{ combat: "shrine", win: [{ say: "The Mother cracks along every reflection at once. Dawn finally breaks over the terraces, for the first time in years. People in the street stop mid-sentence, and then they weep." }, { objective: "po2" }, { end: "win" }] }] },
