@@ -1,6 +1,7 @@
 # Next work (agreed 2026-11-09; started 2026-11-10)
 
-Done: 1 (RULES-AUDIT.md), 2 (save files), 4 (one game, Art style setting).
+Done: 1 (RULES-AUDIT.md), 2 (save files), 4 (one game, Art style setting), 3 (art list v4), 5 (recorded sound),
+7 (two new campaigns, campaign builder, Run a game).
 
 Order: 1, 2, 4 first, then 3, 5, 7.
 

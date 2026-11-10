@@ -120,7 +120,7 @@ if (require.main === module) {
   let bad = 0;
   for (const id of ids) {
     const a = LIB[id];
-    for (const arcAll of a.id.startsWith("lb-") ? [false, true] : [false]) {
+    for (const arcAll of /"arc"/.test(JSON.stringify(a)) ? [false, true] : [false]) {
       const r = check(a, { arcAll });
       const tag = arcAll ? " (with every earlier arc choice)" : "";
       const issues = r.locks.length + r.noWin.length + r.broken.length + (r.wins ? 0 : 1);
