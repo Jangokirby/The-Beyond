@@ -1,18 +1,22 @@
 # Era styles for pictures
 
 Every picture tied to an era is painted in that era's own medium, so a face from 1190 and a face from 2026 never look like
-the same artist painted them. In `asset-list-v3-todo.csv` the **style** column replaces the single house style used for
+the same artist painted them. In `asset-list-v4-todo.csv` the **style** column replaces the single house style used for
 Art 1 (the Floris Arntzenius / Hague School words): put the row's style words at the start of its prompt instead.
 The tone stays the same everywhere: dark, quiet, something wrong.
 
-| Era | Medium | What dates a place |
-|---|---|---|
-| Medieval (to 1700) | egg tempera and gold leaf, Gothic altarpiece, flat perspective, lapis and vermilion | torches and rushlights, thatch, timber, carts; no glass, no street lamps |
-| Victorian (1700-1913) | academic oil, Pre-Raphaelite detail, gaslight warmth | gas lamps, carriages, chimney smoke, cobbles; no cars, no electric light |
-| World Wars (1914-1945) | expressionist oil with hand-tinted photograph tones, khaki and slate | bare bulbs, early cars and lorries, telegraph poles, posters, sandbags |
-| Atomic (1946-1979) | 1950s pulp cover gouache, Kodachrome colour, rim light | neon, chrome, finned cars, TV aerials, fluorescent light |
-| Late Century (1980-1999) | 90s VHS-cover airbrush, sodium orange and cathode cyan, grain | sodium street lights, payphones, satellite dishes, CRTs and tapes |
-| Present (2000-) | cinematic digital painting, teal and neon, rain-slick, a touch of cyberpunk | LED screens, glass towers, phone glow, scooters, CCTV |
+Version 4 builds each era's style from five parts so the eras differ on every axis: **medium**, **light**,
+**palette**, **texture** (the print or film it seems to come from) and **tech** in frame. Late Century and Present
+were too close to each other; they are now pulled far apart.
+
+| Era | Medium | Light | Palette | Texture | Tech in frame |
+|---|---|---|---|---|---|
+| Medieval | egg tempera and gold leaf, Gothic altarpiece | candle, torch, rushlight; gold-leaf glow | lapis, vermilion, bone, gold | craquelure, worn gesso | no glass, no lamps but flame |
+| Victorian | academic oil, Pre-Raphaelite detail | amber gaslight in fog | umber, bottle green, oxblood, sepia | varnished canvas, albumen-print sepia | gas lamps, brass, steam, no electric light |
+| World Wars | expressionist oil with hand-tinted photograph | flat grey daylight, bare bulbs, searchlights | khaki, slate, mud, one tinted accent | newsprint halftone, dust, grain | lorries, field telephones, gas masks, posters |
+| Atomic | 1950s pulp-cover gouache | coloured rim light, neon, fluorescent | Kodachrome red, turquoise, mustard, cream | faint halftone dot | chrome, fins, TV aerials, valve radios |
+| Late Century | 1990s horror paperback and VHS box art, airbrush | harsh on-camera flash, sodium orange against CRT green | sodium orange, CRT green, bruise purple, washed blacks | film grain, VHS tracking lines, colour fringing | CRTs, beige PCs, payphones, pagers, camcorders, tapes |
+| Present | prestige-TV cinematography as a digital matte painting | cold LED, magenta neon, phone glow, lens flare | cyan, teal, magenta, crushed black | razor-sharp, shallow focus, rain reflections | smartphones, LED billboards, drones, smart speakers |
 
 People: the wardrobe for each era is spelled out in the prompt (coif and kirtle; frock coat and watch chain; cloche hat or
 greatcoat; flannel suit or beehive; 90s denim and pagers; tech shells and earbuds), and the background behind a portrait

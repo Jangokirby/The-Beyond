@@ -9,13 +9,22 @@
    The tone stays the same in every era: dark, quiet, something wrong.
    ========================================================================== */
 module.exports = {
-  STYLE: {
-    medieval: "medieval egg tempera and gold leaf panel painting, Gothic altarpiece style, flat perspective, rich lapis blue and vermilion, cracked aged varnish, dark and solemn",
-    victorian: "Victorian academic oil painting, Pre-Raphaelite detail, gaslight warmth, deep umber and bottle green, varnished canvas, dark and melancholy",
-    wars: "1910s-1930s expressionist oil painting mixed with hand-tinted photograph, muted khaki, slate grey and sepia, bold angular brushwork, grain, dark and sombre",
-    atomic: "1950s pulp magazine cover illustration in gouache, saturated Kodachrome colour, dramatic rim lighting, hard shadows, lurid and menacing",
-    modern: "1990s painted VHS cover and film poster art, airbrush, sodium orange and cathode cyan, film grain, flash-lit, eerie",
-    now: "contemporary cinematic digital painting, cool teal and black with neon and LED glow, sharp detail, rain-slick reflections, a touch of cyberpunk, unsettling"
+  /* v4: each era's look is built from five parts, so the eras pull apart on every axis, not just the medium:
+     medium (how it is painted), light (what lights the scene), palette, texture (the print or film it looks like
+     it came from) and tech (what is in the frame). Atomic was already distinct; Late Century and Present are now
+     pushed far apart from it and from each other. */
+  PARTS: {
+    medieval: { medium: "medieval egg tempera and gold leaf panel painting, Gothic altarpiece style, flat perspective, figures outlined in dark line", light: "candle, torch and rushlight only, gold-leaf glow behind the subject", palette: "lapis blue, vermilion, bone white and burnished gold on near-black", texture: "cracked aged varnish, worn gesso, tiny craquelure", tech: "no glass windows, no lamps but flame, iron, wood, wool and stone" },
+    victorian: { medium: "Victorian academic oil painting with Pre-Raphaelite detail, soft glazes", light: "warm amber gaslight and oil lamps, deep shadow, fog diffusing every light", palette: "umber, bottle green, oxblood and sepia", texture: "varnished canvas with the faint sepia of an albumen photograph", tech: "gas lamps, brass, cast iron, steam, top hats, no electric light" },
+    wars: { medium: "1910s-1930s expressionist oil painting mixed with a hand-tinted photograph, bold angular brushwork", light: "flat grey daylight, bare electric bulbs, flare and searchlight glare", palette: "muted khaki, slate grey, mud brown and sepia with one tinted accent", texture: "newsprint halftone and dust, heavy grain, faded tinting", tech: "early motor lorries, telegraph wires, field telephones, gas masks, sandbags, propaganda posters" },
+    atomic: { medium: "1950s pulp magazine cover illustration in gouache", light: "dramatic coloured rim lighting and hard shadows, neon and fluorescent glow", palette: "saturated Kodachrome reds, turquoise, mustard and cream", texture: "smooth gouache with a faint halftone print dot", tech: "chrome, tail fins, television aerials, valve radios, neon diner signs, civil-defence posters" },
+    modern: { medium: "late-1980s and 1990s horror paperback and VHS box art in airbrushed acrylic", light: "harsh on-camera flash with hard drop shadows, sodium-vapour orange street light against cathode-ray green and blue", palette: "sodium orange, CRT green, bruise purple and washed-out blacks", texture: "heavy film grain, VHS tracking lines and colour fringing at the edges, slightly soft focus", tech: "chunky CRT televisions and beige computers, payphones, pagers, flip phones, camcorders, VHS tapes, boxy 1990s cars" },
+    now: { medium: "contemporary prestige-TV cinematography rendered as a digital matte painting", light: "cold blue-white LED light and magenta neon, phone-screen glow on faces, anamorphic lens flare", palette: "cyan, teal, magenta and crushed black", texture: "razor-sharp detail, shallow depth of field, rain-slick reflections, clean digital noise", tech: "smartphones, LED billboards, delivery drones, glass towers, e-scooters, smart speakers, CCTV domes, a touch of cyberpunk" }
+  },
+  get STYLE() {
+    const o = {};
+    for (const [k, p] of Object.entries(this.PARTS)) o[k] = `${p.medium}, ${p.light}, ${p.palette}, ${p.texture}, dark and unsettling`;
+    return o;
   },
   WARDROBE: {
     medieval: { f: "a linen coif or veil, a wool kirtle and surcoat, a cloak pinned with a brooch, a rosary or pilgrim badge", m: "a hooded wool cloak, a tunic and belt, a gambeson or a monk's habit, a pilgrim badge or a cross on a cord" },
