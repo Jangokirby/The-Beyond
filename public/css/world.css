@@ -373,3 +373,20 @@ html.a-still *, html.a-still *::before, html.a-still *::after { animation-durati
 #story .gmline { border-left: 3px solid var(--sodium); padding-left: .6rem; }
 
 .tut { display: inline-block; font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; background: var(--sodium); color: #111; padding: 0 .4rem; margin-right: .4rem; border-radius: 2px; vertical-align: .1em; }
+
+/* ---- How to play (js/rulebook.js) */
+.rguide { display: grid; gap: .6rem; }
+.rg-search { width: 100%; font-size: 1rem; padding: .55rem .7rem; }
+.rg-cols { display: grid; grid-template-columns: minmax(150px, 210px) 1fr; gap: 1rem; align-items: start; }
+.rg-nav { display: flex; flex-direction: column; gap: .25rem; position: sticky; top: 0; }
+.rg-nav .segbtn { text-align: left; }
+.rg-main { min-width: 0; }
+.rg-main h3 { margin: .2rem 0 .6rem; }
+.rg-entry { margin: .3rem 0; }
+.rg-entry > div { padding: .3rem .2rem .5rem; line-height: 1.5; }
+.rg-entry ol { margin: .3rem 0 .3rem 1.2rem; }
+.rgmodal .rg-main { max-height: 62vh; overflow-y: auto; }
+@media (max-width: 700px) { .rg-cols { grid-template-columns: 1fr; } .rg-nav { flex-direction: row; flex-wrap: wrap; position: static; } }
+.rgmodal .rg-entry summary, .rgmodal .rg-main h3 { color: #5b2c10; }
+.rgmodal .rg-main .eyebrow { color: #6d5a44; }
+@media (max-width: 700px) { .rg-nav { flex-wrap: nowrap; overflow-x: auto; padding-bottom: .3rem; } .rg-nav .segbtn { white-space: nowrap; flex: 0 0 auto; } }
