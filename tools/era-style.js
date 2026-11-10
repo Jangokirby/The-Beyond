@@ -103,5 +103,182 @@ module.exports = {
   WORN: ["a mended collar", "ink-stained fingers", "a healed scar on the chin", "a missing button", "a faded old bruise", "a worn leather strap across the chest", "rain-damp hair", "a chipped tooth", "a small tattoo at the wrist", "dust on the shoulders"],
   /* clothing worn by the Late Century people of 2007-2021 */
   WARDROBE_LATE: { f: "a puffer jacket or a cardigan, skinny jeans, a smartphone in hand, earbuds, a lanyard", m: "a hoodie or a bomber jacket, chinos or jeans, a smartphone in hand, earbuds, a rucksack strap" },
+  /* v5: ten distinct outfits per era and sex (class, trade, colour, hair), so the people of one era do not dress alike */
+  WARDROBES: {
+    "medieval": {
+      "f": [
+        "a linen coif and an undyed wool kirtle with a leather belt, a small knife and a pilgrim badge",
+        "a madder-red woollen gown with long sleeves, a white veil and a silver brooch, hair in plaits under the veil",
+        "a black nun's habit with a white wimple, a wooden cross on a cord, hands folded in her sleeves",
+        "a patched blue-grey apron over a kirtle, sleeves rolled, a straw hat, hair tied back, a market basket",
+        "a fur-trimmed green surcoat over a gown, a gold circlet, a hanging purse and a jewelled belt",
+        "a hooded brown travelling cloak over a stained gown, a muddy hem and a walking staff",
+        "a leather jerkin over a linen shirt and hose, short cropped hair, a bow stave across her back",
+        "a widow's black gown with a heavy black veil, a rosary of jet beads",
+        "a midwife's plain grey gown and linen cap, a bundle of dried herbs at her belt",
+        "a scholar's dark gown with a hood, ink-stained cuffs, hair cropped under a cap, a book under one arm"
+      ],
+      "m": [
+        "a brown monk's habit with a rope belt and a shaved tonsure, a wooden cross",
+        "a quilted gambeson and a mail coif, a plain sword belt, a dented helmet under one arm",
+        "a russet tunic and hose, a leather apron, a felt hood and thick forearms, a craftsman's hammer",
+        "a hooded wool cloak over a tunic, a pilgrim's staff and scallop badge, a travel-stained face",
+        "a velvet-trimmed deep blue houppelande with a chain of office and a low cap",
+        "a black priest's cassock with a plain cord belt, a prayer book chained at his hip",
+        "a leather jerkin with rolled sleeves, a woodsman's axe at the belt, a full beard",
+        "a merchant's red hood and a belted long gown, a heavy purse and a wax tablet",
+        "a ragged beggar's patched cloak, a bare head, a wooden bowl in his hand",
+        "an old scribe's dark robe with ink-stained fingers, a skullcap, a pen case on a cord"
+      ]
+    },
+    "victorian": {
+      "f": [
+        "a high-collared black silk dress with jet buttons, a cameo at the throat, hair pinned up under a small bonnet",
+        "a plain brown wool walking dress with a white collar, a straw hat with a ribbon, a parasol",
+        "a nurse's grey dress with a white apron and cap, a small watch pinned at the breast",
+        "a green bustle dress with a fitted jacket, a feathered hat and gloves",
+        "a housemaid's black dress with a white apron and mob cap, sleeves rolled",
+        "a mourning gown with a heavy black veil and crape, a hair-work locket",
+        "a tweed travelling suit with a neat hat, a leather satchel and sturdy boots",
+        "a dark blue shopgirl's dress with a white collar, hair in a tight bun, a pencil behind her ear",
+        "a shabby shawl over a patched dress, loose hair, a flower-seller's basket",
+        "a plum velvet evening gown with lace sleeves, a pearl choker, hair in ringlets"
+      ],
+      "m": [
+        "a black frock coat, a waistcoat with a watch chain, a high starched collar and cravat, side whiskers, a top hat",
+        "a policeman's dark tunic with brass buttons, a tall helmet and a rattle on his belt",
+        "a rumpled tweed suit, a bowler hat, a pencil-stub notebook, a drooping moustache",
+        "a clerk's shiny black coat with sleeve protectors, wire spectacles, a quill behind his ear",
+        "corduroy trousers, braces and a waistcoat, a flat cap, a neckerchief, soot on his face",
+        "a doctor's dark coat, a leather bag and a neat beard",
+        "a clergyman's black coat and white collar and a wide-brimmed hat",
+        "a dandy's plum coat with a silk cravat and a monocle, a waxed moustache, a silver-topped cane",
+        "a faded red army tunic with brass buttons, a moustache, a ribbon of medals",
+        "a dock labourer's rough jacket and cap, a muffler, a scar on his cheek"
+      ]
+    },
+    "wars": {
+      "f": [
+        "a nurse's long grey dress with a white apron, a red cross and a veil",
+        "a 1920s drop-waist dress, a cloche hat, a bobbed haircut, a long string of beads",
+        "a land girl's dungarees, a headscarf, rolled sleeves and muddy boots",
+        "a munitions worker's overalls, hair tied up in a turban scarf, a lunch tin",
+        "a 1930s tailored wool coat with a fox-fur collar and a felt hat tilted to one side",
+        "a woman ambulance driver's greatcoat and peaked cap, leather gauntlets",
+        "a 1940s utility dress with padded shoulders, victory-rolled hair, a gas-mask bag",
+        "a typist's blouse and long skirt, round glasses, hair in a low bun, a pencil in her hair",
+        "a widow's black coat and small black hat with a short veil, a telegram folded in her glove",
+        "a farmer's wife's flowered apron over a plain dress, a headscarf, bare forearms"
+      ],
+      "m": [
+        "an army greatcoat and steel helmet, puttees and a gas-mask bag",
+        "a three-piece grey suit, a watch chain, a bowler hat and a pencil moustache",
+        "a flat cap, a collarless shirt, a waistcoat, braces and a muffler",
+        "a belted trench coat, a fedora, a loosened tie and a cigarette",
+        "a field surgeon's blood-spotted apron over a uniform, rolled sleeves, round glasses",
+        "a pilot's leather flying jacket, goggles pushed up on a leather cap, a silk scarf",
+        "a civil-defence warden's dark overalls, a tin helmet and a whistle",
+        "a chaplain's black coat and collar, a small cross, a worn-out face",
+        "a docker's rough jersey and cap, a hook at his belt",
+        "a country doctor's tweed jacket and cap, a black bag, a pipe"
+      ]
+    },
+    "atomic": {
+      "f": [
+        "a fitted charcoal pencil-skirt suit, cat-eye glasses, red lipstick, hair set in a neat roll",
+        "a full-skirted polka-dot swing dress, a headscarf knotted at the neck, white gloves",
+        "a starched white nurse's uniform and cap, a fob watch, sensible shoes",
+        "a pale-blue diner waitress's uniform with a white apron, hair in a high ponytail",
+        "a 1960s orange shift dress, a bouffant beehive, white go-go boots",
+        "a white lab coat over a blouse, horn-rimmed glasses, hair pinned up, a pencil in the pocket",
+        "a 1970s brown corduroy jacket, flared jeans, long centre-parted hair, round tinted glasses",
+        "a housewife's checked apron over a cardigan, curlers under a headscarf",
+        "a belted trench coat and a headscarf, large sunglasses, a leather handbag",
+        "a 1970s wide-collared polyester blouse and velvet blazer, feathered hair"
+      ],
+      "m": [
+        "a grey flannel suit, a narrow tie, horn-rimmed glasses and a fedora",
+        "a leather jacket over a white T-shirt, jeans, a slicked quiff, a cigarette",
+        "a police officer's dark uniform and peaked cap, a badge and a nightstick",
+        "grease-stained mechanic's coveralls, a cap and rolled sleeves",
+        "a crew cut, an olive field jacket and a dog-tag chain",
+        "a short-sleeved white shirt and skinny tie, a pocket protector full of pens, black-rimmed glasses",
+        "a 1970s tan suede jacket with a wide collar, long sideburns, aviator sunglasses",
+        "a white doctor's coat, a stethoscope, a receding hairline, wire glasses",
+        "a black clerical shirt and collar under a raincoat, a grey crew cut",
+        "denim overalls, a seed-company cap and a sunburnt neck"
+      ]
+    },
+    "modern": {
+      "f": [
+        "an oversized flannel shirt over a band T-shirt, ripped jeans, a choker, long straight hair",
+        "a navy power suit with shoulder pads, big permed hair, gold earrings, a pager at her belt",
+        "a baggy denim jacket over a slip dress, combat boots, a messy bun",
+        "hospital scrubs with a lanyard badge, hair in a ponytail, a pager",
+        "a bomber jacket, high-waisted jeans, a bandana and big hoop earrings",
+        "a cardigan over a turtleneck, round glasses, a satchel of books, a Walkman clipped to her belt",
+        "a tracksuit top and trainers, a scrunchie, hair in a high ponytail",
+        "a long wool coat over a polo neck, a short sharp bob, red lipstick",
+        "a waitress's apron over a plain T-shirt, hair tied back, a pencil behind her ear",
+        "a floral sundress and a denim jacket, a bucket hat, a disposable camera on a strap"
+      ],
+      "m": [
+        "a windbreaker, a plaid shirt, baggy jeans, curtain hair, a pager at his belt",
+        "a leather jacket over a white T-shirt, a goatee, a buzz cut",
+        "a rumpled suit with a loose tie, a short-sleeved shirt, a lanyard",
+        "an oversized hoodie, baggy cargo trousers, a beanie, a skateboard under one arm",
+        "a police detective's blazer over a polo shirt, a badge on his belt, a moustache",
+        "a trucker's cap, a flannel shirt, a thick beard, a thermos",
+        "a lab coat over a striped shirt, round glasses, a clipboard",
+        "a bomber jacket, a shaved head, combat trousers, a duffel bag",
+        "a Hawaiian shirt, shorts, sandals, a gold chain, a camcorder",
+        "a corduroy blazer over a turtleneck, a ponytail, a satchel"
+      ]
+    },
+    "now": {
+      "f": [
+        "a technical shell jacket, wireless earbuds, a smartwatch, a lanyard",
+        "an oversized wool coat, a knit beanie, a face mask pulled under the chin, a tote bag",
+        "hospital scrubs with a lanyard, hair in a braid, a smartwatch",
+        "a puffer jacket, a hijab in a muted colour, a laptop bag",
+        "a tailored blazer over a white T-shirt, a sleek bob, small hoops, a phone in hand",
+        "a courier's high-visibility jacket and cycling helmet, a delivery backpack",
+        "a hoodie under a denim jacket, wire-frame glasses, a shaved side, a nose ring",
+        "a long camel coat and a scarf, sunglasses pushed up, a takeaway coffee cup",
+        "a utility vest over a long-sleeved top, cargo trousers, hair in a high bun, a tablet",
+        "an oversized graphic tee, wide trousers, bright trainers, headphones round her neck"
+      ],
+      "m": [
+        "a technical jacket, a tactical vest, wireless earbuds, a messenger bag",
+        "a hoodie under a bomber jacket, a beanie, headphones, a smartphone",
+        "a suit without a tie, trainers, a smartwatch, a laptop bag",
+        "a high-visibility jacket and hard hat, a tablet, a thermos",
+        "a puffer vest over a shirt, a trimmed beard, a lanyard, an e-scooter helmet",
+        "a delivery courier's jacket, an insulated cube backpack, a face mask",
+        "an oversized knit jumper, round glasses, a man-bun, a tote bag, a tattooed forearm",
+        "a leather jacket, slim jeans, a buzz cut, a phone on a gimbal",
+        "a lab coat over a hoodie, safety glasses pushed up, a tablet",
+        "a long dark overcoat, a scarf, a close beard, a thermal flask, headphones"
+      ]
+    },
+    "late": {
+      "f": [
+        "a puffer jacket, skinny jeans, a lanyard and a smartphone in hand",
+        "a cardigan, skinny jeans, earbuds in, a smartphone in hand",
+        "a hoodie, leggings, trainers, a tote bag",
+        "a blazer and pencil skirt, a lanyard, a takeaway coffee",
+        "a denim jacket, a beanie, a rucksack",
+        "a raincoat, a scarf, a canvas tote bag, a phone in her pocket"
+      ],
+      "m": [
+        "a hoodie, chinos, earbuds, a smartphone in hand",
+        "a bomber jacket, jeans, a rucksack strap, a smartphone",
+        "a shirt with a loosened tie and a lanyard, a laptop bag",
+        "a padded gilet over a shirt, a beanie, a takeaway coffee",
+        "a cardigan, a beard, a rucksack, headphones",
+        "an anorak, jeans, headphones round his neck, a phone in hand"
+      ]
+    }
+  },
   HERITAGE: ["white European", "Black African", "South Asian", "East Asian", "Middle Eastern", "Latin American", "Afro-Caribbean", "Southeast Asian", "North African", "Mediterranean"]
 };

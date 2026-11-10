@@ -77,8 +77,8 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
     const n = String(i + 1).padStart(2, "0");
     const ei = data.eras.indexOf(e), sx = sex === "f" ? 0 : 5;
     add("Agent portraits (character creator)", `portraits/agents/${e.id}-${sex}-${n}.png`, SQ, `${e.name}: ${sex === "f" ? "woman" : "man"} ${n}`,
-      `head-and-shoulders portrait of (${/^[aeiou]/i.test(ES.HERITAGE[i]) ? "an" : "a"} ${ES.HERITAGE[i]} ${lk}:1.3), ${ES.BUILDS[(i + ei) % 10]}, ${ES.WORN[(i * 7 + ei + sx) % 10]}, (wearing ${ES.WARDROBE[e.id][sex]}:1.2), ${ES.POSES[(i * 3 + ei + sx) % 10]}, ${ES.EXPRESSIONS[(i * 7 + ei * 3 + sx) % 10]}, investigator of the supernatural, ${ES.BACKDROP[e.id]}`,
-      "Heritage, wardrobe and medium all date the face: the same person in two eras should look like two different paintings.", "(modern clothes:1.2), (signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v5", ES.STYLE[e.id], { hero: lk });
+      `head-and-shoulders portrait of (${/^[aeiou]/i.test(ES.HERITAGE[i]) ? "an" : "a"} ${ES.HERITAGE[i]} ${lk}:1.3), ${ES.BUILDS[(i + ei) % 10]}, ${ES.WORN[(i * 7 + ei + sx) % 10]}, (wearing ${ES.WARDROBES[e.id][sex][(i * 7 + 2 + sx) % 10]}:1.2), ${ES.POSES[(i * 3 + ei + sx) % 10]}, ${ES.EXPRESSIONS[(i * 7 + ei * 3 + sx) % 10]}, investigator of the supernatural, ${ES.BACKDROP[e.id]}, face in the upper middle`,
+      "Heritage, wardrobe and medium all date the face: the same person in two eras should look like two different paintings. Ten different outfits per era and sex.", (e.id === "modern" || e.id === "now" ? "" : "(modern clothes:1.2), ") + "(signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v5", ES.STYLE[e.id], { hero: lk });
   });
 
   /* 1b. fighters: knights and soldiers through the ages (and the Order of Infinite Dark's ceremonial armour) */
@@ -97,8 +97,8 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
     ["now", "m", "a present-day private military contractor in plate carrier and helmet with night-vision mount, rain on his visor, a black-sun patch on the shoulder"]
   ];
   FIGHTERS.forEach(([era, sex, d], i) => add("Agent portraits: knights and soldiers", `portraits/agents/${era}-${sex}-${String(23 + (i % 2)).padStart(2, "0")}.png`, SQ, d.split(",")[0],
-    `head-and-shoulders portrait of (${d}:1.3), ${ES.POSES[(i * 3 + 1) % 10]}, ${ES.EXPRESSIONS[(i * 7 + 2) % 10]}, ${ES.BACKDROP[era]}`,
-    "A fighter from this era. The black sun is the Order of Infinite Dark's emblem (the book's knightly agency).", "(modern clothes, cosplay, costume:1.2), (signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v5", ES.STYLE[era], { hero: d.split(",")[0] }));
+    `head-and-shoulders portrait of (${d}:1.3), ${ES.POSES[(i * 3 + 1) % 10]}, ${ES.EXPRESSIONS[(i * 7 + 2) % 10]}, ${ES.BACKDROP[era]}, face in the upper middle`,
+    "A fighter from this era. The black sun is the Order of Infinite Dark's emblem (the book's knightly agency).", (era === "modern" || era === "now" ? "(cosplay, costume:1.2)" : "(modern clothes, cosplay, costume:1.2)") + ", (signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v5", ES.STYLE[era], { hero: d.split(",")[0] }));
 
   /* 2. named characters */
   const hsh = (t) => [...String(t)].reduce((h, ch) => (Math.imul(h, 31) + ch.charCodeAt(0)) >>> 0, 7);
@@ -106,7 +106,7 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
   const npcRow = (c, n, prefix = "npc") => {
     if (n.recurs && recurring[n.recurs]) { recurring[n.recurs].note += ` Also appears in ${c.title}: the game shows this one picture there too.`; return; }
     const key = ES.eraKey(c.era, c.year), h = hsh(n.name);
-    const dress = key === "late" ? `wearing ${ES.WARDROBE_LATE[n.sex === "f" ? "f" : "m"]}` : `Clothing of ${eraWords[key]}`;
+    const dress = key === "late" ? `wearing ${ES.WARDROBES.late[n.sex === "f" ? "f" : "m"][h % 6]}` : `Clothing of ${eraWords[key]}`;
     const row = add(`Characters: ${c.title} (${c.year})`, n.recurs ? `portraits/npc/recurring-${n.recurs}.png` : `portraits/${prefix}/${c.id}-${n.id}.png`, SQ, `${n.name}, ${n.tag}`,
       `head-and-shoulders portrait of ${n.name}, ${n.tag}. ${n.look} (${dress}:1.2), ${ES.POSES[h % 10]}, ${ES.EXPRESSIONS[(h >> 3) % 10]}, ${ES.BACKDROP[c.era] || "dim background"}.`, n.recurs ? `Recurring: appears in several cases of ${c.title.split(":")[0]}. Make it once.` : "", "(signature, text, watermark:1.5), frame, cartoon, 3d render, photograph", "v5", ES.STYLE[c.era], { hero: `${n.name}, ${n.tag}` });
     if (n.recurs) recurring[n.recurs] = row;
@@ -209,7 +209,7 @@ const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] ||
     `- Generic rooms and every indoor theme (cellar, church, lab, train, village) list indoor things for their era. They no longer borrow the street list.\n` +
     `- Late Century is split: 1990s and early 2000s, and 2007-2021 (the Vacancy case, 2016). Generic Late Century rows are the 1990s look.\n` +
     `- No readable text in any prompt (signs, labels, headlines, countdowns): shapes only. At most three weighted phrases per prompt.\n` +
-    `- Portraits vary in head angle, expression, build and one worn detail, so people of one era no longer look cloned.\n` +
+    `- Portraits vary in head angle, expression, build and one worn detail, and every agent portrait has its own outfit (ten per era and sex, 120 in all, each with its own class, trade, colour and hair). Agent portraits end "face in the upper middle"; the 1990s and present-day portraits no longer have "modern clothes" in the negative.\n` +
     `- A character who appears in several cases of a campaign has one row and one picture (marked Recurring). The game shows that picture in every case.\n` +
     `- The drive-in screen row is rewritten (blazing white, black screen in the negative). Fight backdrops no longer ask for a plain bottom third: the game darkens them.\n\n`;
   md += `| Group | Pictures |\n|---|---|\n`;

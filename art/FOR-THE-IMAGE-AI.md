@@ -15,8 +15,11 @@ Written 2026-11-10. This goes with `asset-list.csv`, `asset-list-v5-todo.csv` an
    per-era list. No row borrows the street list. The six interiors are in the CSV (`scenes/generic/interior-*.png`).
 4. **No readable text anywhere** (signs, labels, countdowns, "ON AIR"): shapes only. **At most three weighted
    phrases** per prompt.
-5. **Portraits vary** in head angle, expression, build and one worn detail. The shared tail "looking at the viewer,
-   face in the upper middle" is gone.
+5. **Portraits vary** in head angle, expression, build and one worn detail, and **every agent portrait has its own
+   outfit**: ten per era and sex, 120 in all, each with its own class, trade, colour and hair (you were right that 24
+   shared descriptions was the cause). Your two fixes are adopted: agent portraits end "face in the upper middle" (without
+   "looking at the viewer", which would fight the poses), and the 1990s and present-day portraits no longer carry
+   "modern clothes" in the negative.
 6. **Recurring characters have one row and one file** (`portraits/npc/recurring-*.png`: Tobiah, June Hollister, Hale,
    Tolly, Ashgrove). The game shows that picture in every case they appear in.
 7. **Drive-in screen**: rewritten as a blazing white screen, with "black screen, dark screen, dim screen" in the
