@@ -1,0 +1,11 @@
+{
+  "appId": "app.afterglow.dating",
+  "appName": "Afterglow",
+  "webDir": "www",
+  "server": { "androidScheme": "http", "cleartext": true },
+  "android": { "allowMixedContent": true },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "LocalNotifications": { "smallIcon": "ic_stat_icon", "iconColor": "#FF4F7B" }
+  }
+}
