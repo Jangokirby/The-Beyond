@@ -83,6 +83,7 @@
 
   /* ============================================================ EDITOR SHELL */
   const TABS = [["overview", "Overview"], ["flow", "Flow map"], ["scenes", "Scenes"], ["npcs", "People"], ["clues", "Clues"], ["monsters", "Monsters"], ["maps", "Battle maps"], ["notes", "Case notes"], ["check", "Check"], ["json", "Raw data"]];
+  ui.gmEditCase = (id) => { const a = GM.get(id); if (!a) return; cur = clone(a); tab = "overview"; sel = {}; ui.gmEdit(); };
   ui.gmEdit = () => {
     const scroll = document.querySelector("#camp-root") ? document.querySelector("#camp-root").scrollTop : 0;
     const v = GM.validate(cur);
@@ -163,22 +164,23 @@
 
   const condEditor = (o, k, label) => {
     const v = o[k];
-    const kind = !v ? "" : typeof v === "string" ? "flag" : v.clue ? "clue" : v.obj ? "obj" : v.not && typeof v.not === "string" ? "nflag" : v.not && v.not.clue ? "nclue" : v.not && v.not.obj ? "nobj" : "custom";
-    const val = !v ? "" : typeof v === "string" ? v : v.clue || v.obj || (v.not && (typeof v.not === "string" ? v.not : v.not.clue || v.not.obj)) || "";
-    const set = (kd, vl) => { const mk = { flag: () => vl, clue: () => ({ clue: vl }), obj: () => ({ obj: vl }), nflag: () => ({ not: vl }), nclue: () => ({ not: { clue: vl } }), nobj: () => ({ not: { obj: vl } }) }[kd]; if (!kd || !mk) delete o[k]; else o[k] = mk(); commit(); };
+    const kind = !v ? "" : typeof v === "string" ? "flag" : v.clue ? "clue" : v.obj ? "obj" : v.arc ? "arc" : v.not && typeof v.not === "string" ? "nflag" : v.not && v.not.clue ? "nclue" : v.not && v.not.obj ? "nobj" : v.not && v.not.arc ? "narc" : "custom";
+    const val = !v ? "" : typeof v === "string" ? v : v.clue || v.obj || v.arc || (v.not && (typeof v.not === "string" ? v.not : v.not.clue || v.not.obj || v.not.arc)) || "";
+    const set = (kd, vl) => { const mk = { flag: () => vl, clue: () => ({ clue: vl }), obj: () => ({ obj: vl }), nflag: () => ({ not: vl }), nclue: () => ({ not: { clue: vl } }), nobj: () => ({ not: { obj: vl } }), arc: () => ({ arc: vl }), narc: () => ({ not: { arc: vl } }) }[kd]; if (!kd || !mk) delete o[k]; else o[k] = mk(); commit(); };
     const valBox = el("span", { class: "condval" });
     const draw = (kd) => {
       valBox.replaceChildren();
       if (kd === "custom") { valBox.append(el("code", { class: "small" }, JSON.stringify(v)), el("span", { class: "small muted" }, " (advanced condition, edit in Raw data)")); return; }
       if (!kd) return;
       const base = kd.replace(/^n/, "");
-      if (base === "flag") valBox.append(el("input", { type: "text", value: val, list: "gm-flags", placeholder: "flag name", oninput: (e) => set(kd, e.target.value) }));
+      if (base === "arc") valBox.append(el("input", { type: "text", value: val, list: "gm-arcflags", placeholder: "campaign choice", oninput: (e) => set(kd, e.target.value) }));
+      else if (base === "flag") valBox.append(el("input", { type: "text", value: val, list: "gm-flags", placeholder: "flag name", oninput: (e) => set(kd, e.target.value) }));
       else if (base === "clue") valBox.append(el("select", { onchange: (e) => set(kd, e.target.value) }, ...opt(cur.clues, (c) => c.t || "clue").map(([x, l]) => el("option", { value: x, selected: x === val ? "selected" : null }, l))));
       else valBox.append(el("select", { onchange: (e) => set(kd, e.target.value) }, ...[["", "(choose)"], ...cur.objectives.map((ob) => [ob.id, ob.t])].map(([x, l]) => el("option", { value: x, selected: x === val ? "selected" : null }, l))));
     };
     draw(kind);
     const s = el("select", { onchange: (e) => { const kd = e.target.value; if (!kd) delete o[k]; else if (kd !== "custom") set(kd, ""); draw(kd); } },
-      ...[["", "Always"], ["flag", "A flag is set"], ["nflag", "A flag is not set"], ["clue", "Clue is found"], ["nclue", "Clue is not found"], ["obj", "Objective is done"], ["nobj", "Objective is not done"], ...(kind === "custom" ? [["custom", "Custom"]] : [])].map(([x, l]) => el("option", { value: x, selected: x === kind ? "selected" : null }, l)));
+      ...[["", "Always"], ["flag", "A flag is set"], ["nflag", "A flag is not set"], ["clue", "Clue is found"], ["nclue", "Clue is not found"], ["obj", "Objective is done"], ["nobj", "Objective is not done"], ["arc", "An earlier case's choice was made"], ["narc", "An earlier case's choice was not made"], ...(kind === "custom" ? [["custom", "Custom"]] : [])].map(([x, l]) => el("option", { value: x, selected: x === kind ? "selected" : null }, l)));
     return el("div", { class: "condrow" }, el("span", { class: "small muted" }, label), s, valBox);
   };
 
@@ -197,6 +199,7 @@
       { kind: "sel", o: st, k: "combat", label: "Battle map", opts: opt(cur.encounters, (e) => e.name) }, { kind: "bool", o: st, k: "surprise", label: "The agents get a surprise round" },
       { kind: "text", o: st, k: "surpriseIf", label: "…or only if this flag is set", list: "gm-flags" }, { kind: "steps", o: st, k: "win", label: "After the agents win" }] },
     goto: { label: "Go to a scene", make: () => ({ goto: ids(cur.scenes)[0] || "" }), fields: (st) => [{ kind: "sel", o: st, k: "goto", label: "Scene", opts: opt(cur.scenes, (s) => s.name) }] },
+    arcSet: { label: "Remember a choice for the campaign", make: () => ({ arcSet: "" }), fields: (st) => [{ kind: "text", o: st, k: "arcSet", label: "Choice name (later cases in the campaign can check it)", list: "gm-arcflags" }] },
     clue: { label: "Find a clue", make: () => ({ clue: "" }), fields: (st) => [{ kind: "sel", o: st, k: "clue", label: "Clue", opts: opt(cur.clues, (c) => c.t) }] },
     objective: { label: "Complete an objective", make: () => ({ objective: "" }), fields: (st) => [{ kind: "sel", o: st, k: "objective", label: "Objective", opts: [["", "(choose)"], ...cur.objectives.map((o) => [o.id, o.t])] }] },
     set: { label: "Set a flag", make: () => ({ set: "" }), fields: (st) => [{ kind: "text", o: st, k: "set", label: "Flag name (remember what happened)", list: "gm-flags" }] },
@@ -260,7 +263,7 @@
     const w = el("div", {}); const sids = Object.keys(cur.scenes);
     if (!sel.scene || !cur.scenes[sel.scene]) sel.scene = sids[0];
     const fl = el("datalist", { id: "gm-flags" }, ...flagsInUse().map((f) => el("option", { value: f })));
-    w.append(fl);
+    w.append(fl, el("datalist", { id: "gm-arcflags" }, ...(window.GMCAMP ? GMCAMP.allArcFlags() : []).map((f) => el("option", { value: f }))));
     w.append(el("div", { class: "seg" }, ...sids.map((id) => el("button", { class: "segbtn" + (id === sel.scene ? " on" : ""), onclick: () => { sel.scene = id; redraw(); } }, (cur.scenes[id].name || id) + (cur.start === id ? " ★" : ""))),
       btn("+ New scene", () => { const id = slug("scene", cur.scenes); cur.scenes[id] = { name: "New scene", theme: "interior", mood: "calm", lighting: "normal", weather: "", cast: [], notes: "", onEnter: [{ say: "" }], options: [] }; sel.scene = id; commit(); redraw(); }, "small")));
     const s = cur.scenes[sel.scene]; if (!s) return w;
