@@ -36,6 +36,7 @@
         chk("Colour-blind friendly bars", () => S.colour, (v) => (S.colour = v)),
         chk("Reduce motion (no shakes or flashes)", () => S.still, (v) => (S.still = v)),
         el("h4", { class: "set-head" }, "Pictures"),
+        window.ART_STYLE_FIXED ? el("p", { class: "small muted set-note" }, `This page shows the ${window.ART_STYLE || "painted"} style only. The full game switches between Painted, Photo and Drawn here.`) :
         el("label", { class: "set" }, el("span", {}, "Art style"), el("select", { onchange: async (e) => {
           const v = e.target.value, was = window.ART_STYLE || "painted";
           if (v === was) return;

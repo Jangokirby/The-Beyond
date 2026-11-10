@@ -1,4 +1,6 @@
-# Next work (agreed 2026-11-09, start when Gage says "go")
+# Next work (agreed 2026-11-09; started 2026-11-10)
+
+Done: 1 (RULES-AUDIT.md), 2 (save files), 4 (one game, Art style setting).
 
 Order: 1, 2, 4 first, then 3, 5, 7.
 
@@ -33,6 +35,7 @@ Order: 1, 2, 4 first, then 3, 5, 7.
   encounters on the fly, drop in monsters and NPCs, reveal handouts, call for rolls, manage the table.
 
 ## Housekeeping
-- Code lives on GitLab: gitlab.com/bio4shock/the-beyond (main, dossier, painted). GitHub account suspended.
-- Live site (drawn): https://the-beyond-yvb3.onrender.com. Painted/photo Blueprints use branches painted/dossier.
+- Code lives on GitLab: gitlab.com/bio4shock/the-beyond. Everything is on main now; the old dossier and painted
+  branches are kept only as history.
+- Live site: https://the-beyond-yvb3.onrender.com (Painted by default; Settings > Art style for Photo or Drawn).
 - Desktop installers need rebuilding on GitLab with the new server address.
