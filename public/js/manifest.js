@@ -95,7 +95,15 @@ window.ASSETS = {
   ambience: {
     rain:     { src: "assets/audio/sfx/rain_loop.mp3",    volume: 0.45 },
     building: { src: "assets/audio/sfx/building_hum.mp3", volume: 0.35 },
-    boiler:   { src: "assets/audio/sfx/boiler.mp3",       volume: 0.4 }
+    boiler:   { src: "assets/audio/sfx/boiler.mp3",       volume: 0.4 },
+    wind:     { src: "assets/audio/sfx/amb_wind.mp3",     volume: 0.4 },
+    storm:    { src: "assets/audio/sfx/amb_storm.mp3",    volume: 0.4 },
+    sea:      { src: "assets/audio/sfx/amb_sea.mp3",      volume: 0.4 },
+    night:    { src: "assets/audio/sfx/amb_night.mp3",    volume: 0.3 },
+    fire:     { src: "assets/audio/sfx/amb_fire.mp3",     volume: 0.4 },
+    city:     { src: "assets/audio/sfx/amb_city.mp3",     volume: 0.3 },
+    train:    { src: "assets/audio/sfx/amb_train.mp3",    volume: 0.35 },
+    dread:    { src: "assets/audio/sfx/amb_dread.mp3",    volume: 0.35 }
   },
   sfx: {
     ui_click: { src: "assets/audio/sfx/ui_click.mp3", volume: 0.5 },

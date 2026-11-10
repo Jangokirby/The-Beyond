@@ -73,7 +73,19 @@
   /* ================================================================ compile */
   const asArr = (x) => (x == null ? [] : Array.isArray(x) ? x : [x]);
   const MUSIC = { calm: "investigation", dread: "basement", weird: "paperhouse", tense: "investigation", boss: "boss" };
-  const AMB = { rain: "rain", building: "building", boiler: "boiler" };
+  /* ambience beds (recorded, assets/audio/sfx): a scene's weather picks one; with no weather, its theme does.
+     weather "none" keeps a scene silent. */
+  const AMB = { rain: "rain", building: "building", boiler: "boiler", wind: "wind", storm: "storm", sea: "sea", night: "night", fire: "fire", city: "city", train: "train", dread: "dread" };
+  const THEME_AMB = { sea: "sea", forest: "night", village: "night", desert: "wind", snow: "wind", trench: "wind", castle: "wind", fog: "wind", train: "train", cellar: "boiler", lab: "building", modern: "building", future: "city", street: "city", drive: "night", cave: "dread", church: "dread" };
+  /* machine sounds only after their time: a 1187 cellar gets dread, not a boiler */
+  const AMB_FROM = { boiler: 1880, building: 1925, city: 1925, train: 1830 };
+  const AMB_BEFORE = { boiler: "dread", building: "dread", city: "wind", train: "wind" };
+  ADV.ambienceFor = (sc, year) => {
+    if (sc.weather === "none") return null;
+    if (AMB[sc.weather]) return AMB[sc.weather];
+    const k = THEME_AMB[sc.theme || "street"] || null;
+    return k && year && AMB_FROM[k] > year ? AMB_BEFORE[k] : k;
+  };
 
   ADV.cond = (c, g) => {
     if (c == null) return true;
@@ -228,7 +240,7 @@
     for (const [id, sc] of Object.entries(a.scenes)) {
       M.locations[id] = {
         name: sc.name, theme: sc.theme || "street", jp: sc.jp || "", scene: window.ART.scene(sc.theme || "street", id), music: MUSIC[sc.mood || "calm"] || "investigation",
-        ambience: AMB[sc.weather] || null, lighting: sc.lighting || "normal", severity: +sc.severity || 0, particles: sc.weather === "rain" ? "rain" : "none",
+        ambience: ADV.ambienceFor(sc, a.year), lighting: sc.lighting || "normal", severity: +sc.severity || 0, particles: sc.weather === "rain" || sc.weather === "storm" ? "rain" : "none",
         cast: () => (sc.cast || []).filter((n) => !sc.castIf || ADV.cond(sc.castIf[n], window.GAME.api)),
         enter: async (g) => { if (sc.onEnter) await ADV.exec(sc.onEnter, g, M); },
         hotspots: [],

@@ -1,5 +1,7 @@
 /* ============================================================================
-   SYNTH — ambience and sound effects made in code (music is recordings only, see js/score.js).
+   SYNTH — fallback only. Every sound effect and ambience bed is a recording now (assets/audio/sfx,
+   credits in assets/audio/CREDITS.md); this makes a stand-in in code only if a file is missing.
+   Music is recordings only (js/score.js).
 
    Whenever an audio file listed in manifest.js can't be loaded, the player asks
    this file to build the sound instead, so the game is never silent. Drop real
