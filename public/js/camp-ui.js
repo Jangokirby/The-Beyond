@@ -152,7 +152,7 @@
         el("label", { class: "field" }, el("span", {}, "Age"), el("input", { type: "number", min: "16", max: "90", value: String(draft.age), oninput: (e) => { draft.age = +e.target.value || 30; } }))),
       el("label", { class: "field" }, el("span", {}, "Backstory: how did you end up in this work?"), el("textarea", { rows: "4", oninput: (e) => { draft.bio = e.target.value; } }, draft.bio)),
       el("div", { class: "two" },
-        el("label", { class: "field" }, el("span", {}, "Size"), el("select", { onchange: (e) => { draft.size = e.target.value; redraw(); } }, ...C.SIZES.map((s) => el("option", { value: s.id, selected: draft.size === s.id ? "selected" : null },
+        el("label", { class: "field" }, el("span", {}, "Size"), el("select", { onchange: (e) => { draft.size = e.target.value; redraw(); } }, ...C.SIZES.filter((s) => s.start !== false).map((s) => el("option", { value: s.id, selected: draft.size === s.id ? "selected" : null },
           `${s.name}${s.er ? `, ${s.er > 0 ? "+" : ""}${s.er} ER` : ""}${s.health ? `, ${s.health > 0 ? "+" : ""}${s.health} Health` : ""}${s.br ? `, +${s.br} BR` : ""}${s.attack ? `, +${s.attack} Attack` : ""}`)))),
         el("label", { class: "field" }, el("span", {}, "Languages besides English"), el("input", { type: "text", value: draft.languages, placeholder: window.PEOPLE && PEOPLE.get(draft.origin) ? `${PEOPLE.get(draft.origin).langs.filter((l) => l !== "English").join(", ") || "English only"} from home; more needs IQ above 3` : "needs IQ above 3 for more than your native one", oninput: (e) => { draft.languages = e.target.value; } })))));
 
@@ -203,6 +203,7 @@
       el("div", { class: "bggrid" }, ...GD.artifacts.map((x) => el("button", { class: "bgcard" + (draft.pickArtifact === x.name ? " sel" : ""), onclick: () => { draft.pickArtifact = x.name; redraw(); } }, el("b", {}, x.name), el("small", {}, ph2(x.effects).slice(0, 140) + (x.effects.length > 140 ? "…" : "")))))));
     if (bgd && bgd.patron) extra.push(el("div", {}, el("h4", {}, "Your patron"), note("You begin with this patron's first gift. More gifts come from level-ups."),
       el("div", { class: "bggrid" }, ...GD.deities.map((d) => el("button", { class: "bgcard" + (draft.pickPatron === d.name ? " sel" : ""), onclick: () => { draft.pickPatron = d.name; redraw(); } }, el("b", {}, d.name), el("small", {}, ph2(d.domain || d.pantheon || "")), el("small", {}, ph2(d.demands || "").slice(0, 110)))))));
+    if (bgd && bgd.id === "Mutant") { if (!draft.pickMutation) draft.pickMutation = R.MUTATIONS[0].id; extra.push(el("label", { class: "field" }, el("span", {}, "Your Mutant Trait"), el("select", { onchange: (e) => { draft.pickMutation = e.target.value; redraw(); } }, ...R.MUTATIONS.map((m) => el("option", { value: m.id, selected: draft.pickMutation === m.id ? "selected" : null }, `${m.name}: ${m.text}`))))); }
     const hasSpirit = (draft.aspects.occult || draft.aspects.faith || draft.aspects.ancient || bgd && bgd.words);
     body.append(panel("3 · Background", btn("Roll a background", () => { CAMP.rollBackground(draft); redraw(); }, "small primary"), bgBox, ...extra,
       el("label", { class: "field check" }, el("input", { type: "checkbox", checked: draft.magic.on ? "checked" : null, onchange: (e) => { draft.magic.on = e.target.checked; redraw(); } }), el("span", {}, "My agent uses magic (Occult, Faith or Ancient)")),
@@ -233,12 +234,14 @@
       }, "small"))));
     const wT = GD.weaponTypes.find((x) => x.name === w.type);
     const ranged = /Ranged/.test(w.type);
-    const modOK = (m) => { const banned = ranged ? GD.bannedRanged : GD.bannedMelee; return !banned.includes(m) && !GD.weaponTypes.some((o) => o.name !== w.type && o.only.includes(m) && m !== "Throwing"); };
-    const modList = (all, chosen, filter, onToggle) => el("div", { class: "modlist" }, ...all.filter((m) => filter(m.name)).map((m) => {
+    const wMax = CAMP.weaponModCount(draft.bg);
+    if (w.mods.length > wMax) w.mods.length = wMax;
+    const modOK = (m) => { if (draft.bg === "Engineer") return true; const banned = ranged ? GD.bannedRanged : GD.bannedMelee; return !banned.includes(m) && !GD.weaponTypes.some((o) => o.name !== w.type && o.only.includes(m) && m !== "Throwing"); };
+    const modList = (all, chosen, filter, onToggle, max = 2) => el("div", { class: "modlist" }, ...all.filter((m) => filter(m.name)).map((m) => {
       const on = chosen.includes(m.name);
-      return el("label", { class: "modrow" + (on ? " on" : "") }, el("input", { type: "checkbox", checked: on ? "checked" : null, disabled: !on && chosen.length >= 2 ? "disabled" : null, onchange: () => onToggle(m.name) }), el("b", {}, m.name), el("small", {}, m.text));
+      return el("label", { class: "modrow" + (on ? " on" : "") }, el("input", { type: "checkbox", checked: on ? "checked" : null, disabled: !on && chosen.length >= max ? "disabled" : null, onchange: () => onToggle(m.name) }), el("b", {}, m.name), el("small", {}, m.text));
     }));
-    const toggle = (list, name) => { const i = list.indexOf(name); if (i >= 0) list.splice(i, 1); else if (list.length < 2) list.push(name); redraw(); };
+    const toggle = (list, name, max = 2) => { const i = list.indexOf(name); if (i >= 0) list.splice(i, 1); else if (list.length < max) list.push(name); redraw(); };
     const pickBlock = (which, item) => {
       item.picks = item.picks || {};
       const keys = window.GEAR.pickKeys(which, item.mods, item.specialty);
@@ -259,7 +262,7 @@
         el("label", { class: "field" }, el("span", {}, "Type"), el("select", { onchange: (e) => { w.type = e.target.value; w.mods = w.mods.filter(modOK); w.aspect = CAMP.weaponAspects(w)[0]; redraw(); } },
           ...GD.weaponTypes.map((t) => el("option", { value: t.name, selected: w.type === t.name ? "selected" : null }, `${t.name} · +${t.bonus} · ${t.zones ? "reaches 1 zone" : "same zone"}`))))),
       el("label", { class: "field" }, el("span", {}, "Attack Aspect"), el("select", { onchange: (e) => { w.aspect = e.target.value; } }, ...aspects.map((a) => el("option", { value: a, selected: w.aspect === a ? "selected" : null }, C.ASPECT_NAMES[a])))),
-      el("h4", {}, `Modifiers (${w.mods.length}/2)`), modList(GD.weaponMods, w.mods, modOK, (n) => toggle(w.mods, n)), pickBlock("w", w),
+      el("h4", {}, `Modifiers (${w.mods.length}/${wMax})${draft.bg === "Veteran Hunter" ? " · Veteran Hunter: one extra" : ""}${draft.bg === "Engineer" ? " · Engineer: any Modifier fits" : ""}`), modList(GD.weaponMods, w.mods, modOK, (n) => toggle(w.mods, n, wMax), wMax), pickBlock("w", w),
       el("h4", {}, "Specialty (on a Critical hit)"),
       el("div", { class: "modlist" }, ...GD.weaponSpecialties.map((s) => el("label", { class: "modrow" + (w.specialty === s.name ? " on" : "") }, el("input", { type: "radio", name: "wspec", checked: w.specialty === s.name ? "checked" : null, onchange: () => { w.specialty = s.name; redraw(); } }), el("b", {}, s.name), el("small", {}, s.text))))));
     body.append(panel("6 · Armor", note(`Armor is part of who you are. ${c.year} suggestions: ${hints.armor}.`),

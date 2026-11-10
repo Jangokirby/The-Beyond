@@ -104,7 +104,7 @@
   G_.STATUS = {
     frozen: { label: "Frozen", rounds: 2, text: "Immobilized: cannot move." },
     crippled: { label: "Crippled", rounds: 99, text: "Body −2 until a long rest." },
-    poisoned: { label: "Poisoned", rounds: 3, text: "One fewer action." },
+    poisoned: { label: "Poisoned", rounds: 99, text: "One fewer action for the rest of the scene." },
     terrified: { label: "Terrified", rounds: 3, text: "3 Sanity damage each turn." },
     bleeding: { label: "Bleeding", rounds: 3, dmg: 3, text: "3 Health damage a turn." },
     burning: { label: "Burning", rounds: 99, dmg: 4, text: "4 Elemental damage a turn until put out." },

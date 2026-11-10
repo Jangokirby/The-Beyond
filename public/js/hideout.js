@@ -51,6 +51,12 @@
       "The hours pass to {music}. {a} wakes up hungry, which is a good sign.",
       "{a} sleeps badly, then well. By evening the ache has dulled to a bruise."
     ],
+    therapy: [
+      "{a} writes it all down, every word of it, then reads it back aloud to the empty room.",
+      "{a} talks for hours to someone who knows when not to answer. It helps more than it should.",
+      "{a} walks the long way round, naming each thing seen out loud until the world is ordinary again.",
+      "Over {drink}, {a} finally says the thing out loud. The room does not end."
+    ],
     meditate: [
       "{a} sits facing the wall until the noise in the head runs out.",
       "Breath in, breath out. {a} counts to a thousand and starts again.",
@@ -366,8 +372,9 @@
     const asp = (k) => R.aspect(a, k);
     return {
       rest: [
-        { act: "natural", label: "Rest a day", hint: `Natural Recovery: about +${2 + asp("humors")} Health, +${1 + asp("mindfulness")} Sanity`, cost: costTag(1) },
-        { act: "meditate", label: "Meditate a day", hint: `About +${1 + asp("potency")} Stability, +${1 + asp("mindfulness")} Sanity`, cost: costTag(1) },
+        { act: "natural", label: "Rest a day", hint: `Natural Recovery: about +${2 + asp("humors")} Health`, cost: costTag(1) },
+        { act: "therapy", label: "Therapy a day", hint: `Talk it through: about +${1 + asp("mindfulness") + (a.pastime ? 1 : 0)} Sanity`, cost: costTag(1) },
+        { act: "meditate", label: "Meditate a day", hint: `About +${1 + asp("potency") + (a.pastime ? 1 : 0)} Stability`, cost: costTag(1) },
         { act: "week", label: "Rest a week", hint: "Seven days of Natural Recovery", cost: costTag(7) }
       ],
       out: [
@@ -420,16 +427,16 @@
     if (!a || a.status !== "active" || HIDE.left(a) <= 0) return null;
     const d0 = c.day, before = snap(a), era = eraId();
     let spec;
-    if (act === "natural" || act === "meditate" || act === "week") {
-      const days = act === "week" ? 7 : 1, mode = act === "meditate" ? "meditate" : "natural", notes = [];
+    if (act === "natural" || act === "meditate" || act === "therapy" || act === "week") {
+      const days = act === "week" ? 7 : 1, mode = act === "week" ? "natural" : act, notes = [];
       for (let i = 0; i < days; i++) {
         const g = CAMP.restDay(a, { mode, ...(o.opts || {}) });
         if (g && g.note) notes.push(g.note);
         notes.push(...CAMP.passDays(1));
         if (a.status !== "active") break;
       }
-      CAMP.logAdd(`${a.name} ${mode === "meditate" ? "meditated" : "rested"} ${days} day${days > 1 ? "s" : ""}.`);
-      spec = { bg: "room", title: act === "meditate" ? "Meditation" : act === "week" ? "A quiet week" : "Rest", jp: act === "meditate" ? "瞑想" : "休息",
+      CAMP.logAdd(`${a.name} ${mode === "meditate" ? "meditated" : mode === "therapy" ? "worked through it" : "rested"} ${days} day${days > 1 ? "s" : ""}.`);
+      spec = { bg: "room", title: act === "meditate" ? "Meditation" : act === "therapy" ? "Therapy" : act === "week" ? "A quiet week" : "Rest", jp: act === "meditate" ? "瞑想" : act === "therapy" ? "対話" : "休息",
         lines: [fill(pick(LINES[act]), ctx(a))], results: diff(a, before), notes };
     } else if (act === "visit") {
       const b = a.bonds[o.bond]; if (!b) return null;
@@ -472,7 +479,7 @@
     ui.hub();
   };
   /* older entry points, still used by the Downtime tab */
-  HIDE.rest = (a, mode, days = 1, opts = {}) => HIDE.run(a, days > 1 ? "week" : mode === "meditate" ? "meditate" : "natural", { opts });
+  HIDE.rest = (a, mode, days = 1, opts = {}) => HIDE.run(a, days > 1 ? "week" : mode === "meditate" || mode === "therapy" ? mode : "natural", { opts });
   HIDE.visit = (a, b) => HIDE.run(a, "visit", { bond: a.bonds.indexOf(b) });
   HIDE.contacts = (a) => HIDE.run(a, "contacts");
 

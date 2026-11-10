@@ -103,11 +103,13 @@
 
   /* ---------------------------------------------------------------- size */
   C.SIZES = [
-    { id: "tiny", name: "Tiny", er: 2, health: -10, br: 0 },
+    /* Agents start Medium and may shift one category (rulebook p.19): Small or Large. The rest come from Mutations etc. */
+    { id: "tiny", name: "Tiny", er: 2, health: -10, br: 0, start: false },
     { id: "small", name: "Small", er: 1, health: -5, br: 0 },
     { id: "medium", name: "Medium", er: 0, health: 0, br: 0 },
     { id: "large", name: "Large", er: -1, health: 5, br: 1, attack: 1 },
-    { id: "huge", name: "Huge", er: -2, health: 10, br: 2, attack: 2 }
+    { id: "huge", name: "Huge", er: -2, health: 10, br: 2, attack: 2, start: false },
+    { id: "giant", name: "Giant", er: -4, health: 20, br: 4, attack: 4, start: false }
   ];
 
   /* ---------------------------------------------------------------- weapon types (rulebook example: Melee One-Handed +2) */

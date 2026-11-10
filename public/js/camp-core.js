@@ -106,15 +106,17 @@
     if ((w.mods || []).includes("Magic")) set.push("occult", "ancient");
     return set;
   };
-  CAMP.weaponValid = (w) => {
-    const errs = [];
+  /* Veteran Hunter: one additional Modifier on the weapon. Engineer: any Modifier on any weapon. */
+  CAMP.weaponModCount = (bg) => (bg === "Veteran Hunter" ? 3 : 2);
+  CAMP.weaponValid = (w, bg) => {
+    const errs = [], need = CAMP.weaponModCount(bg);
     const t = GD.weaponTypes.find((x) => x.name === w.type);
     if (!w.name.trim()) errs.push("Name the weapon.");
-    if ((w.mods || []).length !== 2) errs.push("Choose exactly 2 Modifiers.");
+    if ((w.mods || []).length !== need) errs.push(`Choose exactly ${need} Modifiers.`);
     if (!w.specialty) errs.push("Choose 1 Specialty.");
     const ranged = /Ranged/.test(w.type);
     const banned = ranged ? GD.bannedRanged : GD.bannedMelee;
-    for (const m of w.mods || []) {
+    if (bg !== "Engineer") for (const m of w.mods || []) {
       if (banned.includes(m)) errs.push(`${m} cannot go on a ${ranged ? "ranged" : "melee"} weapon.`);
       for (const other of GD.weaponTypes) if (other.name !== w.type && other.only.includes(m) && !(m === "Throwing")) errs.push(`${m} belongs to ${other.name} weapons.`);
     }
@@ -177,7 +179,7 @@
     if (!d.bg) e.push("Choose a background.");
     if (d.bg) { const bg = CAMP.bgDef(d.bg); if (bg.artifact && !d.pickArtifact) e.push("Choose your Beyond Artifact."); if (bg.patron && !d.pickPatron) e.push("Choose your patron."); if (bg.aspectPlus && !d.bgAspect) e.push("Choose the Aspect for your +2."); }
     if (d.bonds.some((b) => !b.name.trim())) e.push("Name all three Bonds.");
-    e.push(...CAMP.weaponValid(d.weapon));
+    e.push(...CAMP.weaponValid(d.weapon, d.bg));
     if ((d.armor.mods || []).length !== 2) e.push("Choose exactly 2 armor Modifiers.");
     if (!d.armor.specialty) e.push("Choose 1 armor Specialty.");
     if (!d.armor.name.trim()) e.push("Name the armor.");
@@ -263,10 +265,11 @@
     const gain = { health: 0, sanity: 0, stability: 0 };
     if (R.fx(a, "insomnia")) { const d = R.d6(); if (d <= 3) { gain.note = `Insomnia (${d}): ${a.short} could not sleep tonight.`; return gain; } }
     window.GEAR.longRest(a);
-    if (o.mode === "meditate") gain.stability += 1 + asp("potency") + (o.pastime ? 1 : 0);
+    /* Rest Options (rulebook p.47): choose ONE each night. Natural Recovery 2 + Humors Health;
+       Therapy 1 + Mindfulness Sanity; Meditation 1 + Potency Stability. A favourite pastime adds +1 to Therapy or Meditation. */
+    if (o.mode === "meditate") gain.stability += 1 + asp("potency") + (a.pastime ? 1 : 0);
+    else if (o.mode === "therapy") gain.sanity += 1 + asp("mindfulness") + (a.pastime ? 1 : 0);
     else gain.health += 2 + asp("humors");
-    gain.sanity += 1 + asp("mindfulness");           // house assumption: base +1 Sanity a night, plus Mindfulness (book gives only the Mindfulness bonus)
-    if (a.pastime) { gain.sanity += 1; gain.stability += 1; }
     if (food) gain.health += 1 + 2 * Math.max(0, (rb.housingWc || 1) - 1);
     if (o.useMedicine && (med || labLeft > 0)) { const m = med ? med.wc : rb.housingWc; gain[o.medicinePool || "health"] += 3 + (m - 1); if (!med) a.labUsed = (a.labUsed || 0) + 1; }
     for (const k of Object.keys(gain)) if (gain[k] && rb.warm) gain[k] += rb.warm;
@@ -366,7 +369,7 @@
       const ch = CAMP.char(id), d = clone(ch);
       d.items = d.assets.filter((x) => x.kind === "item" && (x.committed || x.owned) && x.state === "ok").map((x) => (x.custom ? { id: "cu_" + x.uid, tier: x.wc, def: { ...x.custom, custom: true, name: x.name } } : { id: x.ref, tier: x.wc }));
       d.portrait = ch.portraitKey || window.ART.portrait(ch.look);
-      d.fate = ch.baseFate + (window.GEAR && window.GEAR.a(ch, "Plot Armor") ? 1 : 0) + (ch.bonusFate || 0);
+      d.fate = ch.baseFate + (window.GEAR && window.GEAR.a(ch, "Plot Armor") ? 1 : 0) + (ch.bonusFate || 0) + (ch.fateBank || 0);
       d.core = clone(ch.core);
       const live = ch.assets.filter((x) => (x.kind === "housing" || x.kind === "vehicle") && (x.committed || x.owned) && x.state === "ok");
       const has = (m) => live.filter((x) => x.mods.includes(m));
@@ -447,7 +450,8 @@
       ch.core = clone(a.core); ch.afflict = clone(a.afflict || {}); ch.drug = a.drug ? clone(a.drug) : ch.drug; ch.crippled = !!a.crippled; ch.injuries = clone(a.injuries); ch.noticed = a.noticed || 0; ch.bonds = clone(a.bonds);
       for (const k of ["health", "sanity", "stability"]) { ch.pools[k] = { cur: Math.max(a.dead ? 0 : 1, a.pools[k].cur), max: a.pools[k].max }; ch.poolMax[k] = a.pools[k].max; }
       if (a.magic) { ch.wordLoss = a.wordLoss || 0; ch.words = ch.words || {}; let tot = Object.values(ch.words).reduce((x, n) => x + n, 0); const cap = R.wordPoolMax(ch); for (const w of Object.keys(ch.words)) while (tot > cap && ch.words[w] > 0) { ch.words[w] -= 1; tot -= 1; } }
-      ch.fate = ch.baseFate; ch.bonusFate = 0;
+      /* Fate Points do not expire (rulebook p.14): whatever is left over is stored for later missions. */
+      ch.fateBank = Math.max(0, a.fate || 0); ch.fate = ch.baseFate + ch.fateBank; ch.bonusFate = 0;
       if (a.dead) { ch.status = "dead"; out.lines.push(`${ch.name} did not come back. ${a.deathText || ""}`); CAMP.logAdd(`${ch.name} died on ${M.title}.`); continue; }
       if (a.marked === "days") { ch.doomed = 2 + Math.floor(R.rand() * 4); ch.doomText = R.deathCause(a.markedPool || "health", ch.name.split(" ")[0]); out.lines.push(`${ch.name} is marked for death and has ${ch.doomed} days left. Only a miracle can change that.`); }
       else if (a.marked) out.lines.push(`${ch.name} was marked for death, but the fever broke on the sixth day: a recovery, and an injury that won't heal.`);
@@ -456,8 +460,9 @@
       for (const n of CAMP.settleAssets(ch)) out.lines.push(n);
       if (!out.lines.length) out.lines.push(`${ch.name} came home.`);
     }
-    for (let i = 0; i < r.primDone; i++) c.favors.push({ wc: 2, from: M.title });
-    out.favors = r.primDone;
+    /* Completing any Primary Objective, even if not all of them, earns one additional Favor (rulebook p.14). */
+    if (r.primDone > 0) c.favors.push({ wc: 2, from: M.title });
+    out.favors = r.primDone > 0 ? 1 : 0;
     if (r.solved) c.casesSolved += 1;
     c.missionsDone += 1;
     c.history.unshift({ adv: M.id, title: M.title, year: M.year, result: r.solved ? "Solved" : "Not solved", day: c.day });

@@ -269,16 +269,16 @@
     if (!a) return wrap;
     const rb = CAMP.restBonuses(a), asp = (k) => R.aspect(a, k);
     wrap.append(el("div", { class: "pools wide" }, ...["health", "sanity", "stability"].map((k) => bar(a.pools[k], k))),
-      note(`Day ${c.day}. One day of rest: Natural Recovery gives ${2 + asp("humors")} Health, or Meditation gives ${1 + asp("potency")} Stability. Either way Sanity recovers ${1 + asp("mindfulness")}${a.pastime ? ", and your pastime adds more" : ""}. ${rb.warm ? `Warm beds add ${rb.warm} to every gain.` : ""}`));
+      note(`Day ${c.day}. Each night choose one Rest Option: Natural Recovery gives ${2 + asp("humors")} Health, Therapy gives ${1 + asp("mindfulness")} Sanity, or Meditation gives ${1 + asp("potency")} Stability${a.pastime ? " (your pastime adds 1 to Therapy or Meditation)" : ""}. ${rb.warm ? `Warm beds add ${rb.warm} to every gain.` : ""}`));
     const med = a.assets.some((x) => x.kind === "item" && CAMP.itemDef(x).med && (x.committed || x.owned));
     const useMed = el("input", { type: "checkbox", disabled: !med ? "disabled" : null });
     const medPool = el("select", {}, ...["health", "sanity", "stability"].map((k) => el("option", { value: k }, R.POOL_LABEL[k])));
     const useDrug = el("input", { type: "checkbox" });
     const rest = (mode, days = 1) => window.HIDE.rest(a, mode, days, { useMedicine: useMed.checked, medicinePool: medPool.value, drug: useDrug.checked });
-    wrap.append(panel("Rest", el("div", { class: "row" }, btn("Rest a day", () => rest("natural"), "primary"), btn("Meditate a day", () => rest("meditate")), btn("Rest a week", () => rest("natural", 7), "ghost")),
+    wrap.append(panel("Rest", el("div", { class: "row" }, btn("Rest a day", () => rest("natural"), "primary"), btn("Therapy a day", () => rest("therapy")), btn("Meditate a day", () => rest("meditate")), btn("Rest a week", () => rest("natural", 7), "ghost")),
       el("label", { class: "field check" }, useMed, el("span", {}, "Use committed medicine (restores to"), medPool, el("span", {}, ")")),
       el("label", { class: "field check" }, useDrug, el("span", {}, "Take a recreational drug (Resistances up today; down 2 for a few days after)")),
-      el("label", { class: "field check" }, el("input", { type: "checkbox", checked: a.pastime ? "checked" : null, onchange: (e) => { a.pastime = e.target.checked; redraw(); } }), el("span", {}, "I have a restful pastime (+1 Sanity and Stability a day)")),
+      el("label", { class: "field check" }, el("input", { type: "checkbox", checked: a.pastime ? "checked" : null, onchange: (e) => { a.pastime = e.target.checked; redraw(); } }), el("span", {}, "I have a favourite pastime (+1 to Therapy or Meditation)")),
       el("p", { class: "small muted" }, "Medicine only counts while it is committed. Resting a day is a day the world gets to move too.")));
     const svcPanel = ui.servicesPanel && ui.servicesPanel(a);
     if (svcPanel) wrap.append(svcPanel);

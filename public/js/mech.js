@@ -209,7 +209,7 @@
         if (roll < af.disease.cr) {
           for (const k of ["body", "mind", "spirit"]) a.core[k] = Math.max(0, a.core[k] - 1);
           notes.push(`${a.name}'s disease takes a toll (${roll} vs ${af.disease.cr}): every Core Stat falls by 1.`);
-          if (Object.values(a.core).some((v) => v <= 0) && !a.survivor) { a.status = "dead"; notes.push(`${a.name} died of the disease.`); return notes; }
+          if (Object.values(a.core).some((v) => v <= R.deathFloor(a))) { a.status = "dead"; notes.push(`${a.name} died of the disease.`); return notes; }
         } else notes.push(`${a.name} fights the disease off today (${roll} vs ${af.disease.cr}).`);
       }
       if (af.forgetfulness) {

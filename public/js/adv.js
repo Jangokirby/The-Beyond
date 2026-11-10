@@ -31,8 +31,8 @@
      rulebook's Creating a Monster section. Beyond and Construct leave their
      stats to the GM ("?"), so those two use the defaults below. */
   const TYPES = {
-    Beyond:   { h: 30, s: 30, t: 30, atk: 4, er: 10, br: 4, mr: 4, sr: 4, spd: 2, mods: 0, note: "Rulebook leaves stats open. Defaults chosen." },
-    Construct:{ h: 20, s: 10, t: 10, atk: 3, er: 5, br: 8, mr: 8, sr: 8, spd: 0, mods: 0, note: "Rulebook leaves stats open. Defaults chosen." },
+    Beyond:   { h: 30, s: 30, t: 30, atk: 4, er: 10, br: 4, mr: 4, sr: 4, spd: 2, mods: 1, note: "Rulebook leaves stats open (defaults chosen) and grants 1 Legendary Modifier of choice." },
+    Construct:{ h: 15, s: 10, t: 10, atk: 3, er: 5, br: 8, mr: 8, sr: 8, spd: 0, mods: 0, note: "Rulebook: Health 15, other stats open, no Attack and no Modifiers. Attack +3 is a house default so a Construct that fights can hit." },
     Divine:   { h: 40, s: 40, t: 40, atk: 6, er: 14, br: 8, mr: 8, sr: 8, spd: 3, mods: 1 },
     Feral:    { h: 30, s: 20, t: 25, atk: 4, er: 8, br: 3, mr: 1, sr: 1, spd: 1, mods: 0 },
     Folklore: { h: 35, s: 35, t: 35, atk: 5, er: 13, br: 8, mr: 6, sr: 6, spd: 2, mods: 1 },
@@ -65,7 +65,7 @@
       br: res(T.br) + (o.br || 0), mr: res(T.mr) + (o.mr || 0), sr: res(T.sr) + (o.sr || 0),
       speed: Math.max(0, T.spd + D.spd + (o.speed || 0)), actions: 1 + D.act,
       mods: [...(T.free || []), ...(o.mods || [])], dtype: o.dtype || "health", range: o.range || 0, regen: o.regen || 0,
-      hitSfx: o.hitSfx || null, dies: o.dies || null, modsAllowed: Math.max(0, 3 + D.mods), text: o.text || "", deathMark: o.deathMark || 0
+      hitSfx: o.hitSfx || null, dies: o.dies || null, modsAllowed: Math.max(0, 3 + D.mods + (T.mods || 0)), text: o.text || "", deathMark: o.deathMark || 0
     };
     return window.GEAR ? window.GEAR.applyMonsterMods(m) : m;
   };

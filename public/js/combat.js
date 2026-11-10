@@ -539,6 +539,7 @@
       if (statusOf(u, "poisoned")) full = Math.max(1, full - 1);
       if ((pitchAt(u.zone) && a.vision !== "dark") || (radianceAt(u.zone) && !(a.traits && a.traits.sunSight))) full = Math.max(1, full - 1);
       if (cs(u).rapidNext) { full = 1; cs(u).rapidNext = false; }
+      if (u.tacBonus) { full += u.tacBonus; log(`${u.name} acts on a Tactician's call: one extra action.`, "good"); u.tacBonus = 0; }
       cs(u).offhand = false;
     }
     u.ap = full;
@@ -622,6 +623,9 @@
           opts.push({ label: "Shove", hint: "Strength vs its CR: throw it one room away", fn: () => doShove(u, gripable) });
         }
         if (!u.hidden && foes().length) opts.push({ label: "Hide", hint: R.fx(a, "noHide") ? "Hysterical Laughter: cannot hide" : flankedUnit(u) ? "Flanked: cannot hide" : "Awareness vs the toughest foe's CR", disabled: flankedUnit(u) || R.fx(a, "noHide"), fn: () => doHide(u) });
+        if (a.background === "Tactician" && c.tacRound !== c.round && friends().some((x) => x.kind === "agent" && x !== u && alive(x))) opts.push({ label: "Direct an ally", hint: "Tactician, once a round: an ally gets 1 extra action", fn: async () => {
+          const t = await pickUnit(friends().filter((x) => x.kind === "agent" && x !== u && alive(x))); if (!t) return false;
+          c.tacRound = c.round; t.tacBonus = 1; log(`${u.name} calls the play: ${t.name} gets an extra action.`, "good"); return 0; } });
         if (foes().some((e) => e.hidden)) opts.push({ label: "Search", hint: "find a hidden foe", fn: () => doSearch(u) });
         if (foes().length && c.canFlee) opts.push({ label: "Flee", hint: flankedUnit(u) ? "Flanked: cannot flee" : "Speed vs the toughest foe's CR", disabled: flankedUnit(u), fn: () => doFlee(u) });
         if (ga(u, "Stealth Armor") && !(a.dailyUsed || {}).stealth) opts.push({ label: "Stealth Armor", hint: "unseen for 6 rounds, once a day", fn: () => doStealth(u) });
@@ -805,10 +809,11 @@
     }
     c.killer = u;
     applyHit(t, dmg, u);
+    if (!isAlly && dmg > 0 && a.background === "Vampire Traitor") { const hp = a.pools.health, g = Math.min(5, hp.max - hp.cur); if (g > 0) { hp.cur += g; log(`Bloodthirsty: ${u.name} drinks ${g} Health back.`, "good"); G.refreshParty(); } }
     if (W("Suppression")) t.supp = 0;
     if (W("Pin Down") && !t.dead) t.pinned = true;
     if (W("Spell Bane") && t.words > 0) { t.words -= 1; log(`${t.name} loses a word (${t.words} left).`); }
-    if (!isAlly && a.weapon.bleed && !t.dead) addStatus(t, { id: "bleeding", label: "Bleeding", dmg: 2, rounds: 3 });
+    if (!isAlly && a.weapon.bleed && !t.dead) addStatus(t, GE.statusObj("bleeding"));
     /* weapon Specialties on a critical hit */
     if (crit && !isAlly) {
       const live = !t.dead;
@@ -859,7 +864,7 @@
   async function doHide(u, free = false) {
     const a = u.ref;
     if ((a.injuries || []).some((i) => i.disorderName === "Hysterical Laughter")) { log(`${u.name} can't stop laughing, and so can't hide.`); return free ? false : 1; }
-    const need = Math.max(...foes().map((e) => e.cr), 7);
+    const need = Math.max(...foes().map((e) => e.cr), 7) - (a.background === "Spy" ? 1 : 0);
     const mods = [{ label: "Awareness", value: R.aspect(a, "awareness"), base: true }, ...penalties(u)];
     if (ga(u, "Discreet")) mods.push({ label: "Discreet", value: 1 });
     if (free && gw(u, "Silent")) mods.push({ label: "Silent", value: 2 });
@@ -880,7 +885,8 @@
   /* Forceful Movement and Grapples. Magic moves automatically; bodies roll Strength against the CR.
      A grapple moves nothing: the held one can only spend actions trying to break free. */
   async function strengthContest(u, t, label) {
-    return G.rollModal({ agent: u.ref, label: `${label} ${t.name}`, sub: "Strength vs its CR", mods: [{ label: "Strength", value: R.aspect(u.ref, "strength"), base: true }, ...penalties(u)], target: t.cr, targetLabel: `CR ${t.cr}`, items: G.itemsFor(u.ref, "strength"), kind: "check" });
+    const tcr = t.cr - (label === "Grapple" && u.ref.background === "Trapper" ? 1 : 0);
+    return G.rollModal({ agent: u.ref, label: `${label} ${t.name}`, sub: "Strength vs its CR", mods: [{ label: "Strength", value: R.aspect(u.ref, "strength"), base: true }, ...penalties(u)], target: tcr, targetLabel: `CR ${tcr}`, items: G.itemsFor(u.ref, "strength"), kind: "check" });
   }
   async function doGrapple(u, targets) {
     const t = targets.length === 1 ? targets[0] : await pickUnit(targets);
@@ -1264,7 +1270,12 @@
       G.refreshParty();
       return;
     }
-    const risky = Object.entries(a.core).filter(([, v]) => v <= 1).map(([k]) => k);
+    if (a.background === "Vampire Traitor") {
+      const d = R.d6();
+      if (d >= 4) { a.pools[pool].cur = Math.min(a.pools[pool].max, 10); log(`<b>Undeath</b> (${d}): ${u.name} rises again with ${a.pools[pool].cur} ${R.POOL_LABEL[pool]}.`, "crit"); G.refreshParty(); return; }
+      log(`Undeath (${d}): this time the grave keeps its hold.`, "bad");
+    }
+    const risky = Object.entries(a.core).filter(([, v]) => v <= (a.survivor ? 0 : 1)).map(([k]) => k);
     const warn = risky.length ? ` ${u.name}'s ${risky.map((k) => k[0].toUpperCase() + k.slice(1)).join(" and ")} ${risky.length > 1 ? "are" : "is"} already 1: an Injury that lowers ${risky.length > 1 ? "them" : "it"} is death.` : "";
     const choice = await U.modal({ title: `${u.name}: ${R.POOL_LABEL[pool]} 0`, jp: "瀕死", dismiss: false,
       body: `<p>${R.POOL_LABEL[pool]} has hit 0. Choose.</p><p><b>Take an Injury:</b> recover 10 ${R.POOL_LABEL[pool]}, but suffer a ${R.POOL_LABEL[pool]} injury of your choice and lose a Core Stat point.${warn}</p><p><b>Roll the Death Die:</b> 2d6. On 7 or more, recover half of every Healing Pool. Below 7, ${u.name} is marked for death.</p>`,
@@ -1301,7 +1312,12 @@
       }
     } else {
       AudioMan.sfx("death_die");
-      const res = R.deathDie(a);
+      let res = R.deathDie(a);
+      if (!res.survived && a.background === "Gifted" && !a.giftedUsed) {
+        a.giftedUsed = true;
+        log(`${u.name} rolls ${res.total} on the Death Die. Gifted: luck gives one more try.`, "crit");
+        res = R.deathDie(a);
+      }
       await U.modal({ title: "The Death Die", jp: "生死", dismiss: false, body: `<div class="dice-row">${[0, 1].map((i) => `<div class="die landed" data-v="${res.dice[i]}">${pipHTML(res.dice[i])}</div>`).join("")}</div><p class="center big">${res.total}: ${res.survived ? "survives" : "marked for death"}</p>`,
         buttons: [{ id: "ok", label: "Continue", cls: "primary" }] });
       if (res.survived) log(`${u.name} drags a breath back in (${res.total}). Half of every Healing Pool returns.`, "crit");

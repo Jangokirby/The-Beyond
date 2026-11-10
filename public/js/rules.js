@@ -290,7 +290,9 @@
 
   /* Apply an injury to an agent. Returns { injury, died, notes[] }. */
   /* which injuries could this agent take without dying outright? */
-  R.safeInjuries = (a, pool) => R.INJURIES[pool].filter((i) => (a.core[i.core] - 1 - (i.extraCore || 0)) > 0 || a.survivor);
+  /* Survivor background: a Core Stat must reach −1, not 0, to kill. */
+  R.deathFloor = (a) => (a && a.survivor ? -1 : 0);
+  R.safeInjuries = (a, pool) => R.INJURIES[pool].filter((i) => (a.core[i.core] - 1 - (i.extraCore || 0)) > R.deathFloor(a));
   /* Apply one Mutation roll: mut = { rolls, traits } or nothing to roll here. Returns the text to show. */
   R.applyMutation = (a, mut) => {
     const notes = [];
@@ -358,7 +360,7 @@
     if (inj.disorder && disorderId === "hopeless" && ["occult", "faith", "ancient"].every((k) => !origAspectOf(a, k))) { inj.needsSpirit = true; notes.push("Already at 0 in every magic Aspect: take a Spirit Injury too."); }
     a.injuries.push(inj);
     a.pools[pool].cur = Math.min(a.pools[pool].max, a.pools[pool].cur + 10);
-    const died = (Object.values(a.core).some((v) => v <= 0) && !a.survivor) || !!inj.dies;
+    const died = Object.values(a.core).some((v) => v <= R.deathFloor(a)) || !!inj.dies;
     return { injury: inj, died, notes };
   };
 
