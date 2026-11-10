@@ -50,5 +50,58 @@ module.exports = {
     modern: "sodium-orange street lights, a payphone, satellite dishes, 1990s cars, CRT monitors and VHS tapes, flickering fluorescent tubes",
     now: "LED screens and signs, glass towers, phone glow, electric scooters, CCTV cameras, delivery drones far off, cold white LED light"
   },
+
+  /* ---------------------------------------------------------------- v5: concrete, era-true things to put in a row
+     (light and palette words are NOT here: the picture generator adds its own era cues for those.)
+     Late Century is split: "modern" is the 1990s and early 2000s; "late" is 2007-2021 (smartphones, flat screens, LED bulbs). */
+  eraKey(era, year) { return era === "modern" && year >= 2007 ? "late" : era; },
+  ERAWORD: {
+    medieval: "medieval Europe", victorian: "the Victorian era", wars: "the 1910s to 1940s", atomic: "the 1950s to 1980s",
+    modern: "the 1990s and early 2000s, before smartphones", late: "the late 2000s and 2010s, the smartphone era", now: "the present day, 2020s"
+  },
+  /* outdoor, street-level things */
+  STREET: {
+    medieval: "timber-framed houses with thatch, a muddy rutted lane, a well, a wayside cross, ox carts and pack horses",
+    victorian: "gas lamp posts, cast-iron railings, horse-drawn cabs and drays, sooty brick terraces, shop fronts with small panes",
+    wars: "motor lorries and a Model T, telegraph poles, sandbag walls, enamel advertising signs, a hand-painted wartime poster shape",
+    atomic: "tail-fin cars at the kerb, a neon diner sign, television aerials on the roofs, a roadside billboard shape, chrome and glass storefronts",
+    modern: "boxy 1990s hatchbacks, a payphone booth, a satellite dish on a flat roof, a hand-lettered shop sign shape, a bus stop with a paper timetable",
+    late: "hatchbacks and SUVs, a flat-screen advert panel on a bus shelter, a mobile-phone mast, a cash-point, rental key boxes on a railing",
+    now: "glass towers, LED advertising screens, electric scooters, a delivery drone far off, CCTV domes on poles, EV charging posts"
+  },
+  /* inside a home or office */
+  INDOOR: {
+    medieval: "stone hall with a central hearth fire and a trestle table, rush-strewn flagstones, an iron-hinged oak door, a shuttered slit window, tallow candles in an iron stand, exposed roof beams",
+    victorian: "parlour with a gas bracket lamp on a papered wall, heavy velvet drapes, a mahogany table with an oil lamp, a cast-iron fireplace with a mantel clock, a sash window with fog outside",
+    wars: "bare billet room with a single bulb on a flex, an iron bedstead with an army blanket, a black telephone on a deal desk, blackout paper on the window, a paraffin stove, a map pinned to the wall",
+    atomic: "1950s living room with a walnut television set, a vinyl-covered sofa, a round-dial telephone, a console radio, venetian blinds, a fluorescent tube in the kitchen doorway",
+    modern: "apartment with a bulky CRT television on a stand and a VCR, a beige desktop computer, a cordless phone, vertical blinds, tapes in a rack, a blinking answering machine",
+    late: "rented flat with a flat-screen television on a wall bracket, a laptop and a router with green lights, a smartphone on a charger, a lockbox key by the door, IKEA shelves, a cheap LED lamp",
+    now: "open-plan flat with a wall-mounted flat screen on standby, a laptop on a glass desk, a round smart speaker, LED strip lighting, a grey sofa, floor-to-ceiling windows onto city lights"
+  },
+  /* themes that are not a street or a room, one trace of the period each */
+  WILD: {
+    medieval: "a cart track and a wayside shrine", victorian: "a distant gas-lit road and a railway embankment", wars: "a line of telegraph poles and barbed wire",
+    atomic: "a television mast on a far ridge and a dirt road with a tail-fin car", modern: "a satellite dish on a distant farmhouse and a pylon line", late: "a mobile-phone mast and a wind turbine on the horizon",
+    now: "wind turbines and a pylon line on the horizon, a drone light in the sky"
+  },
+  /* themes that are rooms of a particular kind, by era (a missing entry falls back to INDOOR) */
+  THEME_TECH: {
+    church: { medieval: "stone nave with a rood screen and a carved font, rushlights before an altar", victorian: "box pews, gas brackets on the pillars, a brass lectern, a harmonium", wars: "sandbags against the window, a hand-lettered noticeboard shape, camp beds along the aisle",
+      atomic: "folding chairs and a bare altar table, fluorescent tubes, an electric organ", modern: "stacking chairs, a TV on a trolley, a photocopied notice shape, fluorescent tubes", late: "stacking chairs, a projector and screen, a noticeboard of flyers shapes", now: "LED spotlights, a projector screen, a CCTV dome, a donation card reader" },
+    cellar: { medieval: "stone vault with casks and sacks and a rushlight", victorian: "coal chute, wine racks, a gas bracket, a brick vault", wars: "a bare bulb, ammunition crates, a duckboard floor", atomic: "steel shelving of tinned food and water drums, a fallout-shelter sign shape, a bare bulb",
+      modern: "a washing machine, boxes of video tapes, a bare bulb, an old sofa", late: "a boiler and meter box, storage boxes, a dehumidifier, a bare LED bulb", now: "a server rack, boxes, LED strip lights, a smart meter" },
+    train: { victorian: "wooden compartments with brass luggage racks and a gas lamp, buttoned seats", wars: "slatted wooden seats, a blackout blind, a luggage net, a swaying bare bulb", atomic: "vinyl bench seats, a chrome luggage rack, a ceiling fan, a drop-down window", modern: "moulded plastic seats, a pull-down window, a scuffed floor, a faded route map shape", late: "grey fabric seats, a flat information screen, a charging socket, an emergency alarm handle", now: "a sleek carriage with LED strip lights, a map screen, a USB socket, a CCTV dome" },
+    village: { medieval: "thatched cottages, a stone well, a duck pond, a wooden church tower", victorian: "a village green, a smithy, a church spire, cottage gardens, a post box", wars: "a war memorial shape, a red telephone box, an army lorry, sandbags at the pub door", atomic: "a post office, a single petrol pump, television aerials on the cottages", modern: "a phone box, a pub with a satellite dish, hatchbacks on the green", late: "a bus shelter, a broadband cabinet, a mobile-phone mast behind the church, SUVs on the green", now: "a bus shelter with a screen, an EV charge point, a fibre cabinet, a drone far off" },
+    lab: { victorian: "brass microscopes, glass retorts, a gas burner, specimen jars", wars: "valve equipment, bakelite switches, a wooden bench, a bare bulb", atomic: "a Geiger counter, a reel-to-reel computer, steel benches, a fume cupboard",
+      modern: "beige PCs and CRT monitors, a fume hood, plastic sample trays", late: "flat monitors, a centrifuge, plastic racks, a fume hood", now: "glass-walled lab, monitors, a centrifuge, white LED panels" }
+  },
+  /* portrait variety: rotated so that people of one era do not share a pose */
+  POSES: ["head turned three-quarters to the left", "head turned three-quarters to the right", "facing the viewer, chin slightly raised", "head slightly bowed, eyes lifted", "in profile, looking away", "looking over one shoulder", "head tilted a little to one side", "facing the viewer squarely", "three-quarters left, eyes down", "three-quarters right, a half-turn smile"],
+  EXPRESSIONS: ["a guarded half-smile", "a weary, level stare", "wary and alert", "grim and set", "quietly amused", "haunted, hollow-eyed", "tired but determined", "suspicious, one brow raised", "calm, almost serene", "worried, lips pressed"],
+  BUILDS: ["slight build", "broad shoulders", "tall and angular", "stocky", "lean and wiry", "soft-faced and round-shouldered", "a firm jaw, strong shoulders", "narrow face, long neck", "a strong brow, sturdy frame", "delicate, high cheekbones"],
+  WORN: ["a mended collar", "ink-stained fingers", "a healed scar on the chin", "a missing button", "a faded old bruise", "a worn leather strap across the chest", "rain-damp hair", "a chipped tooth", "a small tattoo at the wrist", "dust on the shoulders"],
+  /* clothing worn by the Late Century people of 2007-2021 */
+  WARDROBE_LATE: { f: "a puffer jacket or a cardigan, skinny jeans, a smartphone in hand, earbuds, a lanyard", m: "a hoodie or a bomber jacket, chinos or jeans, a smartphone in hand, earbuds, a rucksack strap" },
   HERITAGE: ["white European", "Black African", "South Asian", "East Asian", "Middle Eastern", "Latin American", "Afro-Caribbean", "Southeast Asian", "North African", "Mediterranean"]
 };

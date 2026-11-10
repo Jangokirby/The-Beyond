@@ -108,9 +108,10 @@
       if (want && byId[want]) { M.npcs[id].portrait = D.portraitKey(want); continue; }
       const g = { ...D.guess(n), ...(n.face && n.face.sex ? { sex: n.face.sex } : {}), ...(n.face && n.face.tags ? { tags: n.face.tags } : {}), ...(pk.who || {})[id] };
       let pool = D.portraitsFor({ era, sex: g.sex, age: g.age, tags: g.tags, npc: true, min: 2 });
-      const fresh = pool.filter((p) => !usedP.has(p.id)); if (fresh.length) pool = fresh;
+      const fresh = pool.filter((p) => !usedP.has(p.id)); if (fresh.length && !n.recurs) pool = fresh;
       if (!pool.length) continue;
-      const p = pool[hash(a.id + id) % pool.length]; usedP.add(p.id);
+      /* someone who turns up in several cases of a campaign (n.recurs) keeps one face: the choice depends on the key, not the case */
+      const p = pool[hash(n.recurs || a.id + id) % pool.length]; usedP.add(p.id);
       M.npcs[id].portrait = D.portraitKey(p.id);
     }
     for (const [id, e] of Object.entries(a.enemies || {})) {

@@ -14,7 +14,8 @@
 (function () {
   const A = window.ART;
   const F = (s, hc, h, o, x = "none", more = {}) => ({ skin: A.SKIN[s], hairC: A.HAIRC[hc], hair: h, outfit: A.OUTFIT[o], extra: x, bg: "#2b2f3a", ...more });
-  const N = (name, tag, look, face) => ({ name, tag, look, face });
+  const RECUR = { "Tobiah of Nájera": "pr-tobiah" };
+  const N = (name, tag, look, face) => ({ name, tag, look, face, ...(RECUR[name] ? { recurs: RECUR[name] } : {}) });
 
   /* ---------------------------------------------------------------- part 1 · 1321 · Roncesvalles */
   const part1 = {

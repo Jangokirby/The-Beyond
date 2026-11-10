@@ -16,7 +16,7 @@ module.exports = {
     "trench-chorus/singer": ["Choir Soldier (the dead made to keep singing)", "a dead Tommy who never stopped singing, (his gas mask's filter is a brass organ pipe that sings:1.3), steel helmet stuffed with wet hymn sheets, mouth stitched with wire, puttees unwinding into barbed wire"],
     "trench-chorus/master": ["The Chorus Master (the order that sends you over the top)", "a regimental chaplain-conductor of a dead choir, (a body built of stacked steel helmets like a pipe organ, every helmet open-mouthed and singing:1.3), a bayonet for a baton, a surplice of muddy field dressings, a telegram for a face"],
     "night-train-aomori/lantern": ["Lantern Wisp (the child left on the platform)", "(a paper railway-platform lantern that floats, its paper split open into a mouth:1.3), a child's tongue lolling out, the station name brushed on it running like tears, one small wooden geta sandal dangling under it"],
-    "night-train-aomori/master": ["Station Master of Nowhere (the journey that never arrives)", "a 1950s Japanese railway station master copied wrong, (peaked cap and gold buttons over a body of clattering departure boards and timetable flaps:1.3), a pocket watch for a face with its hands spinning, white gloves far too long, a whistle on a lanyard of human hair"],
+    "night-train-aomori/master": ["Station Master of Nowhere (the journey that never arrives)", "a 1950s Japanese railway station master copied wrong, (peaked cap and gold buttons over a body of clattering split-flap boards:1.3), a pocket watch for a face with its hands spinning, white gloves far too long, a whistle on a lanyard of human hair"],
     "last-picture-show/cutout": ["Cardboard Usher (the smile you are sold)", "(a 1950s cinema lobby standee of a smiling usher that walks:1.3), flat painted cardboard, its printed smile torn wider by hand, a torch beam shining out of one cut-out eye, its easel leg dragging behind"],
     "last-picture-show/vale": ["Alden Vale (being remembered only as an image)", "a matinee idol stepped down off a movie screen, (skin of flickering silver nitrate film, scratches and cigarette burns racing across him:1.3), a perfect smile stuck repeating one frame, sprocket holes down both sides of his body, a projector beam for a halo"],
     "dial-up/static": ["Static Wraith (the voice on the line that isn't there)", "(the static snow of a 1990s computer screen poured out into a human shape:1.3), scan lines for flesh, a coiled grey modem cable for a spine, a blinking text cursor where its heart should be"],
@@ -83,7 +83,7 @@ module.exports = {
       humanoid: ["The Mesmerist (being controlled)", "a stage mesmerist, (his pocket watch has grown into his palm and swings on a thread of nerve:1.3), spirals turning in his eyes, a tailcoat of black velvet with too many arms in it"],
       spirit: ["The Sitter (death put on display)", "(a Victorian post-mortem photograph that has stood up:1.3), a pale woman as flat as a print with curling silvered edges, the iron posing stand grown into her spine, eyes painted onto closed lids, sepia stains bleeding off her"],
       swarm: ["The Telegraph Moths (news that eats you)", "(a swarm of grey moths printed with telegram words:1.3), flying in the shape of a weeping widow, wires trailing from them"],
-      undead: ["The Resurrection Man's Prize (the body that was sold)", "a corpse dug up by body-snatchers, (anatomy-school stitches and specimen labels tied to its fingers:1.3), a jar of preserved hearts carried like a lantern"]
+      undead: ["The Resurrection Man's Prize (the body that was sold)", "a corpse dug up by body-snatchers, (anatomy-school stitches and paper specimen tags tied to its fingers:1.3), a jar of preserved hearts carried like a lantern"]
     },
     wars: {
       beast: ["The Mud Horse (the war that swallows everything)", "(an army horse made of trench mud and barbed wire:1.3), a gas mask strapped over its long face, shell casings for hooves, its rider long gone"],
@@ -114,7 +114,7 @@ module.exports = {
       beyond: ["The Tape (the video that kills you after you watch it)", "(a black VHS tape that has unspooled into a tall figure of tangled magnetic tape:1.3), a CRT television for a head showing only a blurred home video of your own front door, tracking lines rolling across its body, a handwritten rental label on its chest"],
       construct: ["The Arcade Cabinet (the game you can't stop playing)", "(a 1990s arcade cabinet on many skinny legs:1.3), its screen a child's face pressed against the glass from inside, coin slot mouth, joystick for a tongue"],
       divine: ["The Televangelist (faith sold on the air)", "(a televangelist made of stacked TV sets, each showing the same preaching mouth:1.3), a hairspray halo, praying hands made of credit cards, a toll-free number glowing"],
-      folklore: ["The Hook (the urban legend at lovers' lane)", "an urban legend come true, (a figure in a long raincoat made of newspaper headlines, a hook made from a car door handle:1.3), standing in the glare of headlights"],
+      folklore: ["The Hook (the urban legend at lovers' lane)", "an urban legend come true, (a figure in a long raincoat made of crumpled newspaper pages, a hook made from a car door handle:1.3), standing in the glare of headlights"],
       golem: ["The Mall Santa (the season that eats you)", "(a shopping-mall Santa display made of fibreglass, tinsel and escalator steps:1.3), its painted smile cracked, a sack full of mannequin hands"],
       humanoid: ["The Pager Man (always on call)", "a burnt-out office worker, (his body hung with dozens of buzzing pagers and a brick mobile phone fused to his ear:1.3), tie knotted far too tight, a fax spilling from his mouth"],
       spirit: ["The Bloody Mary (the face in the mirror)", "(a girl made of a bathroom mirror and candle smoke:1.3), her reflection a step behind her, cracked glass skin, a sleepover game's whispered name"],
@@ -158,8 +158,8 @@ module.exports = {
       hour: ["The Hour That Won't End (the minute before the siren)", "(a civil-defence wall clock grown into a figure with too many hands:1.3), a duck-and-cover poster for a face, the air-raid siren its mouth"]
     },
     modern: {
-      place: ["The House That Wants (the home on the listing)", "(a 1990s motel room grown into a body:1.3), the bedspread its tongue, a buzzing ice machine heart, a neon VACANCY sign for an eye, wallpaper like skin"],
-      object: ["The Heirloom (what you inherit)", "(a VHS camcorder with a child's tooth in the cassette slot, its red recording light always on:1.3), a home-video tape beside it labelled in marker, centred"],
+      place: ["The House That Wants (the home on the listing)", "(a 1990s motel room grown into a body:1.3), the bedspread its tongue, a buzzing ice machine heart, a buzzing neon motel sign for an eye, wallpaper like skin"],
+      object: ["The Heirloom (what you inherit)", "(a VHS camcorder with a child's tooth in the cassette slot, its red recording light always on:1.3), a home-video tape beside it scrawled over in marker, centred"],
       hour: ["The Hour That Won't End (the last night of the century)", "(a digital alarm clock grown into a figure with flickering red numbers for a face, stuck at 23:59:1.3), a fax-machine body, a pager buzzing in its chest"]
     },
     now: {

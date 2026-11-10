@@ -13,7 +13,8 @@
 (function () {
   const A = window.ART;
   const F = (s, hc, h, o, x = "none", more = {}) => ({ skin: A.SKIN[s], hairC: A.HAIRC[hc], hair: h, outfit: A.OUTFIT[o], extra: x, bg: "#2b2f3a", ...more });
-  const N = (name, tag, look, face) => ({ name, tag, look, face });
+  const RECUR = { "Edmund Hale": "lb-hale", "Tolly": "lb-tolly", "Mr. Silas Ashgrove": "lb-ashgrove" };
+  const N = (name, tag, look, face) => ({ name, tag, look, face, ...(RECUR[name] ? { recurs: RECUR[name] } : {}) });
   const ASHGROVE = N("Mr. Silas Ashgrove", "Colourman · purveyor of pigments", "Grey gloves, a soft voice, and a smell of soot that follows him into every room. His face is easy to forget, which he seems to count on.", F(1, 5, "slicked", 5, "none", { sex: "m" }));
 
   /* ---------------------------------------------------------------- part 1 · 1889 · London */
