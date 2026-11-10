@@ -107,6 +107,7 @@
       const want = (pk.npcs || {})[id] || (n.face && n.face.photo);
       if (want && byId[want]) { M.npcs[id].portrait = D.portraitKey(want); continue; }
       const g = { ...D.guess(n), ...(n.face && n.face.sex ? { sex: n.face.sex } : {}), ...(n.face && n.face.tags ? { tags: n.face.tags } : {}), ...(pk.who || {})[id] };
+      if (n.recurs) g.age = (n.face && n.face.age) || "adult";   // a recurring person is picked the same way in every case, whatever each case says about them
       let pool = D.portraitsFor({ era, sex: g.sex, age: g.age, tags: g.tags, npc: true, min: 2 });
       const fresh = pool.filter((p) => !usedP.has(p.id)); if (fresh.length && !n.recurs) pool = fresh;
       if (!pool.length) continue;
