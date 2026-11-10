@@ -35,6 +35,17 @@
         chk("Easy-to-read font", () => S.readable, (v) => (S.readable = v), "Atkinson Hyperlegible, designed for low vision"),
         chk("Colour-blind friendly bars", () => S.colour, (v) => (S.colour = v)),
         chk("Reduce motion (no shakes or flashes)", () => S.still, (v) => (S.still = v)),
+        el("h4", { class: "set-head" }, "Pictures"),
+        el("label", { class: "set" }, el("span", {}, "Art style"), el("select", { onchange: async (e) => {
+          const v = e.target.value, was = window.ART_STYLE || "painted";
+          if (v === was) return;
+          if (window.CAMP && CAMP.camp) CAMP.save();
+          try { localStorage.setItem("beyond.artStyle", v); } catch (err) {}
+          if (/[?&]art=/.test(location.search)) { const u = new URL(location.href); u.searchParams.delete("art"); history.replaceState(null, "", u); }
+          window.UI.toast("Changing the pictures. The game reloads; your campaign is saved.");
+          setTimeout(() => location.reload(), 700);
+        } }, ...[["painted", "Painted (oil paintings)"], ["photo", "Photo (old photos and engravings)"], ["drawn", "Drawn (vector drawings)"]].map(([v, t]) => el("option", { value: v, selected: (window.ART_STYLE || "painted") === v ? "selected" : null }, t)))),
+        el("p", { class: "small muted set-note" }, "The same game in three looks. The rulebook's own art for the patrons and the title stays in every style."),
         el("h4", { class: "set-head" }, "Atmosphere"),
         chk("Era styles for the screen", () => (window.ERASKIN ? ERASKIN.on() : true), (v) => window.ERASKIN && ERASKIN.set(v)),
         chk("Sanity effects (what low Sanity does to the screen)", () => (window.MADNESS ? MADNESS.on() : true), (v) => window.MADNESS && MADNESS.set(v)),

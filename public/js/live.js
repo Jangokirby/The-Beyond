@@ -384,7 +384,7 @@
     document.body.append(shell);
     frame.addEventListener("load", wireFrame);
     frame.srcdoc = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="${document.baseURI}">`
-      + `<link rel="stylesheet" href="css/game.css"><link rel="stylesheet" href="css/camp.css"><link rel="stylesheet" href="css/hideout.css"><link rel="stylesheet" href="css/world.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Dela+Gothic+One&family=Shippori+Mincho:wght@400;600;700;800&display=swap">`
+      + `<link rel="stylesheet" href="css/game.css"><link rel="stylesheet" href="css/camp.css"><link rel="stylesheet" href="css/hideout.css"><link rel="stylesheet" href="css/world.css"><link rel="stylesheet" href="css/dossier.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Dela+Gothic+One&family=Shippori+Mincho:wght@400;600;700;800&display=swap">`
       + `<style>body{margin:0}.screen[hidden]{display:none}#overlay[hidden]{display:none}</style></head><body><div id="mirror"></div></body></html>`;
     lastSeq = -1;
   };
@@ -486,6 +486,7 @@
     const m = d.getElementById("mirror"); if (!m) return;
     const keep = {}; for (const id of ["story", "panel", "scene"]) { const n = d.getElementById(id); if (n) keep[id] = { top: n.scrollTop, bottom: n.scrollHeight - n.scrollTop - n.clientHeight < 60 }; }
     d.documentElement.classList.toggle("jp-flavor", !!v.jp);
+    if (window.DOSSIER) d.documentElement.classList.add("ed-dossier", window.ART_STYLE === "painted" ? "ed-painted" : "ed-photo");
     m.innerHTML = expand(v.html);
     for (const id of Object.keys(keep)) { const n = d.getElementById(id); if (n) n.scrollTop = keep[id].bottom ? n.scrollHeight : keep[id].top; }
   };

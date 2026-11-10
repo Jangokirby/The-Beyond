@@ -298,7 +298,7 @@
   HIDE.tab = () => {
     const c = CAMP.camp, S = style(), ag = CAMP.agency(), sel = ui.selected();
     const wrap = el("div", { class: "hideout" });
-    const places = PLACES();
+    const places = HIDE.relayout ? HIDE.relayout(PLACES()) : PLACES();
     const scene = el("div", { class: "hroom" },
       el("img", { class: "hbg", src: HIDE.room(), alt: `The ${ag.short} ${S.name.toLowerCase()}` }),
       el("div", { class: "hday" }, el("b", {}, `${ag.short} ${S.name}`), el("span", {}, `Day ${c.day} · ${c.year}`)),

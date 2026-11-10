@@ -1,0 +1,74 @@
+{
+ "medieval-f-11": {
+  "tags": [
+   "european"
+  ],
+  "age": "adult"
+ },
+ "medieval-m-12": {
+  "tags": [
+   "european"
+  ],
+  "age": "young"
+ },
+ "victorian-f-13": {
+  "tags": [
+   "african"
+  ],
+  "age": "adult"
+ },
+ "victorian-m-14": {
+  "tags": [
+   "european"
+  ],
+  "age": "adult"
+ },
+ "wars-f-15": {
+  "tags": [
+   "east-asian"
+  ],
+  "age": "young"
+ },
+ "wars-m-16": {
+  "tags": [
+   "european"
+  ],
+  "age": "adult"
+ },
+ "atomic-f-17": {
+  "tags": [
+   "latin-american"
+  ],
+  "age": "young"
+ },
+ "atomic-m-18": {
+  "tags": [
+   "east-asian"
+  ],
+  "age": "adult"
+ },
+ "modern-f-19": {
+  "tags": [
+   "south-asian"
+  ],
+  "age": "adult"
+ },
+ "modern-m-20": {
+  "tags": [
+   "european"
+  ],
+  "age": "old"
+ },
+ "now-f-21": {
+  "tags": [
+   "east-asian"
+  ],
+  "age": "young"
+ },
+ "now-m-22": {
+  "tags": [
+   "african"
+  ],
+  "age": "adult"
+ }
+}

@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="css/camp.css">
 <link rel="stylesheet" href="css/hideout.css">
 <link rel="stylesheet" href="css/world.css">
+<link rel="stylesheet" href="css/dossier.css">
 
 <div id="app">
   <section id="screen-camp" class="screen"><div id="camp-root"></div></section>
@@ -73,6 +74,17 @@
 <script src="js/game.js"></script>
 <script src="js/combat.js"></script>
 <script src="js/adv.js"></script>
+<script>
+/* Art style: Painted (default), Photo or Drawn. Settings saves the choice; ?art=photo in the address overrides it. */
+(function () {
+  var q = (location.search.match(/[?&]art=(painted|photo|drawn)\b/) || [])[1], s = null;
+  try { s = localStorage.getItem("beyond.artStyle"); } catch (e) {}
+  s = q || s || window.ART_STYLE_DEFAULT || "painted";
+  if (!/^(painted|photo|drawn)$/.test(s)) s = "painted";
+  window.ART_STYLE = s;
+  if (s !== "drawn") document.write('<script src="js/art/' + s + '/lib.js"><\/script><script src="js/art/' + s + '/picks.js"><\/script><script src="js/dossier.js"><\/script>');
+})();
+</script>
 <script src="js/adventures.js"></script>
 <script src="js/adventures2.js"></script>
 <script src="js/adventures3.js"></script>

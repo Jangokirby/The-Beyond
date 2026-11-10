@@ -139,14 +139,21 @@
     const pick = (key, list) => el("select", { onchange: (e) => { look[key] = e.target.value; redraw(); } }, ...list.map((v) => el("option", { value: v, selected: look[key] === v ? "selected" : null }, cap(v))));
     const fld = (label, ctl) => el("label", { class: "field" }, el("span", {}, label), ctl);
     const grp = (title, open, ...kids) => el("details", { class: "lookgrp", open: open ? "open" : null }, el("summary", {}, title), el("div", { class: "lookgrid" }, ...kids));
+    const D = window.DOSSIER;
+    /* a fresh photo when there is none, or when the one shown no longer fits the gender or origin chosen above */
+    if (D && (!look.photo || !D.fits(look.photo, draft))) D.rollPhoto(look, C.eraOf(c.year).id, { sex: draft.sex, tags: window.PEOPLE ? PEOPLE.heritageOf(draft.origin) : [] });
+    const photoPrev = D ? el("img", { class: "lookprev photo", alt: "Portrait", src: D.src(look.photo) }) : null;
     body.append(panel("1 · Who were you?",
       ui.originFields(draft, redraw),
+      D ? el("div", { class: "look" }, photoPrev, el("div", { class: "lookctl" },
+        el("p", { class: "small muted" }, "Pick a portrait for your agent. Portraits from this campaign's era are shown first (★)."),
+        D.picker({ era: C.eraOf(c.year).id, value: look.photo, sex: draft.sex, tags: window.PEOPLE ? PEOPLE.heritageOf(draft.origin) : [], onPick: (id) => { look.photo = id; look.photos = { ...(look.photos || {}), [D.style]: id }; photoPrev.src = D.src(id); } }))) :
       el("div", { class: "look" }, prev, el("div", { class: "lookctl" },
         grp("Face", true, fld("Skin", swatch("skin", A.SKIN)), fld("Face shape", pick("face", A.FACES)), fld("Eyes", pick("eyes", A.EYES)), fld("Eye colour", swatch("eyeC", A.EYEC)),
           fld("Eyebrows", pick("brows", A.BROWS)), fld("Nose", pick("nose", A.NOSES)), fld("Expression", pick("mouth", A.MOUTHS)), fld("Marks", pick("marks", A.MARKS))),
         grp("Hair", true, fld("Hair colour", swatch("hairC", A.HAIRC)), fld("Hairstyle", pick("hair", A.HAIRS)), fld("Facial hair", pick("facial", A.FACIAL))),
         grp("Clothes and background", true, fld("Clothes", pick("clothes", A.CLOTHES)), fld("Colour", swatch("outfit", A.OUTFIT)), fld("Accessory", pick("extra", A.EXTRAS)), fld("Background", swatch("bg", A.BGS))))),
-      btn("Roll a name and look", () => { CAMP.rollLook(draft); draft.name = CAMP.rollName(draft.origin, draft.sex); redraw(); }, "small ghost"),
+      btn(window.DOSSIER ? "Roll a name and portrait" : "Roll a name and look", () => { CAMP.rollLook(draft); draft.name = CAMP.rollName(draft.origin, draft.sex); redraw(); }, "small ghost"),
       el("div", { class: "two" },
         el("label", { class: "field" }, el("span", {}, "Name"), el("input", { type: "text", maxlength: "40", value: draft.name, oninput: (e) => { draft.name = e.target.value; refreshBar(); } })),
         el("label", { class: "field" }, el("span", {}, "Age"), el("input", { type: "number", min: "16", max: "90", value: String(draft.age), oninput: (e) => { draft.age = +e.target.value || 30; } }))),

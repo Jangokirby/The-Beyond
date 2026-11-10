@@ -39,7 +39,7 @@
     if (builtIn.length) {
       const sel2 = el("select", {}, ...builtIn.map((a) => el("option", { value: a.id }, `${a.title} · ${a.year} · ${a.agencies.join(", ")}`)));
       body.append(panel("Learn from a finished case", note("Copy one of the game's own cases into your workshop to see how it's built, or to rework it into something of yours. The original stays as it is."),
-        el("div", { class: "row tight" }, sel2, btn("Copy to edit", () => { const a = clone(window.ADV.LIBRARY[sel2.value]); a.id = "gm-" + Math.random().toString(36).slice(2, 8); a.title += " (my version)"; a.custom = true; a.notes = a.notes || ""; for (const s of Object.values(a.scenes)) { s.cast = s.cast || []; s.options = s.options || []; s.onEnter = s.onEnter || []; } GM.save(a); cur = a; tab = "overview"; sel = {}; ui.gmEdit(); }, "small"))));
+        el("div", { class: "row tight" }, sel2, btn("Copy to edit", () => { const a = clone(window.ADV.LIBRARY[sel2.value]); const pk = (window.DOSSIER_PICKS || {})[sel2.value]; if (pk && pk.npcs) for (const [k, pid] of Object.entries(pk.npcs)) if (a.npcs && a.npcs[k]) a.npcs[k].face = { ...(a.npcs[k].face || {}), photo: pid }; a.id = "gm-" + Math.random().toString(36).slice(2, 8); a.title += " (my version)"; a.custom = true; a.notes = a.notes || ""; for (const s of Object.values(a.scenes)) { s.cast = s.cast || []; s.options = s.options || []; s.onEnter = s.onEnter || []; } GM.save(a); cur = a; tab = "overview"; sel = {}; ui.gmEdit(); }, "small"))));
     }
     if (!list.length) body.append(note("Nothing here yet. The example is a two-scene case with a witness, a clue and a fight, ready to play."));
     for (const a of list) {
@@ -298,6 +298,18 @@
       const prev = el("img", { class: "lookprev", alt: "", src: "data:image/svg+xml;charset=utf-8," + encodeURIComponent(A.portraitSvg(n.face)) });
       const rp = () => { prev.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(A.portraitSvg(n.face)); };
       const sw = (key, list) => el("div", { class: "swatches" }, ...list.map((v) => el("button", { class: "sw" + (n.face[key] === v ? " on" : ""), style: { background: v }, "aria-label": v, onclick: (e) => { n.face[key] = v; commit(); rp(); e.currentTarget.parentNode.querySelectorAll(".sw").forEach((b) => b.classList.toggle("on", b === e.currentTarget)); } })));
+      const D = window.DOSSIER;
+      if (D) {
+        const auto = !n.face.photo;
+        const ph = el("img", { class: "lookprev photo", alt: "", src: n.face.photo ? D.src(n.face.photo) : "", hidden: n.face.photo ? null : "hidden" });
+        w.append(panel(n.name, el("div", { class: "look" }, ph, el("div", {},
+          el("div", { class: "two" }, field("Name", txt(n, "name")), field("Role", txt(n, "tag", { ph: "e.g. Caretaker" }))), field("How they look and act", area(n, "look", 2)),
+          el("p", { class: "small muted" }, auto ? "No portrait chosen: the game picks one that fits the year, and guesses man or woman from the name and role. Choose one below to fix it." : "Photo chosen."),
+          D.picker({ era: D.eraOf(cur.year), value: n.face.photo, npc: true, onPick: (pid) => { n.face.photo = pid; ph.src = D.src(pid); ph.hidden = false; commit(); } }),
+          n.face.photo ? btn("Let the game choose", () => { delete n.face.photo; commit(); redraw(); }, "small ghost") : null)),
+          btn("Remove", () => { delete cur.npcs[id]; for (const s of Object.values(cur.scenes)) s.cast = (s.cast || []).filter((x) => x !== id); commit(); redraw(); }, "small ghost danger")));
+        continue;
+      }
       w.append(panel(n.name, el("div", { class: "look" }, prev, el("div", {},
         el("div", { class: "two" }, field("Name", txt(n, "name")), field("Role", txt(n, "tag", { ph: "e.g. Caretaker" }))), field("How they look and act", area(n, "look", 2)),
         field("Skin", sw("skin", A.SKIN)), field("Hair colour", sw("hairC", A.HAIRC)), field("Clothes colour", sw("outfit", A.OUTFIT)), field("Eye colour", sw("eyeC", A.EYEC)), field("Background", sw("bg", A.BGS)),

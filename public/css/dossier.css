@@ -1,0 +1,35 @@
+/* ============================================================================
+   DOSSIER EDITION — photo picker, framed photos and round case-file tokens
+   ========================================================================== */
+.photopick { display: grid; gap: .45rem; margin-top: .3rem; }
+.photopick .seg { display: flex; flex-wrap: wrap; gap: .25rem; align-items: center; }
+.photopick .seg small { margin-left: .4rem; }
+.pp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); gap: 5px; align-content: start; grid-auto-rows: max-content; max-height: 340px; overflow-y: auto; padding: 4px; border: 1px solid var(--night-3, #333); border-radius: 6px; background: rgba(0,0,0,.18); }
+.pp { appearance: none; padding: 0; border: 2px solid transparent; border-radius: 4px; background: #1c1611; cursor: pointer; overflow: hidden; display: block; min-width: 0; }
+.pp img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; display: block; filter: grayscale(.15); transition: filter .15s, transform .15s; }
+.pp:hover img { filter: none; transform: scale(1.04); }
+.pp.on { border-color: var(--sodium, #e7b563); box-shadow: 0 0 0 2px rgba(231,181,99,.35); }
+.lookprev.photo { aspect-ratio: 1; object-fit: cover; background: #1c1611; padding: 6px 6px 18px; background: #efe5cf; box-shadow: 0 6px 16px rgba(0,0,0,.45); transform: rotate(-1.2deg); }
+
+/* case-file tokens: every portrait and monster sits in a round print with a rim */
+.ed-dossier .chip { background-size: cover !important; background-position: center 30% !important; filter: sepia(.15); }
+.ed-dossier .token .chip { border: 2px solid #efe5cf; box-shadow: 0 0 0 1.5px #1c1611, 0 2px 4px rgba(0,0,0,.5); }
+.ed-dossier .token .sprite { width: 40px; height: 40px; object-fit: cover; border-radius: 50%; border: 2px solid #8f2a22; box-shadow: 0 0 0 1.5px #1c1611, 0 2px 5px rgba(0,0,0,.55); filter: none; }
+.ed-dossier .token.boss .sprite { width: 62px; height: 62px; border-width: 3px; }
+@media (max-width: 700px) { .ed-dossier .token .sprite { width: 34px; height: 34px; } .ed-dossier .token.boss .sprite { width: 52px; height: 52px; } }
+@media (min-width: 1100px) { .ed-dossier .token .sprite { width: 52px; height: 52px; } .ed-dossier .token.boss .sprite { width: 84px; height: 84px; } }
+/* monster plates in the inspect card and anywhere else a sprite is shown large */
+.ed-dossier .einspect img, .ed-dossier .modal img[src*="dossier/m/"] { border-radius: 4px; border: 6px solid #efe5cf; box-shadow: 0 6px 18px rgba(0,0,0,.5); object-fit: cover; }
+.ed-dossier img[src*="dossier/m/"] { background: #e6d6b6; }
+
+/* painted edition */
+.ed-painted .crest.sealed { height: 64px; aspect-ratio: 1; background-size: cover; background-position: center; color: transparent; border-radius: 50%; box-shadow: 0 0 0 2px #1c1611, 0 3px 8px rgba(0,0,0,.5); }
+.ed-painted .einspect img, .ed-painted .modal img[src*="painted/m/"] { border-radius: 4px; border: 6px solid #2a241c; box-shadow: 0 6px 18px rgba(0,0,0,.5); object-fit: cover; }
+.ed-painted .chip { filter: none; }
+.ed-painted .hroom .hbg { object-fit: cover; }
+.ed-painted .crest.sm.sealed { height: 40px; }
+/* fight tokens at the fight-look sizes (js/fightfx.js) */
+body.fightfx .token .sprite { width: 78px; height: 78px; }
+body.fightfx .token.boss .sprite { width: 124px; height: 124px; }
+@media (min-width: 1100px) { body.fightfx .token .sprite { width: 96px; height: 96px; } body.fightfx .token.boss .sprite { width: 160px; height: 160px; } }
+@media (max-width: 700px) { body.fightfx .token .sprite { width: 52px; height: 52px; } body.fightfx .token.boss .sprite { width: 80px; height: 80px; } }

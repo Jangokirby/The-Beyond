@@ -68,7 +68,7 @@
   CAMP.peek = (id) => rd(KEY(id));
   CAMP.load = (id) => { const c = rd(KEY(id)); if (c) { CAMP.camp = c; CAMP.migrate(c); } return c; };
   CAMP.remove = (id) => { rm(KEY(id)); rm("beyond.mission." + id); wr(IDX, (rd(IDX) || []).filter((x) => x.id !== id)); if (CAMP.camp && CAMP.camp.id === id) CAMP.camp = null; };
-  CAMP.migrate = (c) => { c.favors = c.favors || []; c.log = c.log || []; c.history = c.history || []; c.retired = c.retired || []; c.rules = c.rules || { rest: "rulebook" }; c.day = c.day || 0; for (const ch of c.chars) { ch.portraitKey = window.ART.portrait(ch.look); ch.portrait = ch.portraitKey; ch.grants = ch.grants || { artifact: 0, patron: 0 }; } };
+  CAMP.migrate = (c) => { c.favors = c.favors || []; c.log = c.log || []; c.history = c.history || []; c.retired = c.retired || []; c.rules = c.rules || { rest: "rulebook" }; c.day = c.day || 0; for (const ch of c.chars) { ch.portraitKey = window.ART.portrait(window.DOSSIER ? { ...ch.look, sex: ch.look.sex || ch.sex, tags: ch.look.tags || (window.PEOPLE && ch.origin ? PEOPLE.heritageOf(ch.origin) : undefined) } : ch.look); ch.portrait = ch.portraitKey; ch.grants = ch.grants || { artifact: 0, patron: 0 }; } };
 
   CAMP.newCampaign = ({ name, year, agency }) => {
     const c = { id: uid("c"), name: name || "Untitled campaign", year, agency, day: 0, created: Date.now(), updated: Date.now(), chars: [], retired: [], favors: [], log: [], history: [],
