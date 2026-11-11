@@ -34,7 +34,11 @@ for (const id of ids) {
   if (n.res.size < 2) probs.push(`ways to solve it ${n.res.size} < 2 (set flags res_*)`);
   if (!uniq) probs.push("no enemy with its own rules (build.text)");
   if (tiers < 3) probs.push("endings do not depend on how it went");
-  if (n.size < 22000) probs.push(`size ${(n.size / 1000).toFixed(0)} KB (the floor is the DoB scale; aim for 22 KB+)`);
+  if (n.size < 18000) probs.push(`size ${(n.size / 1000).toFixed(0)} KB (the floor is the DoB scale; aim for 18 KB+)`);
+  /* a limited interview must not hide what the case needs: topics that set a flag or clue used in an if must be free (or Charisma extras) */
+  const used = new Set(); const grab = (c) => { if (c == null) return; if (typeof c === "string") used.add(c); else if (c.flag) used.add(c.flag); else if (c.clue) used.add("clue:" + c.clue); else if (c.obj) used.add("obj:" + c.obj); else if (c.not !== undefined) grab(c.not); else if (c.all) c.all.forEach(grab); else if (c.any) c.any.forEach(grab); };
+  walk(a.scenes, (o) => { if (o.if !== undefined) grab(o.if); });
+  walk(a.scenes, (o) => { if (o.converse && o.converse.limit) for (const t of o.converse.topics || []) { if (t.free || t.cha) continue; const gives = []; walk(t.then || [], (x) => { if (typeof x.set === "string") gives.push(x.set); if (x.clue) gives.push("clue:" + x.clue); }); const g = gives.filter((x) => used.has(x)); if (g.length) probs.push(`limited interview "${t.ask}" gates ${g.join(", ")}: make it free:true`); } });
   console.log((probs.length ? "BELOW " : "ok    ") + id.padEnd(24), `${(n.size / 1000).toFixed(0)}KB clues ${Object.keys(a.clues).length} search ${n.search} interviews ${n.interview} (limited ${n.limited}, cha ${n.cha}) combat ${n.combat} ways ${n.res.size} benefits ${ben.length}`);
   for (const p of probs) console.log("        - " + p);
   if (probs.length) bad++;

@@ -55,7 +55,7 @@
           K.ask("mathilde", [
             K.t("What are they waiting for?", ["The bell. It rings at the third watch, and they get up, and they go."]),
             K.t("Why aren't you waiting?", [{ say: "She touches one ear." }, "I put wax in. When my mother stopped answering I tried everything I had. Wax worked."], { clue: "c_wax", obj: "so2", cha: 6 }),
-            K.t("When did it start?", "After the new bell. It came up from Auxerre on a cart. It was a good bell. People say it was too good.", { set: "bell_new" }),
+            K.t("When did it start?", "After the new bell. It came up from Auxerre on a cart. It was a good bell. People say it was too good.", { free: true, set: "bell_new" }),
             K.t("What do they do at the chapel?", ["They sing. One each. The same eleven, always. They stop when the sun comes."], { cha: 9, clue: "c_hymn", then: [{ say: "\"Twelve, there should be. I counted. There's always one gap.\"" }] }),
             K.t("Where is your mother now?", { say: "She looks away." }, { cha: 12, then: [{ say: "\"In the chapel. Sixth. The one who sings 'And no man shall return by the water.' I know it by the tune.\"" }] })
           ], { label: "Talk to the girl on the wall", name: "Mathilde", open: ["You're from the Order. You've a black sun on your cloaks. Father Anselm said someone would come."], bye: ["Keep something in your ears. I mean it."] }),
@@ -78,7 +78,7 @@
         options: [
           K.ask("anselm", [
             K.t("What has been happening?", ["The new bell was hung in September. By All Saints, the third watch was ringing by itself. Eleven people have gone to the chapel each night since, singing. In the morning, they remember nothing. Brother Odo rings it. He does not wake."], { clue: "c_sleep" }),
-            K.t("Who cast the bell?", ["A founder from Auxerre. Gervais. A good man, and honest. I paid him well, and I gave him some silver of our own to put in the alloy. It's tradition."], { clue: "c_recast" }),
+            K.t("Who cast the bell?", ["A founder from Auxerre. Gervais. A good man, and honest. I paid him well, and I gave him some silver of our own to put in the alloy. It's tradition."], { free: true, clue: "c_recast" }),
             K.t("Where did the silver come from?", [{ say: "His hands are very still." }, "From the crypt. An old reliquary, empty, we thought. Brother Jean's. He was a chorister. He drowned long ago and we had no bones."], { clue: "c_novice", cha: 6 }),
             K.t("Was it empty?", [{ say: "He closes his eyes." }, "I did not look. I did not want to know. The silver would pay for the casting and I had a roof to mend. God forgive me, I did not look."], { cha: 10, obj: "so3", set: "abbot_guilt" }),
             K.t("Can we see where the bell is rung?", "Up the stair, behind the chapel. Brother Odo is there. Don't wake him. Don't speak to him.", { free: true, set: "belfry_known" })
@@ -109,7 +109,7 @@
         onEnter: [{ once: "in", steps: [{ say: "A long shed at the edge of the village with the great furnace cold, and a man sitting in front of it who flinches when you come in." }] }],
         options: [
           K.ask("gervais", [
-            K.t("You cast the new bell?", "I did. It was my best. It was the best bell I ever cast. That's what frightens me.", { set: "bell_cast" }),
+            K.t("You cast the new bell?", "I did. It was my best. It was the best bell I ever cast. That's what frightens me.", { free: true, set: "bell_cast" }),
             K.t("What went into the metal?", "Bronze. Tin. And silver, the abbot's, from a little reliquary. Beautiful work. I melted it with the rest, and I took out the bones.", { clue: "c_foundry" }),
             K.t("What did you do with the bones?", [{ say: "He doesn't look up." }, "I could not put them in the fire. I had never not been able to. I sacked them and put them behind the furnace."], { cha: 8, set: "bones_behind" }),
             K.t("Do you hear it?", "Every night. I don't sleep. I hear a boy singing in the shop. He sings the last verse, and he stops, and he waits.", { cha: 10 })
@@ -195,7 +195,7 @@
           { talk: { npc: "willem", text: "The Order. Bishop Gerolf wrote that you would come. God forgive me, I did not think you would come so soon." } }] }],
         options: [
           K.ask("willem", [
-            K.t("What is happening here?", ["Every night at dusk the dead of Hollebeke come home. They sit at their own tables, in their own seats. They do not speak. They look at the bread. By dawn, the bread is gone, and the family at the table is weaker."], { clue: "c_table" }),
+            K.t("What is happening here?", ["Every night at dusk the dead of Hollebeke come home. They sit at their own tables, in their own seats. They do not speak. They look at the bread. By dawn, the bread is gone, and the family at the table is weaker."], { free: true, clue: "c_table" }),
             K.t("How many?", "Two hundred and eleven buried since Candlemas. Eighty-one still living in the village. Every night, more of them sit down.", { clue: "c_bread" }),
             K.t("Who told them to set out bread?", [{ say: "The handkerchief is now the size of a coin." }, "I did. God help me, I did. In the first week they would not stay buried. They came back and wandered, and clawed at the church door. So I told the village to leave them a loaf. And they sat down. And they ate. And they stayed."], { cha: 7, clue: "c_willem", obj: "po1" }),
             K.t("Why did you not stop it?", "Because it worked. And because it was kind. And because the village was so frightened, and so tired. I told them it was a charity. I called it a Mass.", { cha: 11 }),
@@ -222,7 +222,7 @@
         onEnter: [{ once: "in", steps: [{ say: "A low room, a long table, five chairs. At the head, the baker's widow lays out a loaf with the care of a woman setting a place for a king. Four chairs are empty. The room is cold, and the bread is already warm." }] }],
         options: [
           K.ask("griet", [
-            K.t("Who comes to your table?", ["My husband, my father-in-law, our two boys. They come as the light goes. They sit. They look at the loaf. They do not speak, and they do not eat until I look away."], { clue: "c_table" }),
+            K.t("Who comes to your table?", ["My husband, my father-in-law, our two boys. They come as the light goes. They sit. They look at the loaf. They do not speak, and they do not eat until I look away."], { free: true, clue: "c_table" }),
             K.t("Why do you keep setting the bread?", [{ say: "She straightens the loaf." }, "Because they come anyway. At least this way they are quiet. At least they're mine."]),
             K.t("What has the bread done to you?", "I am thin. Everyone is. We eat what the dead leave, and it is ash. I cannot taste anything. I cannot taste my own children's names.", { cha: 8, set: "ash_hint" }),
             K.t("What does the bread look like?", [{ say: "She shows you the heel of one." }, "Dark. Dense. Willem said it must be this loaf, and no other, and the ash from the pit stirred in, for the dead to know it by."], { cha: 10, clue: "c_ash" })
@@ -234,7 +234,7 @@
         options: [
           K.ask("pieter", [
             K.t("How many have you buried?", "Two hundred and eleven. I wrote each one down. Name, house, day. So that no one is forgotten. That's the only decent thing I had left to give them.", { set: "ledger_known" }),
-            K.t("Do the dead come from these graves?", "They all do. They rise at dusk, and walk home, and sit down. At dawn they come back and lie down. I tidy the earth.", { clue: "c_table" }),
+            K.t("Do the dead come from these graves?", "They all do. They rise at dusk, and walk home, and sit down. At dawn they come back and lie down. I tidy the earth.", { free: true, clue: "c_table" }),
             K.t("May we see your ledger?", [{ say: "He holds it against his chest." }, "It is the only thing I have. But you are the Order. Look."], { cha: 7, set: "ledger_open" }),
             K.t("Why do the last pages have only one name?", [{ say: "He says nothing for a very long time." }, "It's mine. It's mine, over and over. I think I am already dead. I think I have been for weeks. It is only that the bread has not reached me yet."], { cha: 12 })
           ], { label: "Talk to Pieter", name: "the gravedigger" }),
@@ -252,7 +252,7 @@
         options: [
           K.ask("aleid", [
             K.t("What do you know about the dead and bread?", "It is an old thing. Bread for the dead, before there were priests. You do not feed them. You give them something to stop them wanting.", { clue: "c_salt" }),
-            K.t("How do you stop it?", "Salt. Across the sill, and in the bread. And the proper rites, the whole of them, not just the Mass. The dead must be told they are dead. Gently. By name.", { obj: "so2", set: "farewell_known" }),
+            K.t("How do you stop it?", "Salt. Across the sill, and in the bread. And the proper rites, the whole of them, not just the Mass. The dead must be told they are dead. Gently. By name.", { free: true, obj: "so2", set: "farewell_known" }),
             K.t("What is the oven?", [{ say: "She looks a long time at the brewhouse door." }, "A fire the dead were burned in, and something that learned how to be fed. If it is the oven, the bread is only its hand."], { cha: 9, set: "oven_mother" })
           ], { label: "Talk to Sister Aleid", name: "Sister Aleid", bye: ["Bring me salt. A great deal."] }),
           K.go("Back to the village", "arrive"),

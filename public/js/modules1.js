@@ -127,7 +127,7 @@
             topics: [
               { ask: "Who are you, and who are these people?", lines: ["My name is Kennith. This is my parish and these are my flock. I am ever grateful, and I will offer whatever I can."] },
               { ask: "What did they look like?", lines: ["Wicked things. Grey skin, unnaturally long teeth, but human in nature. It was dark and hard to see, with all the chaos."], then: [{ clue: "c_desc" }] },
-              { ask: "How did you stay safe?", lines: ["By God's grace, of course! I read passages from my father's old book all night. If you plan to go after those devils, take it with you!"], then: [{ clue: "c_book" }, { set: "book_known" }] },
+              { ask: "How did you stay safe?", free: true, lines: ["By God's grace, of course! I read passages from my father's old book all night. If you plan to go after those devils, take it with you!"], then: [{ clue: "c_book" }, { set: "book_known" }] },
               { ask: "Did any of the dead look odd to you?", cha: 7, lines: ["They were not bitten and they were not bled. They were opened and emptied. The Lord forgive me, I thought: these things are thirsty."] },
               { ask: "Where are they now?", free: true, lines: [{ say: "As you speak, the sound of a horn carries from the east." }, "That is the horn of Lord Dunberth's estate! There is a barony due east. Go, my children, with God's speed, and save those people from our fate before it is too late!"], then: [{ clue: "c_horn" }, { set: "horn" }] }],
             bye: ["God be with you."] } }] },
