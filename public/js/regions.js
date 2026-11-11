@@ -76,55 +76,61 @@
     ui.mount(body);
   });
 
-  /* ------------------------------------------------------------ the board: era, then region, then jobs */
-  let view = null;
+  /* ------------------------------------------------------------ the board: pick the period; your agency's HQ contact sends the jobs
+     Your agency is who you work for, not what you may do: every job of the period reaches you from your own HQ, and where it is
+     (and who usually leads it) comes from the job. The contact changes with the agency and the period, and so does how they reach you. */
+  const HQ = {
+    OID: { medieval: ["Prior Anselm", "Prior of the Order", "a sealed letter, carried by a lay brother", "Peace to you. Brother Anselm writes."], victorian: ["Prior Cuthbert", "Prior of the Order", "a letter and, when it is urgent, a telegram", "Prior Cuthbert to the agents of the Order."], wars: ["Prior Cuthbert", "Prior of the Order", "a telegram delivered to your billet", "STOP. The Prior writes."], atomic: ["Brother Amadeo", "the Prior's secretary", "a telephone call at an odd hour", "It is Brother Amadeo, from the Prior's office."], modern: ["Brother Amadeo", "the Prior's secretary", "a call on your mobile, and a fax to follow", "Amadeo here, for the Prior."], now: ["Sister Odile", "Keeper of the Order's correspondence", "a message on your phone", "Sister Odile. The Order has a job."], future: ["Sister Odile", "Keeper of the Order's correspondence", "a call that arrives on your wrist", "Odile, from the Priory. Eight hundred years of this and it still rings at night."] },
+    WCA: { victorian: ["Mr. Wells", "Senior partner, Wells and Constantine", "a letter in a plain envelope", "Mr. Wells presents his compliments."], wars: ["Mr. Wells", "Senior partner, Wells and Constantine", "a telegram to your lodgings", "WELLS HERE. A MATTER FOR THE ASSOCIATION."], atomic: ["Miss Pembroke", "Mr. Wells's private secretary", "a telephone call", "Miss Pembroke, from Mr. Wells's office."], modern: ["Mr. Quill", "Duty officer, the Association", "a call, and a file by courier", "Quill, at the Association."], now: ["Ms. Okafor", "Head of Operations", "an encrypted message", "Okafor, Operations. We have something."], future: ["Agent Hugo", "Handler, Neo France", "a call that opens in the air in front of you", "Agent Hugo, from headquarters."] },
+    NSBD: { wars: ["Commissioner Hale", "Division headquarters, Nassau", "a coded telegram", "NSBD HEADQUARTERS. COMMISSIONER HALE."], atomic: ["Director Mallory", "Division director", "a telephone call on a scrambled line", "Mallory. The Division has a case."], modern: ["Agent Ruiz", "Dispatcher, the Division", "your pager, then a call", "Ruiz, dispatch. Call me back from a payphone."], now: ["Dana Whitcombe", "Field coordinator", "a secure text", "Whitcombe, Division. Read, then delete."], future: ["Dana Whitcombe", "Field coordinator", "a call that appears on your lenses", "Whitcombe. Division. It is a long way from the Bahamas."] },
+    EHG: { atomic: ["Captain Mori", "Guard liaison", "a sealed note delivered by a courier on a scooter", "From Captain Mori of the Heavenly Guard."], modern: ["Colonel Ishikawa", "Guard operations", "a call from Tokyo", "Ishikawa, Guard operations."], now: ["Lieutenant Tanabe", "Guard watch officer", "a message on your phone", "Tanabe, watch officer."], future: ["Marshal Aoki", "Commander of the Guard", "a call that stands in the room like a person", "Marshal Aoki, of the Guard."] },
+    BFV: { now: ["Handler Wen", "Vanguard handler", "an encrypted app message", "Wen, Vanguard. Job."], future: ["Dispatcher Lin", "Vanguard dispatch", "a call that is already in your ear when you wake", "Lin, Vanguard dispatch. Everyone who is awake, listen."] }
+  };
+  C.HQ = HQ;
+  CAMP.hq = (agencyId, year) => {
+    const order = ["medieval", "victorian", "wars", "atomic", "modern", "now", "future"], e = C.eraOf(year || CAMP.camp.year).id, t = HQ[agencyId] || HQ.OID;
+    for (let i = order.indexOf(e); i >= 0; i--) if (t[order[i]]) return t[order[i]];
+    return Object.values(t)[0];
+  };
+  /* the jobs of the player's chosen period: every one of them, sorted by year */
+  CAMP.periodJobs = () => { const c = CAMP.camp, era = C.eraOf(c.year); return CAMP.allAdventures().filter((m) => m.year >= era.from && m.year <= era.to && CAMP.canTake(m, c.agency) && !CAMP.isBlank(m)).sort((x, y) => x.year - y.year); };
+  CAMP.isBlank = (m) => { const src = m.src || m; return !!(m.custom || src.custom) && ((m.title || "") === "Untitled case" || !(m.summary || (src && src.summary))); };
   ui.board = (wrap) => {
     const c = CAMP.camp, era = C.eraOf(c.year), ag = CAMP.agency(), here = c.region || CAMP.homeRegion(c.agency);
-    const list = CAMP.advList();                       // this era, any case this agency can take
-    const byRegion = {}; for (const m of list) (byRegion[CAMP.regionOfCase(m)] = byRegion[CAMP.regionOfCase(m)] || []).push(m);
-    if (!view || (!byRegion[view] && view !== here)) view = byRegion[here] ? here : (Object.keys(byRegion).sort((x, y) => byRegion[y].length - byRegion[x].length)[0] || here);
-    wrap.append(el("h3", { class: "sect" }, `Jobs for the ${ag.short} · ${era.name} (${c.year})`));
-    /* time first: the eras this agency exists in, with how many jobs each holds */
-    const all = CAMP.allAdventures();
+    const list = CAMP.periodJobs(), hq = CAMP.hq(c.agency, c.year);
+    wrap.append(el("h3", { class: "sect" }, `Choose the period · ${ag.short}`));
+    const all = CAMP.allAdventures().filter((m) => !CAMP.isBlank(m));
     wrap.append(el("div", { class: "regionbar eras" }, ...C.ERAS.filter((e) => ag.founded <= e.to).map((e) => {
       const n = all.filter((m) => m.year >= e.from && m.year <= e.to && CAMP.canTake(m, c.agency)).length;
-      return el("button", { class: "region" + (e.id === era.id ? " on" : ""), onclick: () => { if (e.id === era.id) return; c.year = Math.max(e.from, Math.min(e.to, Math.max(e.sample, ag.founded))); CAMP.logAdd(`The campaign moved to ${c.year}.`); CAMP.save(); view = null; ui.hub("missions"); } },
-        el("b", {}, e.name), el("small", {}, `${e.from < 1000 ? e.from : e.from}–${e.to >= 2100 ? "" : e.to} · ${n} job${n === 1 ? "" : "s"}`));
+      return el("button", { class: "region" + (e.id === era.id ? " on" : ""), onclick: () => { if (e.id === era.id) return; c.year = Math.max(e.from, Math.min(e.to, Math.max(e.sample, ag.founded))); CAMP.logAdd(`The campaign moved to ${c.year}.`); CAMP.save(); ui.hub("missions"); } },
+        el("b", {}, e.name), el("small", {}, `${e.from}–${e.to >= 2600 ? "" : e.to} · ${n} job${n === 1 ? "" : "s"}`));
     })));
-    const chips = el("div", { class: "regionbar" }, ...C.REGIONS.filter((r) => byRegion[r.id] || r.id === here).map((r) => {
-      const n = (byRegion[r.id] || []).length;
-      return el("button", { class: "region" + (r.id === view ? " on" : "") + (r.id === here ? " here" : ""), onclick: () => { view = r.id; ui.hub("missions"); } },
-        el("b", {}, r.name), el("small", {}, `${n} job${n === 1 ? "" : "s"}${r.id === here ? " · your team is here" : ""}`));
-    }));
-    wrap.append(chips);
-    const rv = C.regionOf(view);
-    if (view !== here) {
-      const days = CAMP.travelDays(here, view);
-      wrap.append(note(`Your team is in ${C.regionOf(here).name}. Getting to ${rv.name} takes about ${days} day${days === 1 ? "" : "s"}; ${ag.short} covers it. Picking a job here sends you there.`, ""));
-    } else wrap.append(el("p", { class: "small muted" }, rv.blurb));
-    const jobs = byRegion[view] || [];
-    if (!jobs.length) wrap.append(note(`Nothing on the board in ${rv.name} in this period for the ${ag.short}. Try another region, or change the period.`));
+    wrap.append(el("div", { class: "hqcard" },
+      el("p", { class: "eyebrow" }, `${era.name} · ${c.year}`),
+      el("b", {}, `${hq[0]}, ${hq[1]}`),
+      el("p", { class: "small muted" }, `Reaches you by ${hq[2]}.`),
+      el("p", { class: "hqsay" }, `“${hq[3]} ${list.length ? `There ${list.length === 1 ? "is one matter" : `are ${list.length} matters`} on the desk.` : "Nothing on the desk for this period just now."}”`)));
+    if (!list.length) wrap.append(note(`${hq[0]} has nothing for the ${ag.short} in this period. Choose another period above.`));
     const grid = el("div", { class: "cardgrid" });
-    for (const m of jobs) {
-      const done = c.history.filter((h) => h.adv === m.id), joint = !CAMP.isLead(m, c.agency);
+    for (const m of list) {
+      const done = c.history.filter((h) => h.adv === m.id), joint = !CAMP.isLead(m, c.agency), rg = C.regionOf(CAMP.regionOfCase(m));
       grid.append(el("button", { class: "mcard", onclick: async () => {
         U.click(); if (!CAMP.active().length) return U.toast("You need an active agent.");
-        if (view !== here) { const ok = await ui.travel(view); if (!ok) return; }
+        const to = CAMP.regionOfCase(m);
+        if (to !== here) { const ok = await ui.travel(to); if (!ok) return; }
         ui.briefing(m.id);
       } },
         el("img", { src: U.img(m.art || window.ART.scene(m.theme || "street", m.id)), alt: "" }),
-        el("div", { class: "etxt" }, el("b", {}, m.title), el("span", { class: "mono" }, m.setting), el("small", {}, m.summary || ""),
+        el("div", { class: "etxt" }, el("b", {}, m.title), el("span", { class: "mono" }, `${m.setting} · ${rg.name}`), el("small", {}, m.summary || ""),
           joint ? el("span", { class: "tag" }, "Joint operation") : null,
           done.length ? el("span", { class: "tag ok" }, done[0].result) : null)));
     }
     wrap.append(grid);
-    const elsewhere = CAMP.allAdventures().filter((m) => !list.includes(m) && CAMP.canTake(m, c.agency) && !(m.year >= era.from && m.year <= era.to));
-    if (elsewhere.length) wrap.append(note(`${elsewhere.length} more job${elsewhere.length > 1 ? "s are" : " is"} open to the ${ag.short} in other periods. Use Period to move through time.`, ""));
     return wrap;
   };
 
   /* ------------------------------------------------------------ the briefing says who assigned it */
-  const HANDLER = { OID: "the Prior", WCA: "Mr. Wells", NSBD: "the Division desk", EHG: "your section chief", BFV: "Vanguard dispatch" };
+  const HANDLER = new Proxy({}, { get: (_, k) => { try { return CAMP.hq(k)[0]; } catch (e) { return "your agency"; } } });
   const brief0 = ui.briefing;
   ui.briefing = (advId, ...rest) => {
     const r = brief0.call(ui, advId, ...rest);
