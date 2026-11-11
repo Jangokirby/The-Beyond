@@ -199,7 +199,7 @@
         options: [
           K.ask("jean", [
             K.t("Are you all right?", ["I'm doing the counter. Somebody has to do the counter."], { free: true }),
-            K.t("Have you seen the film?", [{ say: "She takes her fingers away from her eyes." }, "I saw it. From the booth. I saw the ending, only the ending. That was enough."], { clue: "c_end", obj: "so3" }),
+            K.t("Have you seen the film?", [{ say: "She takes her fingers away from her eyes." }, "I saw it. From the booth. I saw the ending, only the ending. That was enough."], { clue: "c_end", obj: "so3", free: true }),
             K.t("What does it show?", "A mirror. You see yourself, watching. And then you see what happens to the watcher. After that it asks you, very kindly, to buy a ticket.", { cha: 8, clue: "c_end" }),
             K.t("How do you not look?", [{ say: "She laughs, a little too quickly." }, "You look at the corner of the screen. Not at the middle. At the corner, there's a smudge, a place where the paint's peeled. You look at that."], { cha: 11, set: "corner_trick" })
           ], { label: "Talk to Jean", name: "Jean", bye: ["Popcorn's free. It's always free."] }),

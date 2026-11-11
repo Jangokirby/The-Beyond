@@ -10,59 +10,6 @@
   const N = (name, tag, look, face) => ({ name, tag, look, face });
   const win = [{ end: "win" }];
 
-  /* ---------------------------------------------------------------- 1999 · any */
-  ADV.register({
-    id: "dial-up", title: "Dial-Up", setting: "Rotterdam, Netherlands · 1999", year: 1999, level: [2, 5], agencies: ["WCA", "NSBD", "EHG", "OID"],
-    summary: "A bulletin board with no host answers on a phone number that doesn't exist. Eleven users have logged in. Their bodies are in their bedrooms, and none of them are waking up.",
-    objectives: [
-      { id: "po1", kind: "primary", t: "Trace the phone number", done: "It is routed through an exchange that was decommissioned in 1971." },
-      { id: "po2", kind: "primary", t: "Sever the line and free the logged-in", done: "Eleven users wake with a gasp, their screens black." },
-      { id: "so1", kind: "secondary", t: "Read the Sysop's last message", done: "'Do not answer it twice.' It was signed by someone who answered twice." }],
-    clues: {
-      c_bbs: { t: "Threshold BBS", s: "Priya", x: "Nobody runs it. Callers get a greeting that uses their name, and sometimes a name they haven't used since childhood." },
-      c_exchange: { t: "An exchange that doesn't exist", s: "Telephone exchange", x: "The number routes to Exchange 31, closed in 1971. There is still a line connected." },
-      c_sysop: { t: "The Sysop's last message", s: "Dead user's terminal", x: "'It remembers everyone who calls. It wants to remember everyone. Do not answer it twice.'" }
-    },
-    npcs: {
-      priya: N("Priya Das", "ISP technician", "Thin, wired on coffee, a lanyard full of keys and a laptop held like a shield.", F(2, 0, "long", 0, "glasses")),
-      lazarus: N("Lazarus", "Sysop (deceased)", "Only a green cursor. It blinks to the rhythm of a heartbeat.", F(4, 0, "bald", 5, "none", "#0a1a14"))
-    },
-    enemies: {
-      static: { build: { name: "Static Wraith", type: "Spirit", difficulty: "easy", sprite: "spirit", hue: 150, dtype: "sanity", range: 1 } },
-      operator: { build: { name: "The Operator", type: "Beyond", difficulty: "challenging", sprite: "beyond", hue: 160, dtype: "sanity", range: 1, core: { body: 0, mind: 3, spirit: 2 }, mods: ["Mimic"] }, modText: { "Mimic": "Speaks with the voices of those it has taken." } }
-    },
-    encounters: {
-      exchange: { name: "Exchange 31", theme: "lab", lit: true, fightText: "The racks hum. A dozen handsets lift all at once.", zones: [
-        { id: "a", name: "Cable door", col: 0, row: 0 }, { id: "b", name: "Switching racks", col: 1, row: 0 }, { id: "c", name: "The patch panel", col: 2, row: 0 }], edges: [["a", "b"], ["b", "c"]], start: "a", foes: [{ t: "operator", zone: "c" }, { t: "static", zone: "b" }, { t: "static", zone: "b" }] }
-    },
-    start: "office",
-    scenes: {
-      office: { name: "Priya's ISP office", theme: "lab", mood: "calm", cast: ["priya"], onEnter: [{ once: "a", steps: [
-        { say: "Rotterdam, December 1999. Everyone is talking about the Millennium Bug. Rain on the harbour cranes, Christmas lights on the Witte de Withstraat, and above a kebab shop a cramped ISP office where cables run across the ceiling like vines and three modems screech at once." },
-        { say: "Priya Das has pinned eleven names to the wall, each with a printout and a polaroid of a sleeping face. She's on her fourth coffee and her hands shake when she isn't typing." }] }],
-        options: [
-          { label: "Talk to Priya", hint: "ISP technician", steps: [{ converse: { npc: "priya", id: "main",
-            open: ["Finally. My manager thinks I'm having a breakdown. My manager might be right. Sit anywhere that isn't a cable."],
-            topics: [
-              { ask: "What's Threshold?", lines: ["A bulletin board. Dial-up, old school, green text on black. It's not on any list. There's no sysop. The number's not even in our routing tables.", "When you connect, it says hello. By name. Not your handle: your real name. Sometimes a name you haven't used since you were a kid. It said hello to me as <i>Pree-Pree</i>. That's what my grandmother called me."], then: [{ clue: "c_bbs" }] },
-              { ask: "What happened to the eleven?", lines: ["They all dialled it the same night, December 3rd, between midnight and two. All my customers. I checked the logs.", { say: "She points at the polaroids." }, "Next morning their families find them asleep at their desks. Not dead. Asleep. Breathing, pulse, everything. They just don't wake up.", "And their screens are all showing the same thing: a blinking green cursor. Waiting for them to type."] },
-              { ask: "Did you call it yourself?", lines: ["Once. Before I knew. It said hello, Pree-Pree, and asked how my grandmother was. She died in 1987.", "I pulled the phone cable out of the wall with my bare hands. My modem still lights up at three in the morning, all by itself. I've unplugged it. It still lights up."] },
-              { ask: "Who was the sysop?", lines: ["There's a handle in the old logs: <i>LAZARUS</i>. Ran a board on the same number back in '94, '95. Then nothing.", "Hendrik Vos. Found dead at his keyboard in 1996. Heart failure. He was twenty-six."] }],
-            bye: ["Whatever you do, don't connect to it twice. I don't know why I know that. I just do."] } }] },
-          { label: "Examine one victim's terminal", once: true, steps: [{ check: { aspect: "iq", cr: "medium", label: "Dig through the logs", investigate: true, ok: [{ say: "A final message from the board's own sysop, scrolling on a dead man's screen." }, { clue: "c_sysop" }, { objective: "so1" }], fail: [{ say: "Garbled characters, then a long grey nothing." }] } }] },
-          { label: "Trace the number", once: true, steps: [{ check: { aspect: "iq", cr: "challenging", label: "Trace the line", investigate: true, ok: [{ say: "The call is routed through Exchange 31, closed in 1971. And still switched on." }, { clue: "c_exchange" }, { objective: "po1" }], fail: [{ say: "The trace folds back on itself, and your own phone number appears in the logs." }, { damage: { pool: "sanity", amount: 2 } }, { say: "Then your phone rings. The caller ID reads EXCHANGE 31, a building closed in 1971. It keeps ringing until you write the address down." }, { clue: "c_exchange" }, { objective: "po1" }] } }] },
-          { label: "Go to Exchange 31", if: { clue: "c_exchange" }, steps: [{ goto: "exchange" }] }] },
-      exchange: { name: "Telephone Exchange 31", theme: "lab", mood: "weird", lighting: "normal",
-        onEnter: [{ once: "ex", steps: [
-          { say: "Exchange 31 is a squat brick building on a dead-end street in Delfshaven, windows bricked up, a KPN sign rusted to illegibility. The door opens when you touch it." },
-          { say: "Inside, the old switching hall: rack after rack of electromechanical relays in the dark, chattering like a thousand cicadas, though the building has had no power since 1971. Every handset on every test bench has been lifted off its hook and laid on its side, and from each one a thin voice is talking." },
-          { say: "You know some of the voices. They're the eleven. They're saying hello to each other, over and over, in green-text cadence: <i>hello. hello. are you there. hello.</i>" }] }],
-        options: [
-          { label: "Pull the main trunk cable", steps: [{ combat: "exchange", win: [{ say: "The trunk comes loose in a spray of sparks. Across the city, eleven monitors go dark, and eleven people sit up in bed, gasping." }, { objective: "po2" }, { end: "win" }] }] },
-          { label: "Back to Priya's office", steps: [{ goto: "office" }] }] }
-    }
-  });
-
   /* ---------------------------------------------------------------- 2024 · BFV (and others) */
   ADV.register({
     id: "signal-drift", title: "Signal Drift", setting: "Yunnan Province, China · 2024", year: 2024, level: [3, 6], agencies: ["BFV", "WCA", "NSBD", "EHG", "OID"],
