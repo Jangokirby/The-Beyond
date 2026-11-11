@@ -35,7 +35,14 @@ function check(a, opts = {}) {
     return true;
   };
   const clone = (s) => ({ sc: s.sc, f: new Set(s.f), c: new Set(s.c), o: new Set(s.o), a: new Set(s.a), au: new Set(s.au), end: s.end });
-  const key = (s) => [s.sc, s.end || "", [...s.f].sort().join(","), [...s.c].sort().join(","), [...s.o].sort().join(","), [...s.a].sort().join(",")].join("|");
+  /* state merging: a flag, clue or objective that no condition ever reads cannot change what happens next, so it is left out of the state key */
+  const used = new Set();
+  const grab = (c) => { if (c == null) return; if (typeof c === "string") used.add(c); else if (c.flag) used.add(c.flag); else if (c.clue) used.add("clue:" + c.clue); else if (c.obj) used.add("obj:" + c.obj); else if (c.not !== undefined) grab(c.not); else if (c.all) c.all.forEach(grab); else if (c.any) c.any.forEach(grab); else if (c.ge || c.lt) { const f = (c.ge || c.lt)[0]; used.add(f); used.add(f + "+"); } };
+  (function walk(x) { if (Array.isArray(x)) x.forEach(walk); else if (x && typeof x === "object") { if (x.if !== undefined) grab(x.if); Object.values(x).forEach(walk); } })(a.scenes);
+  const affects = (steps) => { let hit = false; (function w(x) { if (hit) return; if (Array.isArray(x)) x.forEach(w); else if (x && typeof x === "object") { if (x.goto || x.end || x.combat || x.join || x.leave || x.inc || x.arcSet || x.unset) hit = true; if (typeof x.set === "string" && used.has(x.set)) hit = true; if (x.clue && used.has("clue:" + x.clue)) hit = true; if (x.objective && used.has("obj:" + x.objective)) hit = true; Object.values(x).forEach(w); } })(steps); return hit; };
+  const relevantOpt = new WeakMap();
+  const isRel = (o) => { if (!relevantOpt.has(o)) relevantOpt.set(o, affects(o.steps)); return relevantOpt.get(o); };
+  const key = (s) => [s.sc, s.end || "", [...s.f].filter((f) => used.has(f) || f.startsWith("opt:") || f.startsWith("once:") || f.endsWith("+")).sort().join(","), [...s.c].filter((c) => used.has("clue:" + c)).sort().join(","), [...s.o].filter((o) => used.has("obj:" + o)).sort().join(","), [...s.a].sort().join(",")].join("|");
   /* run steps; returns list of resulting states (branching on rolls and choices) */
   const run = (steps, s, depth = 0) => {
     let cur = [s];
@@ -98,7 +105,7 @@ function check(a, opts = {}) {
     const os = options(s);
     if (!os.length) { problems.push({ kind: "LOCK", k }); if (process.env.SL_DEBUG) console.error("LOCKSTATE", [...s.f].join(","), "|", [...s.o].join(",")); continue; }
     for (const { o, i } of os) {
-      const b = clone(s); if (o.once) b.f.add(`opt:${s.sc}:${i}`);
+      const b = clone(s); if (o.once && isRel(o)) b.f.add(`opt:${s.sc}:${i}`);
       for (const r of run(o.steps, b)) add(r, k, `${s.sc}: ${o.label}`);
     }
   }

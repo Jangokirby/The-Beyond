@@ -137,7 +137,7 @@
       smithy: { name: "The smithy and church", theme: "church", mood: "calm", lighting: "shadow", weather: "fire", cast: ["lukas"],
         onEnter: [{ once: "in", steps: [{ say: "The smithy doubles as the church: the pews pushed aside to make room for tools and weapons. Lukas tends the forge. He looks at your agency badge a long time." }, { set: "lukas_met" }] }],
         options: [
-          { label: "Show Lukas your credentials", hint: "He used to be OID", once: true, steps: [
+          { label: "Show Lukas your credentials", hint: "He used to be OID", if: { not: "lukas_open" }, steps: [
             { check: { aspect: "charisma", cr: "medium", label: "Convince him you are what you say", who: "choose",
               ok: [{ set: "lukas_open" }, { say: "He puts down the hammer. \"Wells's people. Good. Then I don't have to explain what the Order forgot.\"" }],
               fail: [{ say: "He is not convinced, but he is not unkind either. Come back when you have something to show." }, { unset: "never" }] } }] },
@@ -193,10 +193,10 @@
           { objective: "po1" }] }],
         options: [
           { label: "Go forward, into the cavern", if: { not: "mine_clear" }, steps: [{ combat: "mine", win: [{ say: "The Gluttons are down, spilling coins. The statue continues to ooze every three rounds. It cannot be destroyed, and the sickness will go on unless the mine is sealed." }, { set: "mine_clear" }] }] },
-          { label: "Seal the mine with Lukas's charges", if: { all: ["mine_clear", "charges_known"] }, once: true, steps: [{ check: { aspect: "iq", cr: "medium", label: "Set the charges", tags: ["seal"], who: "choose",
+          { label: "Seal the mine with Lukas's charges", if: { all: ["mine_clear", "charges_known", { not: "sealed" }] }, steps: [{ check: { aspect: "iq", cr: "medium", label: "Set the charges", tags: ["seal"], who: "choose",
             ok: [{ say: "The charges go off, one after another, bringing the roof down over the sunken streets." }, { set: "sealed" }, { set: "res_charges" }],
             fail: [{ say: "Some of the charges fire. Not all. The roof comes down on a part of the cavern, and you have to go in again." }, { damage: { pool: "health", amount: 3 } }] } }] },
-          { label: "Seal the mine with your own ingenuity", if: "mine_clear", once: true, steps: [{ choice: { prompt: "How do you shut away a thing that cannot be broken?", options: [
+          { label: "Seal the mine with your own ingenuity", if: { all: ["mine_clear", { not: "sealed" }] }, steps: [{ choice: { prompt: "How do you shut away a thing that cannot be broken?", options: [
             { label: "Flood the cavern from the old stream", steps: [{ check: { aspect: "awareness", cr: "challenging", label: "Find where the stream was diverted", tags: ["seal"], who: "choose",
               ok: [{ say: "You find the sluice. The stream goes where it used to go, and the water comes up black around the giant's feet and does not stop." }, { set: "sealed" }, { set: "res_flood" }],
               fail: [{ say: "You cannot find where the stream was turned away." }] } }] },
