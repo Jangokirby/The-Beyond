@@ -64,7 +64,7 @@
       attack: Math.max(0, T.atk + D.atk + (o.attack || 0)), er: Math.max(0, T.er + D.er + (o.er || 0)),
       br: res(T.br) + (o.br || 0), mr: res(T.mr) + (o.mr || 0), sr: res(T.sr) + (o.sr || 0),
       speed: Math.max(0, T.spd + D.spd + (o.speed || 0)), actions: 1 + D.act,
-      mods: [...(T.free || []), ...(o.mods || [])], dtype: o.dtype || "health", range: o.range || 0, regen: o.regen || 0,
+      mods: [...(o.noFree ? [] : (T.free || [])), ...(o.mods || [])], dtype: o.dtype || "health", range: o.range || 0, regen: o.regen || 0,
       hitSfx: o.hitSfx || null, dies: o.dies || null, modsAllowed: Math.max(0, 3 + D.mods + (T.mods || 0)), text: o.text || "", deathMark: o.deathMark || 0
     };
     return window.GEAR ? window.GEAR.applyMonsterMods(m) : m;
@@ -94,6 +94,8 @@
     if (c.not !== undefined) return !ADV.cond(c.not, g);
     if (c.clue) return g.has(c.clue);
     if (c.obj) return g.done(c.obj);
+    if (c.ge) return Number(g.flag(c.ge[0]) || 0) >= c.ge[1];
+    if (c.lt) return Number(g.flag(c.lt[0]) || 0) < c.lt[1];
     if (c.all) return c.all.every((x) => ADV.cond(x, g));
     if (c.any) return c.any.some((x) => ADV.cond(x, g));
     if (c.arc) return !!(window.ARCS && window.ARCS.flag(c.arc));
@@ -260,7 +262,7 @@
         name: sc.name, theme: sc.theme || "street", jp: sc.jp || "", scene: window.ART.scene(sc.theme || "street", id), music: MUSIC[sc.mood || "calm"] || "investigation",
         ambience: ADV.ambienceFor(sc, a.year), lighting: sc.lighting || "normal", severity: +sc.severity || 0, particles: sc.weather === "rain" || sc.weather === "storm" ? "rain" : "none",
         cast: () => (sc.cast || []).filter((n) => !sc.castIf || ADV.cond(sc.castIf[n], window.GAME.api)),
-        enter: async (g) => { if (sc.onEnter) await ADV.exec(sc.onEnter, g, M); },
+        enter: async (g) => { if (sc.onEnter) await ADV.exec(sc.onEnter.map((x) => (x && x.once ? { ...x, once: id + ":" + x.once } : x)), g, M); },
         hotspots: [],
         actions: (sc.options || []).map((o, i) => ({
           label: o.label,

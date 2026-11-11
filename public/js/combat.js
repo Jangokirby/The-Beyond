@@ -22,6 +22,16 @@
     for (const a of G.active()) c.units.push({ kind: "agent", uid: a.id, ref: a, name: a.short, zone: enc.start, out: false });
     if (st.nomura && st.nomura.joined && !st.nomura.dead) c.units.push({ kind: "ally", uid: "nomura", ref: st.nomura, name: "Nomura", zone: enc.start, out: false });
     for (const g of st.guards || []) if (!g.dead) c.units.push({ kind: "ally", uid: g.id, ref: g, name: g.short, zone: enc.start, out: false });
+    /* friendly units written into the encounter (a militia, say); `auto` ones fight on their own */
+    for (const al of enc.allies || []) {
+      const d = M.enemies[al.t]; if (!d) continue;
+      const ref = { id: "al_" + al.t + "_" + c.units.length, name: al.name || d.name, short: al.name || d.name, portrait: "", attackBonus: d.attack, er: d.er, br: d.br, mr: d.mr, sr: d.sr,
+        pools: { health: { cur: d.health, max: d.health }, sanity: { cur: d.sanity, max: d.sanity }, stability: { cur: d.stability, max: d.stability } } };
+      c.units.push({ kind: "ally", uid: ref.id, ref, name: ref.name, zone: al.zone, out: false, auto: al.auto !== false, stay: !!al.stay });
+    }
+    /* civilians: a foe that spends two rounds in a room with civilians and nobody to fight eats one */
+    c.civ = { ...(enc.civilians || {}) }; c.civTime = {}; c.civTotal = Object.values(c.civ).reduce((x, n) => x + n, 0); c.civEaten = 0;
+    c.trapped = enc.trapped ? { ...enc.trapped, left: enc.trapped.rounds, freed: false } : null;
     let n = 0;
     for (const f of enc.foes) {
       const d = M.enemies[f.t];
@@ -378,13 +388,22 @@
         if (u.kind === "enemy") {
           if (c.surprise && c.round === 1) { continue; }
           await (u.t === "ghost" ? ghostTurn(u) : replicaTurn(u));
-        } else await playerTurn(u);
+        } else if (u.kind === "ally" && u.auto) await autoAlly(u);
+        else await playerTurn(u);
         checkEnd();
         render();
       }
       await endRound();
     }
     await finish();
+  }
+
+  async function autoAlly(u) {
+    log(`<b>${u.name}'s turn.</b>`, "turn");
+    let t = foes().filter((e) => e.zone === u.zone && !e.hidden);
+    if (!t.length && !u.stay) { const near = foes().filter((e) => c.adj[u.zone].includes(e.zone)); if (near.length) { u.zone = near[0].zone; log(`${u.name} moves to ${c.zones[u.zone].name}.`); t = foes().filter((e) => e.zone === u.zone); } }
+    if (t.length) await doAttack(u, [t[0]]); else await sleep(200);
+    render();
   }
 
   function initiative() {
@@ -405,11 +424,21 @@
       const g = ghost();
       if (g.dead) { c.done = true; c.outcome = "killed"; return; }
     } else if (!foes().length) { c.done = true; c.outcome = "victory"; return; }
+    if (c.enc.fleeAt) {
+      const left = foes().filter((e) => e.t === c.enc.fleeAt.t);
+      if (left.length && left.length <= c.enc.fleeAt.n) { log(`<b>${c.enc.fleeAt.text || "The survivors break and run."}</b>`, "crit"); for (const e of left) e.dead = true; c.done = true; c.outcome = "victory"; return; }
+    }
     if (!c.units.some((u) => isAgent(u) && alive(u))) { c.done = true; c.outcome = c.units.some((u) => u.fled) ? "fled" : "wiped"; }
   }
 
   async function endRound() {
     await zoneEnd();
+    for (const z of Object.keys(c.civ || {})) {
+      if (c.civ[z] <= 0 || (c.trapped && c.trapped.zone === z && !c.trapped.freed)) continue;
+      const here = foes().some((e) => e.zone === z), guarded = friends().some((f) => f.zone === z);
+      if (here && !guarded) { c.civTime[z] = (c.civTime[z] || 0) + 1; if (c.civTime[z] >= 2) { c.civTime[z] = 0; c.civ[z] -= 1; c.civEaten += 1; log(`<b>A civilian in ${c.zones[z].name} is eaten.</b>`, "bad"); } } else c.civTime[z] = 0;
+    }
+    if (c.trapped && !c.trapped.freed) { c.trapped.left -= 1; if (c.trapped.left <= 0) { c.trapped.freed = true; c.civEaten += c.civ[c.trapped.zone] || 0; log(`<b>The fire takes everyone in ${c.zones[c.trapped.zone].name}.</b>`, "bad"); c.civ[c.trapped.zone] = 0; } else log(`${c.trapped.left} round${c.trapped.left === 1 ? "" : "s"} before the roof comes down on ${c.zones[c.trapped.zone].name}.`, "bad"); }
     if (window.MAGIC) window.MAGIC.tick({ log, dispelAll: magicEnv(null).dispelAll }, c.units.filter((x) => x.kind === "agent").map((x) => x.ref));
     for (const u of c.units) {
       for (const st of [...statuses(u)]) {
@@ -606,6 +635,7 @@
       if (u.kind === "agent" && a.magic && R.potency(a) > 0 && Object.values(a.magic.words).some((n) => n > 0)) opts.push({ label: "Cast a spell", hint: foes().some((e) => near(z).includes(e.zone)) ? "string words" : "no foe in reach: heal or ward", fn: () => doCast(u) });
       if (u.kind === "agent" && a.traits.torchBearer && !a.flareUsed && inZone(z, foes()).length) opts.push({ label: "Lantern flare", hint: "once a day: 15 Stability to foes here", fn: () => doFlare(u) });
       if (u.kind === "agent" && window.MECH.powers(a).some((p) => p.kind === "auto" || p.kind === "narrative")) opts.push({ label: "Powers", hint: "patron gifts", fn: () => doPowers(u) });
+      if (u.kind === "agent" && c.trapped && !c.trapped.freed && z === c.trapped.zone) opts.push({ label: "Lift the broken beam", hint: `Strength, Challenging ${R.cr(c.trapped.cr || "challenging")} · the fire hurts either way`, fn: () => doBeam(u) });
       if (c.enc.boss && c.zones[z].knife && !c.knifeTaken && u.kind === "agent") opts.push({ label: "Take the bleeding knife", fn: () => doKnife(u) });
       if (c.enc.boss && u.kind === "agent" && G.api.done("so1") && G.api.done("so3")) {
         const g = ghost();
@@ -646,6 +676,12 @@
   }
 
   /* ---------------------------------------------------------------- actions */
+  async function doBeam(u) {
+    await hurt(u, "health", 2, { elemental: true });
+    const r = await G.rollModal({ agent: u.ref, label: `${u.name} heaves at the burning beam`, sub: "Strength", mods: [{ label: "Strength", value: R.aspect(u.ref, "strength"), base: true }], target: R.cr(c.trapped.cr || "challenging"), targetLabel: `CR ${R.cr("challenging")}`, kind: "check" });
+    if (r.ok) { c.trapped.freed = true; log(`<b>The beam rolls clear. The civilians in ${c.zones[c.trapped.zone].name} stumble out.</b>`, "good"); } else log(`The beam will not move.`, "bad");
+    return 1;
+  }
   const rangeOf = (u) => { const r = u.kind === "ally" ? 1 : u.ref.weapon.range + (gw(u, "Long Range") ? 1 : 0); return zoneSev(u.zone) >= 3 ? Math.min(r, 1) : r; };
   async function doMove(u) {
     if (statusOf(u, "frozen")) { log(`${u.name} is frozen in place.`); return false; }
@@ -1626,6 +1662,7 @@
   async function finish() {
     const st = G.state;
     st.gmFate = c.gmFate;
+    if (c.civTotal) { st.flags.civTotal = c.civTotal; st.flags.civSaved = c.civTotal - c.civEaten; } if (c.enc.keyCivilian) st.flags.keyCivAlive = (c.civ[c.enc.keyCivilian] || 0) > 0;
     for (const u of c.units) {
       if (u.kind === "enemy") continue;
       const a = u.ref;

@@ -13,8 +13,8 @@ const PUB = path.join(__dirname, "..", "public");
 global.document = { addEventListener() {} };
 global.window = { ART: { SKIN: Array(10).fill(0), HAIRC: Array(12).fill(0), OUTFIT: Array(14).fill(0) }, ADV: { LIBRARY: {}, register(a) { this.LIBRARY[a.id] = a; } } };
 window.PACKS = { define(p) { for (const a of p.cases) window.ADV.register(a); } };
-for (const f of ["js/adventures.js", "js/adventures2.js", "js/adventures3.js", "js/tutorial.js", ...fs.readdirSync(path.join(PUB, "packs")).filter((f) => f.endsWith(".js")).map((f) => "packs/" + f)])
-  eval(fs.readFileSync(path.join(PUB, f), "utf8"));
+for (const f of ["js/adventures.js", "js/adventures2.js", "js/adventures3.js", "js/modules1.js", "js/modules1b.js", "js/tutorial.js", ...fs.readdirSync(path.join(PUB, "packs")).filter((f) => f.endsWith(".js")).map((f) => "packs/" + f)])
+  { const p = path.join(PUB, f); if (fs.existsSync(p)) eval(fs.readFileSync(p, "utf8")); }
 eval(fs.readFileSync(path.join(PUB, "js/rites.js"), "utf8"));
 const LIB = window.ADV.LIBRARY;
 const arr = (x) => (x == null ? [] : Array.isArray(x) ? x : [x]);
@@ -28,6 +28,7 @@ function check(a, opts = {}) {
     if (c.not !== undefined) return !cond(c.not, s);
     if (c.clue) return s.c.has(c.clue);
     if (c.obj) return s.o.has(c.obj);
+    if (c.ge || c.lt) return !!c.ge;
     if (c.all) return c.all.every((x) => cond(x, s));
     if (c.any) return c.any.some((x) => cond(x, s));
     if (c.arc) return s.a.has(c.arc) || (arcAll && !s.au.has(c.arc));
@@ -61,7 +62,7 @@ function check(a, opts = {}) {
           x.sc = st.goto; x.moved = true;
           const sc = a.scenes[st.goto];
           x.moved = false;
-          const r = depth > 30 ? [x] : run(sc.onEnter, x, depth + 1);
+          const r = depth > 30 ? [x] : run(nsEnter(st.goto, sc.onEnter), x, depth + 1);
           for (const y of r) y.moved = true;
           next.push(...r);
         } else if (st.if) next.push(...run(cond(st.if, x) ? st.then : st.else, x, depth + 1));
@@ -81,10 +82,11 @@ function check(a, opts = {}) {
     }
     return cur;
   };
+  function nsEnter(id, en) { return (en || []).map((x) => (x && x.once ? { ...x, once: id + ":" + x.once } : x)); }
   const options = (s) => (a.scenes[s.sc].options || []).map((o, i) => ({ o, i })).filter(({ o, i }) => cond(o.if, s) && !(o.once && s.f.has(`opt:${s.sc}:${i}`)));
 
   let start = { sc: a.start, f: new Set(), c: new Set(), o: new Set(), a: new Set(opts.arcFlags || []), au: new Set(), end: null };
-  const init = run(a.scenes[a.start].onEnter, start);
+  const init = run(nsEnter(a.start, a.scenes[a.start].onEnter), start);
   const seen = new Map(), queue = [], edges = new Map(), problems = [];
   const add = (s, from, label) => { delete s.moved; const k = key(s); if (seen.has(k)) { edges.get(k).from.push(from); return; } seen.set(k, s); edges.set(k, { from: [from], by: label, prev: from }); queue.push(k); };
   for (const s of init) add(s, null, "start");
