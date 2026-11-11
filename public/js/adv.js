@@ -119,7 +119,7 @@
         if (await ADV.exec(r.ok ? c.ok : c.fail, g, M)) return true;
       } else if (st.group) {
         const c = st.group;
-        const res = await G.groupCheck({ aspect: c.aspect, cr: R.cr(c.cr), label: c.label || "Everyone rolls", intro: c.intro || "" });
+        const res = await G.groupCheck({ aspect: c.aspect, cr: R.cr(c.cr), label: c.label || "Everyone rolls", intro: c.intro || "", tags: c.tags || [] });
         if (await ADV.exec(res.every((x) => x.ok) ? c.ok : c.fail, g, M)) return true;
       } else if (st.combat) {
         const out = await window.COMBAT.start(st.combat, { surprise: !!st.surprise || !!(st.surpriseIf && g.flag(st.surpriseIf)), canFlee: true });
@@ -201,20 +201,38 @@
           return ADV.exec([line], g, M);
         };
         const k = (i) => `conv:${npcId}:${cv.id || ""}:${i}`;
-        if (window.APPROACH && !(await window.APPROACH.open(g, M, npcId))) return false;
+        if (cv.approach && window.APPROACH && !(await window.APPROACH.open(g, M, npcId))) return false;
         if (!(cv.id && g.flag(`conv:${npcId}:${cv.id}:opened`))) { for (const l of cv.open || []) await speak(l); if (cv.id) g.set(`conv:${npcId}:${cv.id}:opened`); }
         else if (cv.again) await speak(cv.again);
+        /* A limited interview (the rulebook's interview rule, as in Death of a Bloodline): the first time, a Charisma roll decides
+           how many questions this person will answer. Medium 10 or better: five. Challenging 14 or better: as many as you like.
+           Below that: two. Topics with `cha: N` are the extra things only a persuasive agent in the party can draw out. */
+        const lk = `conv:${npcId}:${cv.id || ""}:limit`;
+        if (cv.limit && g.flag(lk) == null) {
+          const r = await G.check({ aspect: "charisma", cr: R.cr("medium"), label: `Win ${(M.npcs[npcId] || {}).name ? M.npcs[npcId].name.split(" ")[0] : "their"} trust`, investigate: true, who: "choose", tags: ["interview"] });
+          const tot = r.total || 0;
+          g.set(lk, tot >= R.cr("challenging") ? 99 : tot >= R.cr("medium") ? 5 : 2);
+          const lim = g.flag(lk);
+          await g.narrate(lim >= 99 ? "They relax, and it is clear they will tell you whatever you ask." : lim === 5 ? "They will answer some questions, but not all night." : "They will give you a minute, and not a second more.");
+        }
+        const bestCha = Math.max(0, ...G.active().map((a) => R.aspect(a, "charisma")));
         for (;;) {
-          const left = (cv.topics || []).map((t, i) => ({ t, i })).filter(({ t, i }) => ADV.cond(t.if, g) && !(t.once !== false && g.flag(k(i))));
+          const used = (cv.topics || []).reduce((n, t, i) => n + (g.flag(k(i)) && !t.free ? 1 : 0), 0);
+          const cap = cv.limit ? g.flag(lk) : 99;
+          const left = (cv.topics || []).map((t, i) => ({ t, i })).filter(({ t, i }) => ADV.cond(t.if, g) && !(t.once !== false && g.flag(k(i))) && (!t.cha || bestCha >= t.cha));
           if (!left.length) { for (const l of cv.done || []) await speak(l); break; }
+          if (cv.limit && cap < 99 && used >= cap && left.every(({ t }) => !t.free)) { for (const l of cv.cutoff || ["That's all I have to say. I have things to do."]) await speak(l); break; }
           const npc = M.npcs[npcId] || {};
-          const id = await g.choose(cv.prompt || `What do you ask ${npc.name || "them"}?`, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask })), { id: "bye", label: cv.leave || "That's all for now" }]);
+          const more = cv.limit && cap < 99 ? ` (${Math.max(0, cap - used)} question${cap - used === 1 ? "" : "s"} left)` : "";
+          const id = await g.choose((cv.prompt || `What do you ask ${npc.name || "them"}?`) + more, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask, hint: t.cha ? "Your Charisma draws this out" : t.free ? "" : undefined })), { id: "bye", label: cv.leave || "That's all for now" }]);
           if (id === "bye" || id == null) { for (const l of cv.bye || []) await speak(l); break; }
           const t = cv.topics[+id]; g.set(k(+id));
           for (const l of t.lines || []) { if (window.GAME.state.phase === "ending") return true; await speak(l); }
           if (t.then && await ADV.exec(t.then, g, M)) return true;
         }
-      } else if (st.arcSet) { if (window.ARCS) window.ARCS.set(st.arcSet); }
+      } else if (st.join) { await g.join(st.join); }
+      else if (st.leave) { g.leave(st.leave); }
+      else if (st.arcSet) { if (window.ARCS) window.ARCS.set(st.arcSet); }
       else if (st.arcUnset) { if (window.ARCS) window.ARCS.set(st.arcUnset, false); }
       else if (st.end) { await window.CAMP.endAdventure(st.end); return true; }
     }
@@ -223,7 +241,7 @@
 
   ADV.compile = (a) => {
     const M = { id: a.id, title: a.title, jp: a.jp || "", flavor: a.flavor || "", downtime: a.downtime, agency: a.agencies.join(" / "), setting: a.setting, year: a.year, summary: a.summary,
-      agents: [], items: {}, npcs: {}, clues: a.clues || {}, lore: {}, objectives: a.objectives, text: { intro: a.intro || a.summary }, interviews: {},
+      agents: [], items: {}, npcs: {}, companions: a.companions || {}, clues: a.clues || {}, lore: {}, objectives: a.objectives, text: { intro: a.intro || a.summary }, interviews: {},
       enemies: {}, encounters: {}, locations: {}, start: a.start, modText: {}, src: a };
     for (const [id, n] of Object.entries(a.npcs || {})) M.npcs[id] = { name: n.name, jp: "", tag: n.tag || "", look: n.look || "", portrait: n.portraitKey && (window.ASSETS.portraits || {})[n.portraitKey] ? n.portraitKey : window.ART.portrait(n.face || {}) };
     for (const [id, e] of Object.entries(a.enemies || {})) {

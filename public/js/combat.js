@@ -746,6 +746,7 @@
       if (W("Silent") && u.hidden) mods.push({ label: "Silent, hiding", value: 2 });
       if (statusOf(u, "inspire")) mods.push({ label: "Inspired", value: 2 });
     }
+    if (!isAlly) for (const m of G.objectiveMods(["attack"], { enemy: t.t })) mods.push(m);
     if (u.knife && t.t === "ghost") mods.push({ label: "Bleeding knife", value: 2 });
     if (opts.extra) mods.push(opts.extra);
     const accurate = W("Accurate");

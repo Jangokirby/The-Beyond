@@ -85,6 +85,7 @@
     if (R.weatherMod(sev)) mods.push({ label: `Weather ${sev}`, value: R.weatherMod(sev) });
     if (window.GEAR) for (const m of window.GEAR.rollMods(agent)) mods.push(m);
     if (window.GEAR && window.GEAR.a(agent, "Discreet") && (opts.tags || []).includes("hide")) mods.push({ label: "Discreet", value: 1 });
+    for (const m of G.objectiveMods(opts.tags || [])) mods.push(m);
     for (const m of ctx.extra || []) mods.push(m);
     if (opts.situational) mods.push({ label: opts.situationalLabel || "Situational bonus", value: opts.situational });
     let cr = opts.cr;
@@ -330,7 +331,56 @@
     const o = M.objectives.find((x) => x.id === id);
     AudioMan.sfx("objective");
     await G.stamp(o);
+    if (o && o.benefit) await G.applyBenefit(o);
     G.badge();
+  };
+
+  /* ================================================================== objective benefits and companions
+     objective.benefit = { text, bonus: { tags: [..], value }, combat: { enemy?: "id", attack: n }, flag, give: [items] }
+       bonus   a Situational Bonus (+2 by default) on any roll carrying one of the tags
+       combat  a bonus on attacks against everything (or one enemy kind)
+     The benefit counts once the objective is done, and is shown in the case file. */
+  G.objectiveMods = (tags = [], ctx = {}) => {
+    const out = [];
+    for (const o of (M && M.objectives) || []) {
+      const b = o.benefit; if (!b || G.state.obj[o.id] !== "done") continue;
+      if (b.bonus && (b.bonus.tags || []).some((t) => tags.includes(t))) out.push({ label: b.label || o.t, value: b.bonus.value != null ? b.bonus.value : R.SITUATIONAL });
+      if (b.combat && tags.includes("attack") && (!b.combat.enemy || b.combat.enemy === ctx.enemy)) out.push({ label: b.label || o.t, value: b.combat.attack != null ? b.combat.attack : R.SITUATIONAL });
+    }
+    return out;
+  };
+  G.applyBenefit = async (o) => {
+    const b = o.benefit;
+    if (b.flag) api.set(b.flag);
+    for (const it of b.give || []) api.addItem(it);
+    if (b.text) { U.toast(`<span class="tk">Benefit</span> ${b.text}`, "clue"); await api.narrate(`<b>${b.label || o.t}.</b> ${b.text}`); }
+  };
+  /* companions: local agents who travel with the team and lend a hand in fights and with advice */
+  const mkCompanion = (id) => {
+    const cdef = (M.companions || {})[id]; if (!cdef) return null;
+    const n = M.npcs[cdef.npc] || {};
+    const m = ADV.buildMonster({ name: cdef.name || n.name || id, type: "Human", difficulty: "medium", sprite: "humanoid", mods: [], ...(cdef.build || {}) });
+    return { id: "co_" + id, name: m.name, short: (m.name || id).split(" ")[0], portrait: n.portrait || "", attackBonus: cdef.attack != null ? cdef.attack : m.attack + 1, er: m.er, br: m.br, mr: m.mr, sr: m.sr,
+      pools: { health: { cur: m.health, max: m.health }, sanity: { cur: m.sanity, max: m.sanity }, stability: { cur: m.stability, max: m.stability } }, companion: id };
+  };
+  api.join = async (id) => {
+    G.state.companions = G.state.companions || {};
+    if (G.state.companions[id]) { G.state.companions[id].joined = true; return; }
+    const ref = mkCompanion(id); if (!ref) return;
+    G.state.companions[id] = { joined: true, ref, hinted: [] }; (G.state.guards = G.state.guards || []).push(ref);
+    U.toast(`<b>${ref.name}</b> joins the team.`, "clue");
+  };
+  api.leave = (id) => { const x = (G.state.companions || {})[id]; if (x) { x.joined = false; G.state.guards = (G.state.guards || []).filter((g) => g !== x.ref); } };
+  G.companions = () => Object.entries(G.state.companions || {}).filter(([, x]) => x.joined && !x.ref.dead);
+  /* ask a companion what they think: the first thing they have to say that the team has not heard */
+  G.askCompanion = async (id) => {
+    const x = G.state.companions[id], cdef = (M.companions || {})[id] || {};
+    const hint = (cdef.hints || []).find((h, i) => !x.hinted.includes(i) && ADV.cond(h.if, api));
+    const i = hint ? cdef.hints.indexOf(hint) : -1;
+    if (!hint) return api.say((cdef.nothing) || "I've told you what I know. Let's see what you find.", { who: cdef.npc });
+    x.hinted.push(i);
+    await api.say(hint.text, { who: cdef.npc });
+    if (hint.then) await ADV.exec(hint.then, api, M);
   };
   api.addItem = (id) => { if (!G.state.items.includes(id)) G.state.items.push(id); };
   api.goto = async (id) => G.goto(id);
@@ -728,10 +778,11 @@
           const done = G.state.obj[o.id] === "done";
           if (o.kind === "secondary" && !done) continue;
           pane.append(el("div", { class: "obj" + (done ? " done" : "") }, el("img", { src: U.img(done ? "seal_done" : "seal_secret", "ui"), alt: "" }),
-            el("div", {}, el("small", {}, o.kind === "primary" ? "Primary" : "Secondary"), el("b", {}, o.t), done && o.done ? el("p", {}, o.done) : null)));
+            el("div", {}, el("small", {}, o.kind === "primary" ? "Primary" : "Secondary"), el("b", {}, o.t), done && o.done ? el("p", {}, o.done) : null, done && o.benefit && o.benefit.text ? el("p", { class: "small" }, "Benefit: " + o.benefit.text) : null)));
         }
         const hidden = M.objectives.filter((o) => o.kind === "secondary" && G.state.obj[o.id] !== "done").length;
         if (hidden) pane.append(el("p", { class: "small muted" }, `${hidden} secondary objective${hidden > 1 ? "s" : ""} not yet discovered.`));
+        for (const [cid, x] of G.companions()) pane.append(el("button", { class: "btn", onclick: () => G.askCompanion(cid) }, `Ask ${x.ref.short} what they think`));
         if (M.id === "death-of-a-bloodline") pane.append(el("button", { class: "btn", onclick: () => G.hint() }, "Think it over (IQ, Medium)"));
       } else if (t === "clues") {
         if (!G.state.clues.length) pane.append(el("p", { class: "muted" }, "Nothing yet. Talk to people and search the places you visit."));
