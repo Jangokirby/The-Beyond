@@ -194,21 +194,21 @@
         options: [
           { label: "Go forward, into the cavern", if: { not: "mine_clear" }, steps: [{ combat: "mine", win: [{ say: "The Gluttons are down, spilling coins. The statue continues to ooze every three rounds. It cannot be destroyed, and the sickness will go on unless the mine is sealed." }, { set: "mine_clear" }] }] },
           { label: "Seal the mine with Lukas's charges", if: { all: ["mine_clear", "charges_known"] }, once: true, steps: [{ check: { aspect: "iq", cr: "medium", label: "Set the charges", tags: ["seal"], who: "choose",
-            ok: [{ say: "The charges go off, one after another, bringing the roof down over the sunken streets." }, { set: "sealed" }],
+            ok: [{ say: "The charges go off, one after another, bringing the roof down over the sunken streets." }, { set: "sealed" }, { set: "res_charges" }],
             fail: [{ say: "Some of the charges fire. Not all. The roof comes down on a part of the cavern, and you have to go in again." }, { damage: { pool: "health", amount: 3 } }] } }] },
           { label: "Seal the mine with your own ingenuity", if: "mine_clear", once: true, steps: [{ choice: { prompt: "How do you shut away a thing that cannot be broken?", options: [
             { label: "Flood the cavern from the old stream", steps: [{ check: { aspect: "awareness", cr: "challenging", label: "Find where the stream was diverted", tags: ["seal"], who: "choose",
-              ok: [{ say: "You find the sluice. The stream goes where it used to go, and the water comes up black around the giant's feet and does not stop." }, { set: "sealed" }],
+              ok: [{ say: "You find the sluice. The stream goes where it used to go, and the water comes up black around the giant's feet and does not stop." }, { set: "sealed" }, { set: "res_flood" }],
               fail: [{ say: "You cannot find where the stream was turned away." }] } }] },
             { label: "Seal the corridor with iron from the smithy", steps: [{ check: { aspect: "durability", cr: "medium", label: "Hang the iron door", tags: ["seal"], who: "choose",
-              ok: [{ say: "A door of Lukas's iron, set in the stone, and the keyhole stuffed with lead." }, { set: "sealed" }],
+              ok: [{ say: "A door of Lukas's iron, set in the stone, and the keyhole stuffed with lead." }, { set: "sealed" }, { set: "res_door" }],
               fail: [{ say: "The door will not hang. Not yet." }] } }] }] } }] },
           { label: "Leave the mine", steps: [{ goto: "town" }] },
           { label: "Close the book on Hannisburg", if: "sealed", steps: [{ objective: "po3" }, { goto: "end" }] }] },
       end: { name: "Hannisburg, in the spring", theme: "village", mood: "calm", lighting: "glow", weather: "none",
         onEnter: [{ once: "in", steps: [
           { say: "With the statue buried deep beneath the earth once more, you feel the weight of the curse begin to lift. But Hannisburg will need more than a sealed cave to recover. As agents of the WCA, this is only your first test. There will always be more mysteries and curses in the shadows, and winter in Germany has only just begun." },
-          { if: { flag: "marcel_taken" }, then: [{ say: "Marcel Fischer is taken to a quiet room in Berlin and asked a great many questions." }], else: [{ say: "Marcel Fischer is gone by morning, with whatever he could carry. The Association will find him, if it chooses to." }] },
+          { if: { flag: "res_charges" }, then: [{ say: "Lukas’s charges buried the giant under a thousand tons of Hannisburg. Nothing will dig that out." }] }, { if: { flag: "res_flood" }, then: [{ say: "The old stream runs black through the lower town now. People have been told not to drink from it, and, mostly, they listen." }] }, { if: { flag: "res_door" }, then: [{ say: "An iron door in the hillside, and a priest who sits in front of it with a Bible on his knee." }] }, { if: { obj: "so3" }, then: [{ say: "Lukas has been blessing acid for the rest of the Association’s agents since." }] }, { if: { flag: "marcel_taken" }, then: [{ say: "Marcel Fischer is taken to a quiet room in Berlin and asked a great many questions." }], else: [{ say: "Marcel Fischer is gone by morning, with whatever he could carry. The Association will find him, if it chooses to." }] },
           { say: "Everyone who touched the gold or wore the thread has golden nails, and if they are not pulled every two months, the gold will spread. Mr. Wells has put it in your file." },
           { end: "win" }] }], options: [] }
     }
@@ -232,6 +232,9 @@
       c_seats: { t: "Threads sewn into the seats", s: "The Audience Hall", x: "Thin black threads sewn into the cushions: a drain, to draw soul energy from the spectators during the performances." },
       c_ledger: { t: "Nicolas's address", s: "Under the stage", x: "In a ledger among the crates: Nicolas Renard's home address." },
       c_slack: { t: "The strings hung slack", s: "The performance", x: "For a moment the strings above the puppet hung slack. The puppet went on moving anyway." },
+      c_box: { t: "The same names buy the tickets", s: "The box office", x: "Every night the same sixty names buy tickets, in advance, in the same seats. They are the people who wake up very tired. The doubled attendance is the same sixty people, twice as often." },
+      c_valcourt: { t: "Madame Valcourt is afraid of her own show", s: "Madame Valcourt", x: "The director knows something is wrong, and has told no one: the takings are better than they have ever been, and she cannot make herself close the house." },
+      c_lodging: { t: "The missing stagehands slept in the same room", s: "The stagehands' lodging", x: "Marc, Paul and Théo shared a room over the stage door. Their beds are made. Each pillow has a long black thread across it, as if combed there." },
       c_bones: { t: "Renard's skeleton", s: "Under the stage", x: "Clean bones, no flesh at all. Black threads tied at the wrists and jaw. The skull is posed to smile." }
     },
     npcs: {
@@ -262,6 +265,17 @@
       lobby: { name: "The Opéra Montclair", theme: "interior", mood: "tense", lighting: "glow", weather: "none", cast: ["usher", "director"],
         onEnter: [{ once: "in", steps: [{ say: "The opera house stands four stories tall, with carved stone pillars framing the entrance. Painted posters cover the walls: puppet performances. The front doors are unlocked. Inside is a wide marble lobby with a red carpet leading toward the theatre, and glass chandeliers overhead." }] }],
         options: [
+          { label: "Talk to Madame Valcourt", steps: [{ converse: { npc: "director", id: "main", limit: true, approach: false,
+            open: ["You are the Association's people? Mr. Wells said someone would come. Please, sit."],
+            topics: [
+              { ask: "How long has Renard been back?", lines: ["Two weeks. He came in through the stage door on a Tuesday and the stage manager said he looked rested. I said nothing was wrong. It was the first time I've been glad of being wrong."] },
+              { ask: "How have the takings been?", lines: ["Better than they have ever been. Do you know, I can hear the house at night. It never sounds empty."], then: [{ clue: "c_valcourt" }] },
+              { ask: "Why not close the house?", cha: 9, lines: [{ say: "Her fan has stopped moving." }, "I have tried. Four times. I write the notice and I find the notice in the bin, and the posters have gone up again overnight, in my handwriting."], then: [{ clue: "c_valcourt" }] },
+              { ask: "Who are the regulars?", lines: ["Sixty people. They come every night. They're very polite."], then: [{ set: "regulars" }] }],
+            bye: ["Please. Be quick."] } }] },
+          { label: "Ask the box office for the ticket book", if: "regulars", once: true, steps: [{ check: { aspect: "iq", cr: "easy", label: "Read the ticket book", investigate: true,
+            ok: [{ say: "The same sixty names, every night, in the same seats. The takings are not doubled attendance: they are the same people, twice as often." }, { clue: "c_box" }],
+            fail: [{ say: "A great many names. They run together." }, { clue: "c_box" }] } }] },
           { label: "Talk to the usher", steps: [{ converse: { npc: "usher", id: "main", limit: true,
             topics: [
               { ask: "What do you make of Renard?", lines: ["He hasn't spoken a word to anyone since he came back, monsieur. Not one. And he is here before any of us in the morning, and I never see him arrive."], then: [{ clue: "c_usher" }] },
@@ -286,6 +300,7 @@
           { label: "The Audience Hall", steps: [{ goto: "hall" }] },
           { label: "Beneath the stage", steps: [{ goto: "under" }] },
           { label: "The back corridor and the trap room", steps: [{ goto: "trap" }] },
+          { label: "The stagehands' lodging over the stage door", steps: [{ goto: "lodging" }] },
           { label: "Go to Nicolas Renard's house", if: { clue: "c_ledger" }, steps: [{ goto: "renard" }] }] },
       stage: { name: "The Grand Stage", theme: "interior", mood: "tense", lighting: "shadow", weather: "none",
         onEnter: [{ once: "in", steps: [{ say: "The stage is framed by thick red curtains hanging from iron rods. Rows of wooden seats face the puppet stage, which is built of painted wood and tall enough to hide a performer behind it. Thin ropes and counterweights hang from the ceiling. The stage floor is scratched in several places." }] }],
@@ -333,6 +348,16 @@
             ok: [{ say: "Three stagehands' coats hang on hooks, buttoned, with nothing in them but black thread. Marc, Paul and Théo. The strings go up through the trap, to the stage." }, { damage: { pool: "sanity", amount: 2 } }],
             fail: [{ say: "Props, costumes, dust." }] } }] },
           { label: "Back to the house", steps: [{ goto: "house" }] }] },
+      lodging: { name: "The stagehands' lodging", theme: "interior", mood: "dread", lighting: "shadow", weather: "none",
+        onEnter: [{ once: "in", steps: [{ say: "A narrow room over the stage door with three iron beds, a stove, a shared washstand. The beds are made: neatly, the way men make them who are leaving for a few hours." }] }],
+        options: [
+          { label: "Look at the beds", once: true, steps: [{ check: { aspect: "awareness", cr: "medium", label: "Notice what is on the pillows", investigate: true,
+            ok: [{ say: "Across each pillow lies a long black thread, as if combed there. They are not thread you would find on a stage: they are warm." }, { clue: "c_lodging" }],
+            fail: [{ say: "Beds. Three. Made." }] } }] },
+          { label: "Search their belongings", once: true, steps: [{ check: { aspect: "iq", cr: "medium", label: "Read their letters", investigate: true,
+            ok: [{ say: "Théo's last letter home: Renard came back so changed. He said the new puppets were learning to want things. Paul says he has started to hear them at night." }, { set: "stagehand_letter" }],
+            fail: [{ say: "Ordinary letters, ordinary mail." }] } }] },
+          { label: "Back to the house", steps: [{ goto: "house" }] }] },
       renard: { name: "Nicolas Renard's house", theme: "interior", mood: "dread", lighting: "shadow", weather: "none",
         onEnter: [{ once: "in", steps: [
           { say: "The house sits along a narrow street lined with brick buildings. Every window is lit by candlelight. Inside the front room are wooden worktables covered with carving tools, and hundreds of puppets hang from hooks across the walls: some small enough to hold in one hand, others the size of a human body." },
@@ -350,13 +375,15 @@
           { label: "Cut the strings and contain it", hint: "Needs what you learned about the strings", if: { all: [{ any: [{ obj: "so2" }, "notebook"] }, { not: "contain_tried" }] }, steps: [
             { set: "contain_tried" },
             { check: { aspect: "occult", cr: "challenging", label: "Find the master string and cut it", who: "choose",
-              ok: [{ say: "You find the one string that does not run to a puppet, and cut it. The body sags, held up only by the frame. You pack the frame in salt, and iron, and take it away." }, { objective: "po3" }, { set: "contained" }, { goto: "end" }],
+              ok: [{ say: "You find the one string that does not run to a puppet, and cut it. The body sags, held up only by the frame. You pack the frame in salt, and iron, and take it away." }, { objective: "po3" }, { set: "contained" }, { set: "res_contain" }, { goto: "end" }],
               fail: [{ say: "The master string moves under your knife. It has noticed you." }, { combat: "workshop", win: [{ objective: "po3" }, { goto: "end" }] }] } }] },
-          { label: "Fight it", steps: [{ combat: "workshop", win: [{ objective: "po3" }, { goto: "end" }] }] }] },
+          { label: "Fight it", steps: [{ set: "res_destroy" }, { combat: "workshop", win: [{ objective: "po3" }, { goto: "end" }] }] }] },
       end: { name: "After the final curtain", theme: "interior", mood: "calm", lighting: "shadow", weather: "none",
         onEnter: [{ once: "in", steps: [
           { if: { flag: "contained" }, then: [{ say: "The frame is packed in a crate lined with salt and iron, and Mr. Wells has a vault to put it in. It will never perform again, but you know it has not stopped watching." }],
             else: [{ say: "The strings holding the body snap, one by one. The fleshless corpse collapses to the floor. Across the room, dozens of puppets drop from their hooks. None of them move again." }] },
+          { if: { obj: "so2" }, then: [{ say: "You knew what to cut, and where." }], else: [{ say: "You never found out what the strings were made of." }] },
+          { if: { obj: "so1" }, then: [{ say: "The porcelain mask goes to the Association in a velvet bag. Mr. Wells will not look at it." }] },
           { if: { flag: "masked" }, then: [{ say: "Some of you still carry the faint weight of a mask you took off a long time ago." }] },
           { end: "win" }] }], options: [] }
     }

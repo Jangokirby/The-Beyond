@@ -11,7 +11,7 @@
   const A = window.ART, ADV = window.ADV;
   const F = (s, hc, h, o, x = "none", more = {}) => ({ skin: A.SKIN[s], hairC: A.HAIRC[hc], hair: h, outfit: A.OUTFIT[o], extra: x, bg: "#2b2f3a", ...more });
   const N = (name, tag, look, face) => ({ name, tag, look, face });
-  const NOISE = [{ inc: "reports" }];
+  const K = window.CASEKIT;
 
   ADV.register({
     id: "traitor", title: "Traitor", setting: "Neo France, Paris · 2150", year: 2150, level: [1, 9], agencies: ["WCA", "NSBD", "BFV", "EHG", "OID"], region: "europe", theme: "future",
@@ -29,11 +29,15 @@
       c_relay: { t: "A relay still sending", s: "The rooftop", x: "The relay tower on the roof was shut off, and is still sending without any power. The hotel was meant to be deactivated." },
       c_scramble: { t: "The signal is scrambled", s: "The hotel", x: "The interior is invisible to surveillance. Lower floors read higher than normal tremors." },
       c_cult: { t: "A cult's plan", s: "Suite 13", x: "A local terrorist cult, with Dredge Agents' help, plans an ambush in District 55 to pin the teams down." },
+      c_cars: { t: "Cars with the engines still running", s: "District 55", x: "Every abandoned vehicle in the street has its engine running and its doors open. Whatever emptied them did it quickly, and quietly." },
+      c_witness: { t: "The night guard heard it first", s: "The convenience store", x: "A night guard hid in the store through the evacuation. He heard the Dredge Agents say they were waiting for \"the ones with the badges\"." },
+      c_ward: { t: "Moreau checked in three weeks ago", s: "The clinique", x: "Seline Moreau was admitted to the Clinique Sainte-Helix three weeks ago for a \"stress cure\", under a name that is not hers. She left after two days. The doctor who treated her has not been seen since." },
       c_seline: { t: "Moreau was not alone", s: "The garage", x: "Seline Moreau was taken in, not driven out. Someone offered her what the Dredge can make." }
     },
     npcs: {
       hugo: N("Agent Hugo", "WCA handler · Neo France", "Tall, with dark skin and a sleek blue suit that doesn't crease. He holds a cup of tea as if it were a weapon.", F(2, 5, "short", 7, "none", { sex: "m" })),
       seline: N("Agent Seline Moreau", "WCA agent · gone rogue", "A woman in a pale coat with a hooked metal rig strapped across her back like a backpack, and eyes that are not quite focussed on you.", F(0, 4, "bun", 7, "none", { sex: "f" })),
+      guard: N("Maxime", "Night guard · hiding", "Pale and unshaven, in a security uniform that has been slept in, clutching a cold cup of coffee with both hands.", F(1, 3, "short", 7, "none", { sex: "m" })),
       operator: N("The Relay Operator", "Dredge Agent · technomancer", "Hooded, wired to the wall, with a crown of small drones circling the top of his head.", F(1, 5, "short", 7, "none", { sex: "m" }))
     },
     companions: {
@@ -77,6 +81,12 @@
           { say: "All agents from every agency were split into three teams: Dragon, Witch and Ogre. You are Team Dragon. You will infiltrate and secure L'Horizon d'Acier, a hotel for foreign tourists. It should have been deactivated, but it is giving off strong relay signals, pumping out reconnaissance coordinates and agent locations. Team Dragon will be dropped on the roof by jump-copter. Lower floors show higher than normal tremor readings: avoid them." },
           { say: "Finish locking down the surrounding area, and then the assault on the Hospital Clinique Sainte-Helix can begin. Witch and Ogre will converge on the hospital when they are done." }] }],
         options: [
+          K.ask("hugo", [
+            K.t("Why us, and why all the agencies?", "Because she was ours, and what she took is everyone's problem. A Rupture opened wherever the Dredge goes. Every agency has an interest in not letting that happen twice."),
+            K.t("Who is Seline Moreau?", ["A good agent. The best field analyst I trained. Four months ago she stopped sleeping, and three weeks ago she stopped reporting.", "I should have seen it."], { clue: "c_brief" }),
+            K.t("Is there a chance she can be talked down?", { say: "Hugo looks into his cup for a long moment." }, { cha: 8, then: [{ say: "\"If someone she respects asks. I would like her back, if there is a back to bring her to.\"" }, { set: "hugo_hopes" }] }),
+            K.t("What are we walking into?", "A hotel that should be dark, a signal that should not exist, and under it a tremor that none of our instruments can explain. Stay off the lower floors.", { free: true })
+          ], { label: "Press Agent Hugo", name: "Hugo", hint: "He knows her best", bye: ["Come back alive."] }),
           { label: "Take Agent Hugo along", hint: "A local handler who gives guidance: he is not a fighter", once: true, steps: [{ join: "hugo" }, { say: "\"I will be on the line, and in the second copter.\" He sets his tea down." }] },
           { label: "Board the jump-copter", steps: [{ goto: "roof" }] }] },
       roof: { name: "The rooftop of L'Horizon d'Acier", theme: "future", mood: "tense", lighting: "glow", weather: "wind",
@@ -131,6 +141,12 @@
           { label: "Stop the possessed vehicle in the garage (zone 7)", hint: "Awareness Medium 10", if: "street_clear", once: true, steps: [{ check: { aspect: "occult", cr: "medium", label: "Close the possession", who: "choose",
             ok: [{ say: "The engine coughs and dies. A shape in the driver's seat goes with it." }, { set: "garage_secured" }, { inc: "secured" }, { clue: "c_seline" }], fail: [{ say: "The car roars out of the garage and tries to run you down." }, { damage: { pool: "health", amount: 4 } }, { inc: "reports" }, { set: "garage_secured" }, { inc: "secured" }] } }] },
           { label: "Eat something in the convenience store", hint: "Heals 3 Health", once: true, steps: [{ say: "An action eating food here heals 3 Health. Everyone eats." }] },
+          K.find("Look over the abandoned cars", "awareness", "medium", "Every car on the street has its engine running and its doors open. Whatever emptied them did it fast and quietly.", "Cars. They look like cars.", { clue: "c_cars", hint: "Their engines are running", pre: "The street is lined with unattended vehicles." }),
+          K.ask("guard", [
+            K.t("What did you hear?", "They said they were waiting for the ones with the badges. They said the street was a net.", { clue: "c_witness" }),
+            K.t("How long have you been here?", "Since the lights went out. Nobody came for me. I think it's because I was not afraid, and then I think it's because I was too afraid to be noticed.", { free: true }),
+            K.t("Did you see the woman with the hook?", { say: "He nods, and then stops nodding, and doesn't say anything for a while." }, { cha: 9, then: [{ say: "\"She walked down the middle of the street. She was crying. The lights followed her.\"" }, { clue: "c_seline" }] })
+          ], { label: "Talk to the night guard", name: "Maxime", hint: "He is hiding in the convenience store" }),
           { label: "Go on to the Café du Sillage", if: "street_clear", steps: [{ goto: "cafe" }] }] },
       cafe: { name: "Café du Sillage", theme: "future", mood: "weird", lighting: "glow", weather: "none",
         onEnter: [{ once: "in", steps: [{ say: "[Written from your briefing; the module stops here.] The café has been serving coffee on this corner for two hundred and fifty years, and today the chairs are stacked, the sign is dark and the espresso machine is still warm. Someone has been using it as a staging post. A cloth on the bar is stained with something that is not coffee." }] }],
@@ -143,18 +159,19 @@
         onEnter: [{ once: "in", steps: [{ say: "[Written from your briefing; the module stops here.] Witch and Ogre are already at the doors, and Dragon is the last to arrive. Inside, the air is wrong: cold in a way the building cannot be, and the long corridor ahead is slightly too long. The surgical theatre is at the end, and the lights are on. Agent Seline Moreau stands in the middle of it, with the Wicked Dredge across her back, humming." }] }],
         options: [
           { label: "Try to talk her down", hint: "She was one of you. Charisma Challenging 14", if: { not: { obj: "po1" } }, steps: [{ check: { aspect: "charisma", cr: "challenging", label: "Reach the agent under the Dredge", who: "choose", tags: ["ambush"],
-            ok: [{ talk: { npc: "seline", text: "I didn't mean... it said it would show me where they all went. Every agent we ever lost. All I had to do was open the door." } }, { say: "She takes the rig off her back with shaking hands, and puts it in yours." }, { objective: "po1" }, { set: "seline_alive" }],
+            ok: [{ talk: { npc: "seline", text: "I didn't mean... it said it would show me where they all went. Every agent we ever lost. All I had to do was open the door." } }, { say: "She takes the rig off her back with shaking hands, and puts it in yours." }, { objective: "po1" }, { set: "seline_alive" }, { set: "res_talk" }],
             fail: [{ say: "She shakes her head. She does not hear you any more." }, { combat: "clinique", win: [{ objective: "po1" }, { inc: "reports" }] }] } }] },
           { label: "Disable the Artifact before it opens another Rupture", hint: "Occult Medium 10", if: { not: { obj: "po1" } }, steps: [{ check: { aspect: "occult", cr: "medium", label: "Cut the Dredge's hook", who: "choose",
-            ok: [{ say: "The hum drops an octave and stops. She falls to her knees as the weight comes off her." }, { objective: "po1" }, { set: "seline_alive" }],
+            ok: [{ say: "The hum drops an octave and stops. She falls to her knees as the weight comes off her." }, { objective: "po1" }, { set: "seline_alive" }, { set: "res_disable" }],
             fail: [{ say: "The hook swings round on its own, and tears open the air." }, { combat: "clinique", win: [{ objective: "po1" }, { inc: "reports" }] }] } }] },
-          { label: "Take the Artifact by force", if: { not: { obj: "po1" } }, steps: [{ combat: "clinique", win: [{ objective: "po1" }, { inc: "reports" }] }] },
+          K.find("Read the ward records", "iq", "medium", "A three-week-old admission under a false name. Seline Moreau came in for a stress cure and left after two days; the doctor who treated her has not been seen since.", "The records are in a format the building has already half-eaten.", { clue: "c_ward", hint: "Before the fight", if: { not: { obj: "po1" } }, pre: "The ward is quiet. Nobody has been in it for weeks." }),
+          { label: "Take the Artifact by force", if: { not: { obj: "po1" } }, steps: [{ set: "res_force" }, { combat: "clinique", win: [{ objective: "po1" }, { inc: "reports" }] }] },
           { label: "Finish the operation", if: { obj: "po1" }, steps: [{ set: "clinique_secured" }, { inc: "secured" }, { goto: "end" }] }] },
       end: { name: "Neo France, after dark", theme: "future", mood: "calm", lighting: "glow", weather: "none",
         onEnter: [{ once: "in", steps: [
           { if: { lt: ["reports", 5] }, then: [{ objective: "po2" }, { say: "By morning there is no trace of an operation. The surveillance came back online at dawn with nothing to show." }], else: [{ say: "The news feeds are full of it by breakfast: gunfire in District 55, lights in the sky over the Horizon d'Acier. WCA will spend a month explaining it." }] },
           { if: { ge: ["secured", 5] }, then: [{ objective: "po3" }, { say: "All five zones are yours." }], else: [{ say: "Some zones were left unsecured. Hugo makes a note." }] },
-          { if: { flag: "seline_alive" }, then: [{ say: "Seline Moreau is taken into WCA custody alive. She will tell them what the Dredge offered her, and what it showed her." }], else: [{ say: "Agent Seline Moreau does not leave the theatre. What she was working with has not left Paris." }] },
+          { if: { flag: "res_talk" }, then: [{ say: "You brought her in by talking, and everyone in the room remembers." }] }, { if: { flag: "res_disable" }, then: [{ say: "You switched off the Dredge with her still wearing it, and she never forgave you, or thanked you." }] }, { if: { obj: "so2" }, then: [{ say: "The cult that planned the ambush has been named, and will be gone by Friday." }] }, { if: { flag: "seline_alive" }, then: [{ say: "Seline Moreau is taken into WCA custody alive. She will tell them what the Dredge offered her, and what it showed her." }], else: [{ say: "Agent Seline Moreau does not leave the theatre. What she was working with has not left Paris." }] },
           { end: "win" }] }], options: [] }
     }
   });

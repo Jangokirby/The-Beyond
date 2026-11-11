@@ -185,15 +185,15 @@
             { say: "He will baptise any agent who accepts in the Black Coffin, and give them the first Effect of the Order of the Golden Mask. If all of you accept, there will be no fight, and you may leave unharmed." },
             { say: "But the Man-Eaters will keep eating if left to their devices." },
             { check: { aspect: "charisma", cr: "challenging", label: "Convince them to abandon this place", who: "choose",
-              ok: [{ say: "He listens, with his head on one side. Then he laughs, a dry thing, and agrees: his children will leave this county." }, { objective: "po3" }, { set: "accepted" }, { goto: "end" }],
+              ok: [{ say: "He listens, with his head on one side. Then he laughs, a dry thing, and agrees: his children will leave this county." }, { objective: "po3" }, { set: "accepted" }, { set: "res_accept" }, { goto: "end" }],
               fail: [{ say: "He is amused. He will not abandon his sanctuary, and his children are hungry." }, { set: "accepted" }, { goto: "end" }] } }] },
-          { label: "Refuse, and fight", steps: [
+          { label: "Refuse, and fight", steps: [{ set: "res_fight" },
             { if: { obj: "so3" }, then: [{ say: "You open the Liber Expugnationis, and read a passage aloud over the water. Something in the black water stops reaching." }, { combat: "ruinsb", win: [{ goto: "end" }] }], else: [{ combat: "ruins", win: [{ goto: "end" }] }] }] }] },
       end: { name: "What you leave behind", theme: "village", mood: "calm", lighting: "shadow", weather: "none",
         onEnter: [{ once: "in", steps: [
           { say: "The Prior will want a battle report: what you did, and the tactics you used." }, { objective: "po2" },
-          { if: { flag: "accepted" }, then: [{ say: "Some of you walk out into the daylight with a coffin's cold still in your bones, and something new that has no name. The Order will want to know." }, { end: "win" }],
-            else: [{ say: "The ruins lie empty, purged of evil. A county is safe under your watch. The world is a slightly better place this day, and it is thanks to you. Remember those who fell today, or don't: whichever is better for the living's sanity. I am sure they would understand." }, { end: "win" }] }] }], options: [] }
+          { if: { flag: "res_accept" }, then: [{ say: "Some of you walk out into the daylight with a coffin's cold still in your bones, and something new that has no name. The Order will want to know." }, { end: "win" }],
+            else: [{ if: { obj: "so3" }, then: [{ say: "The Book of Vanquishing did its work: not one of them got up twice." }] }, { if: { ge: ["civSaved", 9] }, then: [{ say: "Dunlaith will rebuild." }], else: [{ say: "Dunlaith will have more graves than houses this winter." }] }, { say: "The ruins lie empty, purged of evil. A county is safe under your watch. The world is a slightly better place this day, and it is thanks to you. Remember those who fell today, or don't: whichever is better for the living's sanity. I am sure they would understand." }, { end: "win" }] }] }], options: [] }
     }
   });
 })();
