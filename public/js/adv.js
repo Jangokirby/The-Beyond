@@ -232,7 +232,8 @@
           for (const l of t.lines || []) { if (window.GAME.state.phase === "ending") return true; await speak(l); }
           if (t.then && await ADV.exec(t.then, g, M)) return true;
         }
-      } else if (st.join) { await g.join(st.join); }
+      } else if (st.inc) { g.set(st.inc, (Number(g.flag(st.inc)) || 0) + (st.by || 1)); }
+      else if (st.join) { await g.join(st.join); }
       else if (st.leave) { g.leave(st.leave); }
       else if (st.arcSet) { if (window.ARCS) window.ARCS.set(st.arcSet); }
       else if (st.arcUnset) { if (window.ARCS) window.ARCS.set(st.arcUnset, false); }

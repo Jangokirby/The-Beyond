@@ -13,7 +13,7 @@ const PUB = path.join(__dirname, "..", "public");
 global.document = { addEventListener() {} };
 global.window = { ART: { SKIN: Array(10).fill(0), HAIRC: Array(12).fill(0), OUTFIT: Array(14).fill(0) }, ADV: { LIBRARY: {}, register(a) { this.LIBRARY[a.id] = a; } } };
 window.PACKS = { define(p) { for (const a of p.cases) window.ADV.register(a); } };
-for (const f of ["js/adventures.js", "js/adventures2.js", "js/adventures3.js", "js/modules1.js", "js/modules1b.js", "js/tutorial.js", ...fs.readdirSync(path.join(PUB, "packs")).filter((f) => f.endsWith(".js")).map((f) => "packs/" + f)])
+for (const f of ["js/adventures.js", "js/adventures2.js", "js/adventures3.js", "js/modules1.js", "js/modules1b.js", "js/modules1c.js", "js/tutorial.js", ...fs.readdirSync(path.join(PUB, "packs")).filter((f) => f.endsWith(".js")).map((f) => "packs/" + f)])
   { const p = path.join(PUB, f); if (fs.existsSync(p)) eval(fs.readFileSync(p, "utf8")); }
 eval(fs.readFileSync(path.join(PUB, "js/rites.js"), "utf8"));
 const LIB = window.ADV.LIBRARY;
@@ -75,6 +75,7 @@ function check(a, opts = {}) {
           for (const t of st.converse.topics || []) all = all.flatMap((y) => (cond(t.if, y) ? run(t.then, y, depth + 1) : [y]));
           next.push(...all);
         }
+        else if (st.inc) { x.f.add(st.inc + "+"); next.push(x); }
         else if (st.end) { x.end = st.end; next.push(x); }
         else next.push(x);
       }
@@ -91,11 +92,11 @@ function check(a, opts = {}) {
   const add = (s, from, label) => { delete s.moved; const k = key(s); if (seen.has(k)) { edges.get(k).from.push(from); return; } seen.set(k, s); edges.set(k, { from: [from], by: label, prev: from }); queue.push(k); };
   for (const s of init) add(s, null, "start");
   let n = 0;
-  while (queue.length && n < (opts.max || 150000)) {
+  while (queue.length && n < (opts.max || +process.env.SL_MAX || 150000)) {
     const k = queue.shift(), s = seen.get(k); n++;
     if (s.end) continue;
     const os = options(s);
-    if (!os.length) { problems.push({ kind: "LOCK", k }); continue; }
+    if (!os.length) { problems.push({ kind: "LOCK", k }); if (process.env.SL_DEBUG) console.error("LOCKSTATE", [...s.f].join(","), "|", [...s.o].join(",")); continue; }
     for (const { o, i } of os) {
       const b = clone(s); if (o.once) b.f.add(`opt:${s.sc}:${i}`);
       for (const r of run(o.steps, b)) add(r, k, `${s.sc}: ${o.label}`);
