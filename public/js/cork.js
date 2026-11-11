@@ -5,7 +5,7 @@
    clues that matter and say what you think it is and where it will be.
    One theory per case. Both right: the team goes in prepared, and every
    agent gains a Fate Point for this case. Wrong: nothing lost but the
-   certainty. Works on any written case or side job; the answer is read from
+   certainty. Works on any written case; the answer is read from
    the case itself (its strongest enemy and the fight it waits in).
    ========================================================================== */
 (function () {

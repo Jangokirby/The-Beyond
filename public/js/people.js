@@ -1,7 +1,7 @@
 /* ============================================================================
    PEOPLE — where a character is from.
 
-   An agent (and anyone the game invents: bonds, side-job witnesses) has an
+   An agent (and anyone the game invents: bonds) has an
    origin and a gender. The origin gives
      names     first names by gender and family names, so a rolled name fits
      langs     the language they grew up speaking (they speak English too)
@@ -108,7 +108,7 @@
   const P = (window.PEOPLE = { ORIGINS: O, get: (id) => byId[id] || null });
   P.randomOrigin = () => pick(O).id;
   P.SEXES = [["f", "Woman"], ["m", "Man"], ["x", "Neither, or rather not say"]];
-  /* rnd: an optional seeded random function, so a side job rebuilt from its seed keeps its names */
+  /* rnd: an optional seeded random function */
   const pk = (a, rnd) => a[Math.floor((rnd || R)() * a.length)];
   P.first = (origin, sex, rnd) => { const o = byId[origin] || pk(O, rnd); const s = sex === "f" || sex === "m" ? sex : (rnd || R)() < 0.5 ? "f" : "m"; return pk(o[s], rnd); };
   P.last = (origin, rnd) => pk((byId[origin] || pk(O, rnd)).last, rnd);
