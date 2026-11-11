@@ -13,7 +13,7 @@ const PUB = path.join(__dirname, "..", "public");
 global.document = { addEventListener() {} };
 global.window = { ART: { SKIN: Array(10).fill(0), HAIRC: Array(12).fill(0), OUTFIT: Array(14).fill(0) }, ADV: { LIBRARY: {}, register(a) { this.LIBRARY[a.id] = a; } } };
 window.PACKS = { define(p) { for (const a of p.cases) window.ADV.register(a); } };
-for (const f of ["js/adventures.js", "js/adventures2.js", "js/adventures3.js", "js/casekit.js", "js/modules1.js", "js/modules1b.js", "js/modules1c.js", "js/modules2.js", "js/modules3.js", "js/modules4.js", "js/modules5.js", "js/tutorial.js", ...fs.readdirSync(path.join(PUB, "packs")).filter((f) => f.endsWith(".js")).map((f) => "packs/" + f)])
+for (const f of ["js/adventures.js", "js/adventures2.js", "js/adventures3.js", "js/casekit.js", "js/modules1.js", "js/modules1b.js", "js/modules1c.js", "js/modules2.js", "js/modules3.js", "js/modules4.js", "js/modules5.js", "js/modules6.js", "js/tutorial.js", ...fs.readdirSync(path.join(PUB, "packs")).filter((f) => f.endsWith(".js")).map((f) => "packs/" + f)])
   { const p = path.join(PUB, f); if (fs.existsSync(p)) eval(fs.readFileSync(p, "utf8")); }
 eval(fs.readFileSync(path.join(PUB, "js/rites.js"), "utf8"));
 const LIB = window.ADV.LIBRARY;
