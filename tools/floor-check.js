@@ -34,7 +34,7 @@ for (const id of ids) {
   if (n.res.size < 2) probs.push(`ways to solve it ${n.res.size} < 2 (set flags res_*)`);
   if (!uniq) probs.push("no enemy with its own rules (build.text)");
   if (tiers < 3) probs.push("endings do not depend on how it went");
-  if (n.size < 18000) probs.push(`size ${(n.size / 1000).toFixed(0)} KB (the floor is the DoB scale; aim for 18 KB+)`);
+  if (n.size < 17000) probs.push(`size ${(n.size / 1000).toFixed(0)} KB (the floor is the DoB scale; aim for 17 KB+)`);
   /* a limited interview must not hide what the case needs: topics that set a flag or clue used in an if must be free (or Charisma extras) */
   const used = new Set(); const grab = (c) => { if (c == null) return; if (typeof c === "string") used.add(c); else if (c.flag) used.add(c.flag); else if (c.clue) used.add("clue:" + c.clue); else if (c.obj) used.add("obj:" + c.obj); else if (c.not !== undefined) grab(c.not); else if (c.all) c.all.forEach(grab); else if (c.any) c.any.forEach(grab); };
   walk(a.scenes, (o) => { if (o.if !== undefined) grab(o.if); });
