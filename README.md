@@ -30,7 +30,7 @@ and point its line at it. Anything without a file is drawn or played by the game
 (`js/art.js` draws scenes, portraits and monsters; `js/synth.js` makes music and sound effects).
 
 ## Writing cases
-Cases are plain data in `js/adventures.js`, `js/adventures2.js` and `js/adventures3.js` (format described at the
+Cases are plain data in `js/modules1.js` to `js/modules8.js` (and the packs in `packs/`) (format described at the
 top of `js/adv.js`). The **GM workshop** builds the same thing without code, and can copy any built-in case as a
 starting point. Useful optional fields: `flavor: "jp"` (Japanese labels while it runs) and `downtime: 2`
 (downtime actions in the break after it).
