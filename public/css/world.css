@@ -390,3 +390,12 @@ html.a-still *, html.a-still *::before, html.a-still *::after { animation-durati
 .rgmodal .rg-entry summary, .rgmodal .rg-main h3 { color: #5b2c10; }
 .rgmodal .rg-main .eyebrow { color: #6d5a44; }
 @media (max-width: 700px) { .rg-nav { flex-wrap: nowrap; overflow-x: auto; padding-bottom: .3rem; } .rg-nav .segbtn { white-space: nowrap; flex: 0 0 auto; } }
+
+/* ---- the job board: era, then region (js/regions.js) */
+.regionbar { display: flex; flex-wrap: wrap; gap: .4rem; margin: .4rem 0 .6rem; }
+.region { appearance: none; text-align: left; padding: .45rem .7rem; border: 1px solid var(--night-3, #333); border-radius: 6px; background: rgba(0,0,0,.25); color: inherit; cursor: pointer; display: grid; gap: .1rem; }
+.region small { opacity: .75; }
+.region.on { border-color: var(--sodium, #e7b563); box-shadow: 0 0 0 1px rgba(231,181,99,.4); }
+.region.here b::before { content: "\25CF  "; color: var(--sodium, #e7b563); }
+.travel .travelart { width: 100%; max-height: 40vh; object-fit: cover; border-radius: 6px; margin: .4rem 0 .8rem; }
+.assigned { margin: .1rem 0 .8rem; }

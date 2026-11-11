@@ -157,7 +157,7 @@
     const look = { seed: b.name, sex, age, skin: (window.PEOPLE && PEOPLE.get(origin) && S.length) ? S[PEOPLE.get(origin).skin[h % PEOPLE.get(origin).skin.length]] : skin,
       hairC: age === "old" ? "#c9c9c9" : (ART.HAIRC || [])[h % 4], facial: sex === "f" || age === "child" ? "none" : ["none", "none", "moustache", "beard"][h % 4],
       hair: sex === "f" ? ["long", "bun", "bob", "ponytail"][h % 4] : ["short", "parted", "slicked", "bald"][h % 4], tags: window.PEOPLE ? PEOPLE.heritageOf(origin) : [],
-      era: window.CAMP && CAMP.camp && window.CDATA ? CDATA.eraOf(CAMP.camp.year).id : undefined };
+      era: window.CAMP && CAMP.camp && window.CDATA ? CDATA.artEra(CAMP.camp.year) : undefined };
     try { const key = ART.portrait(look); return { short: b.name.split(" ")[0], src: (window.ASSETS.portraits || {})[key] || "" }; } catch (e) { return null; }
   };
 })();

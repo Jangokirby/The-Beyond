@@ -103,9 +103,8 @@
     const w = el("div", {});
     w.append(panel("The case", field("Title", txt(cur, "title", { max: "60", after: null })), field("Setting", txt(cur, "setting", { ph: "Place · year" })),
       field("Hook (shown on the job board and in the briefing)", area(cur, "summary", 4)),
-      el("div", { class: "two" }, field("Year", txt(cur, "year", { type: "number" })), el("div", {}, field("Level range"),
-        el("div", { class: "two" }, el("input", { type: "number", min: "1", max: "9", value: String(cur.level[0]), oninput: (e) => { cur.level[0] = +e.target.value; commit(); } }), el("input", { type: "number", min: "1", max: "9", value: String(cur.level[1]), oninput: (e) => { cur.level[1] = +e.target.value; commit(); } }))))));
-    w.append(panel("Agencies that can take this job", note("Only agencies founded by the case's year make sense. The job board also filters by the era the player picked."),
+      el("div", { class: "two" }, field("Year", txt(cur, "year", { type: "number" })), field("Where in the world", sel(cur, "region", C.REGIONS.map((r) => [r.id, r.name]))))));
+    w.append(panel("Agency that usually takes this job", note("Any agency that exists in the case's year can be assigned it and travel to the place; these are the ones who usually do. Other agencies are sent as a joint operation."),
       el("div", { class: "seg" }, ...C.AGENCIES.map((ag) => el("button", { class: "segbtn" + (cur.agencies.includes(ag.id) ? " on" : ""), onclick: () => { const i = cur.agencies.indexOf(ag.id); if (i >= 0) cur.agencies.splice(i, 1); else cur.agencies.push(ag.id); commit(); redraw(); } }, ag.short + (ag.founded > cur.year ? " (not founded yet)" : ""))))));
     const ob = panel("Objectives", note("Primary objectives decide whether the case is solved, and each one earns a Favor. Secondary ones are hidden from the players until found. Complete them with an Objective step."));
     cur.objectives.forEach((o, i) => ob.append(el("div", { class: "objrow" },

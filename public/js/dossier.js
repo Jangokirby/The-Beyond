@@ -27,7 +27,7 @@
   const byId = {}; for (const g of ["portraits", "monsters", "scenes"]) for (const x of LIB[g]) byId[x.id] = x;
   D.get = (id) => byId[id];
   const ERAS = ["medieval", "victorian", "wars", "atomic", "modern", "now"];
-  D.eraOf = (year) => (window.CDATA && window.CDATA.eraOf ? window.CDATA.eraOf(+year || 2000).id : "modern");
+  D.eraOf = (year) => (window.CDATA && window.CDATA.eraOf ? window.CDATA.artEra(+year || 2000) : "modern");
   /* nearest eras first, so a 1958 case with few 1950s photos borrows from the 1940s before the 1990s */
   const nearEras = (era) => { const i = Math.max(0, ERAS.indexOf(era)); return ERAS.slice().sort((a, b) => Math.abs(ERAS.indexOf(a) - i) - Math.abs(ERAS.indexOf(b) - i)); };
 

@@ -25,7 +25,7 @@
   GM.loadAll = () => { for (const a of rd()) ADV.register(a); };
 
   GM.blank = () => ({
-    id: uid(), custom: true, title: "Untitled case", setting: "", year: 1976, level: [1, 3], agencies: ["EHG"], summary: "", notes: "",
+    id: uid(), custom: true, title: "Untitled case", setting: "", year: 1976, region: "asia-east", agencies: ["EHG"], summary: "", notes: "",
     objectives: [{ id: "po1", kind: "primary", t: "Find out what happened", done: "" }, { id: "po2", kind: "primary", t: "Put a stop to it", done: "" }],
     clues: {}, npcs: {}, enemies: {}, encounters: {}, start: "start",
     scenes: { start: { name: "The scene", theme: "street", mood: "calm", lighting: "normal", weather: "", cast: [], notes: "", onEnter: [{ say: "Describe what the agents see." }], options: [{ label: "Wrap it up", steps: [{ end: "win" }] }] } }

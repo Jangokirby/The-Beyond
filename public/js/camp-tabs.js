@@ -35,21 +35,7 @@
         el("div", { class: "row" }, btn("Resume", async () => { if (!(await CAMP.resumeMission())) { toast("The saved mission could not be found."); ui.hub(); } }, "primary"),
           btn("Abandon it", async () => { const r = await modal({ title: "Abandon the mission?", body: "<p>Progress in it is lost. Nothing else changes.</p>", buttons: [{ id: "no", label: "Keep" }, { id: "yes", label: "Abandon", cls: "danger" }] }); if (r === "yes") { G.saveKey = "beyond.mission." + c.id; G.clearSave(); c.mission = null; redraw(); } }, "danger"))));
     }
-    wrap.append(el("h3", { class: "sect" }, `Jobs for the ${CAMP.agency().short}, ${era.name} (${c.year})`));
-    if (!list.length) wrap.append(note("Nothing on the board for this agency in this period yet. Change the period, or build your own with the GM toolkit (coming)."));
-    const grid = el("div", { class: "cardgrid" });
-    for (const m of list) {
-      const done = c.history.filter((h) => h.adv === m.id);
-      const lv = m.level ? `Lv ${m.level[0]}–${m.level[1]}` : "";
-      grid.append(el("button", { class: "mcard", onclick: () => { U.click(); if (!CAMP.active().length) return toast("You need an active agent."); ui.briefing(m.id); } },
-        el("img", { src: U.img(m.art || window.ART.scene(m.theme || "street", m.id)), alt: "" }),
-        el("div", { class: "etxt" }, el("b", {}, m.title), el("span", { class: "mono" }, `${m.setting}${lv ? " · " + lv : ""}`), el("small", {}, m.summary || ""),
-          done.length ? el("span", { class: "tag ok" }, done[0].result) : null)));
-    }
-    wrap.append(grid);
-    const far = CAMP.allAdventures().filter((m) => !list.includes(m) && (m.agencies || []).includes(c.agency));
-    if (far.length) wrap.append(note(`${far.length} more job${far.length > 1 ? "s are" : " is"} available for ${CAMP.agency().short} in other periods: ${far.map((m) => `${m.title} (${m.year})`).join(", ")}.`));
-    return wrap;
+    return ui.board(wrap);
   };
 
   /* ============================================================ AGENTS */

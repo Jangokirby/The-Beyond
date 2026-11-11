@@ -12,7 +12,7 @@
     const M = window.MODULE, inCase = window.GAME && GAME.state && document.body.dataset.mode && document.body.dataset.mode !== "hub";
     if (inCase && M && M.id === "death-of-a-bloodline") return "";
     const y = (inCase && M && M.year) || (window.CAMP && CAMP.camp && CAMP.camp.year) || 0;
-    return y && window.CDATA ? CDATA.eraOf(y).id : "";
+    return y && window.CDATA ? CDATA.artEra(y) : "";
   };
   const apply = () => { const e = era(); if ((root.dataset.era || "") !== e) { if (e) root.dataset.era = e; else delete root.dataset.era; } };
   window.ERASKIN = { apply, set: (v) => { try { localStorage.setItem("beyond.eraSkin", v ? "on" : "off"); } catch (e) {} apply(); }, on };

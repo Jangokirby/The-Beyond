@@ -25,7 +25,7 @@
     modern:    { name: "Field office", wall: "#23272d", wall2: "#1b1f24", floor: "#15181c", trim: "#0a0c0f", light: "#dfe9f2", board: "#5a4a36", metal: "#41474f", phone: "Phone", garage: "Garage", vault: "Vault", lamp: "fluor" },
     now:       { name: "Ops room", wall: "#141a24", wall2: "#10151d", floor: "#0b0f15", trim: "#05080c", light: "#60f0ff", board: "#1d2a38", metal: "#2a3644", phone: "Comms", garage: "Drone bay", vault: "Vault", lamp: "strip" }
   };
-  const eraId = () => C.eraOf(CAMP.camp.year).id;
+  const eraId = () => C.artEra(CAMP.camp.year);
   const style = () => STYLE[eraId()] || STYLE.atomic;
 
   /* Words that make a line sound like its century. */

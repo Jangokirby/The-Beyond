@@ -35,7 +35,7 @@
   const eraNow = () => {
     const M = window.MODULE, inCase = window.GAME && GAME.state && document.body.dataset.mode !== "hub";
     const year = (inCase && M && M.year) || (window.CAMP && CAMP.camp && CAMP.camp.year) || 1976;
-    return window.CDATA ? CDATA.eraOf(year).id : "modern";
+    return window.CDATA ? CDATA.artEra(year) : "modern";
   };
   const flavNow = () => {
     const M = window.MODULE; if (!M || !(window.GAME && GAME.state)) return null;

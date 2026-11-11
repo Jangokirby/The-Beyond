@@ -45,8 +45,8 @@
       const f = G.flagsOf(a);
       for (const x of f.reads) if (!set.has(x)) out.push(`Part ${i + 1} (${a.title}) checks the choice "${x}", but no earlier part remembers it.`);
       for (const x of f.sets) if (!set.has(x)) set.set(x, i);
-      const miss = r.agencies.filter((ag) => !(a.agencies || []).includes(ag));
-      if (miss.length) out.push(`Part ${i + 1} (${a.title}) isn't open to ${miss.join(", ")}: those agencies won't see it on their case board.`);
+      const miss = r.agencies.filter((ag) => !CAMP.canTake(a, ag));
+      if (miss.length) out.push(`Part ${i + 1} (${a.title}) is set before ${miss.join(", ")} existed, so those agencies cannot be sent on it.`);
       if (i > 0) { const prev = G.caseOf(r.parts[i - 1]); if (prev && C.eraOf(prev.year).id !== C.eraOf(a.year).id) out.push(`Part ${i + 1} (${a.year}) is in a different era from part ${i} (${prev.year}). A campaign is played in one era.`); }
       if (!a.custom && ADV.LIBRARY[id] && window.ARCS && ARCS.of(id) && ARCS.of(id).id !== "gmc-" + r.id) out.push(`Part ${i + 1} (${a.title}) already belongs to the game's campaign "${ARCS.of(id).title}".`);
     });

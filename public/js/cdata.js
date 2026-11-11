@@ -8,19 +8,19 @@
   const C = (window.CDATA = {});
 
   C.AGENCIES = [
-    { id: "OID", name: "Order of Infinite Dark", short: "OID", founded: 800, home: "France, wandering",
+    { id: "OID", name: "Order of Infinite Dark", short: "OID", founded: 800, home: "France, wandering", region: "europe",
       blurb: "Knights, rites and ancient steel. The oldest order against the Beyond, still loyal to the old ways.",
       style: "Ceremonial armor, holy weapons, ancient rites.", crest: "OID" },
-    { id: "WCA", name: "Wells and Constantine Association", short: "WCA", founded: 1853, home: "London",
+    { id: "WCA", name: "Wells and Constantine Association", short: "WCA", founded: 1853, home: "London", region: "europe",
       blurb: "Sharp suits, thorough investigation, secret government agreements. The origin of every modern agency.",
       style: "Professional, polished, prepared.", crest: "WCA" },
-    { id: "NSBD", name: "North and South American Beyond Division", short: "NSBD", founded: 1910, home: "The Bahamas",
+    { id: "NSBD", name: "North and South American Beyond Division", short: "NSBD", founded: 1910, home: "The Bahamas", region: "americas-north",
       blurb: "Stretched thin across two continents. Self-reliant agents who act on their own judgment, far from backup.",
       style: "Rugged, practical, built for survival.", crest: "NSBD" },
-    { id: "EHG", name: "The Emperor's Heavenly Guard", short: "EHG", founded: 1949, home: "Japan",
+    { id: "EHG", name: "The Emperor's Heavenly Guard", short: "EHG", founded: 1949, home: "Japan", region: "asia-east",
       blurb: "Born from the ruptures after the bomb. Fast, casual, efficient, and sometimes brutal.",
       style: "Casual clothes, quick decisions.", crest: "EHG", emblem: "emblem" },
-    { id: "BFV", name: "Black Fang Vanguard", short: "BFV", founded: 2022, home: "China",
+    { id: "BFV", name: "Black Fang Vanguard", short: "BFV", founded: 2022, home: "China", region: "asia-east",
       blurb: "Large, technological and publicly friendly: drones, AI and compassionate civilian care.",
       style: "State-of-the-art tech, public-relations polish.", crest: "BFV" }
   ];
@@ -35,6 +35,41 @@
     { id: "now", name: "The Present", from: 2022, to: 2100, sample: 2024, blurb: "Drones, AI and augmented reality, and a new Chinese vanguard." }
   ];
 
+  /* Far future: the Black Fang Vanguard is the last agency founded and the one that finally made global cooperation easy.
+     Any year from 2101 on belongs to it; every agency that exists can work there. Pictures and music borrow the Present's. */
+  C.ERAS.push({ id: "future", name: "The Far Future", from: 2101, to: 2600, sample: 2150, art: "now", blurb: "Megacities, rupture-hunting machines and one global network of agencies. The Beyond has had centuries to learn what we fear." });
+  C.artEra = (year) => { const e = C.eraOf(year); return e.art || e.id; };
+
+  /* ---------------------------------------------------------------- where in the world
+     A job has a time (its year, so its era) and a place (its region). Agencies send agents wherever the job is: an agent
+     is not tied to home. Travelling takes days and the agency pays for it. */
+  C.REGIONS = [
+    { id: "europe", name: "Europe", blurb: "From the Atlantic coast to the Urals, the oldest ground the Beyond has touched." },
+    { id: "africa-me", name: "Africa and the Middle East", blurb: "Deserts, river valleys, ancient cities and old trade roads." },
+    { id: "asia-south", name: "South and Central Asia", blurb: "Mountains, monsoon cities, steppe and the roads between them." },
+    { id: "asia-east", name: "East and Southeast Asia", blurb: "Islands, rice country, rail lines and some of the densest cities on Earth." },
+    { id: "americas-north", name: "North America and the Caribbean", blurb: "Plains, small towns, big cities and the islands between two seas." },
+    { id: "americas-south", name: "Latin America", blurb: "Cordillera, rainforest, coast and high plateau." },
+    { id: "oceania", name: "Oceania and the Poles", blurb: "A great many islands, one dry continent, and the ice at both ends." }
+  ];
+  /* days of travel between regions, in the days of a modern jet; slower eras multiply it (see TRAVEL) */
+  const RD = { "europe|africa-me": 1, "europe|asia-south": 2, "europe|asia-east": 3, "europe|americas-north": 2, "europe|americas-south": 3, "europe|oceania": 4,
+    "africa-me|asia-south": 1, "africa-me|asia-east": 3, "africa-me|americas-north": 3, "africa-me|americas-south": 3, "africa-me|oceania": 4,
+    "asia-south|asia-east": 2, "asia-south|americas-north": 4, "asia-south|americas-south": 5, "asia-south|oceania": 3,
+    "asia-east|americas-north": 2, "asia-east|americas-south": 4, "asia-east|oceania": 2,
+    "americas-north|americas-south": 2, "americas-north|oceania": 3, "americas-south|oceania": 4 };
+  C.regionOf = (id) => C.REGIONS.find((r) => r.id === id) || C.REGIONS[0];
+  C.regionDays = (a, b) => (a === b ? 0 : RD[a + "|" + b] || RD[b + "|" + a] || 3);
+  /* how a journey feels and how long it takes, by era: mult scales the days */
+  C.TRAVEL = {
+    medieval: { mult: 9, how: ["a merchant cog hugging the coast", "pilgrim roads, ferries and a cart that lost a wheel", "a river barge, then a long ride", "a pack-mule train over the passes"] },
+    victorian: { mult: 4, how: ["a steamship with a berth the agency booked", "a boat train and a night ferry", "a slow mail steamer and a longer railway"] },
+    wars: { mult: 3, how: ["an ocean liner, with the agency's cover story stamped in every passport", "a troopship and a freight train", "a flying boat, then a train"] },
+    atomic: { mult: 1.6, how: ["a propeller airliner with a fuel stop on every continent", "a long prop flight, a second flight and a jeep", "a slow ocean liner for the gear and a plane for the agents"] },
+    modern: { mult: 1, how: ["a jet airliner, two connections and a car to the site", "economy seats booked under four different names", "a red-eye flight and a rented car"] },
+    now: { mult: 1, how: ["an agency-booked flight, a tablet with the dossier, and a rented car at the other end", "a direct flight, a train, and a ride-share nobody asked about", "a charter, a drone drop for the gear, and a driver who does not ask"] },
+    future: { mult: 0.5, how: ["a suborbital hop from one agency hub to another", "a maglev line and an automated cab", "a cargo skiff with the kit in a sealed case"] }
+  };
   C.agenciesIn = (year) => C.AGENCIES.filter((a) => a.founded <= year);
   C.eraOf = (year) => C.ERAS.find((e) => year >= e.from && year <= e.to) || C.ERAS[C.ERAS.length - 1];
 

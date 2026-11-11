@@ -347,7 +347,7 @@
   };
   CAMP.advList = () => {
     const c = CAMP.camp, era = C.eraOf(c.year);
-    return CAMP.allAdventures().filter((m) => m.year >= era.from && m.year <= era.to && (m.agencies || []).includes(c.agency)).sort((x, y) => x.year - y.year);
+    return CAMP.allAdventures().filter((m) => m.year >= era.from && m.year <= era.to && CAMP.canTake(m, c.agency)).sort((x, y) => x.year - y.year);
   };
   CAMP.advMeta = (id) => CAMP.allAdventures().find((m) => m.id === id);
 

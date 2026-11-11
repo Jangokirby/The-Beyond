@@ -340,7 +340,7 @@
     const out = el("b", { class: "yearbig" }, String(year));
     const label = el("div", { class: "small muted" }, C.eraOf(year).name);
     const body = el("div", {}, el("p", { class: "small" }, `${ag.short} was founded in ${ag.founded < 1000 ? "the " + ag.founded + "s" : ag.founded}. Your agents can work in any year from then on, using the gear of the day. Adventures are listed by period.`),
-      el("label", { class: "field" }, el("span", {}, "Year"), el("input", { type: "range", min: String(Math.max(ag.founded, 800)), max: "2060", step: "1", value: String(year), oninput: (e) => { year = +e.target.value; out.textContent = year; label.textContent = C.eraOf(year).name; } }), out), label);
+      el("label", { class: "field" }, el("span", {}, "Year"), el("input", { type: "range", min: String(Math.max(ag.founded, 800)), max: "2600", step: "1", value: String(year), oninput: (e) => { year = +e.target.value; out.textContent = year; label.textContent = C.eraOf(year).name; } }), out), label);
     modal({ title: "Change time period", body, buttons: [{ id: "no", label: "Cancel" }, { id: "ok", label: "Go", cls: "primary" }] }).then((r) => {
       if (r === "ok") { c.year = year; CAMP.logAdd(`The campaign moved to ${year}.`); CAMP.save(); ui.hub("missions"); }
     });
