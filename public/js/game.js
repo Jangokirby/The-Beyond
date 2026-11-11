@@ -360,7 +360,7 @@
     const cdef = (M.companions || {})[id]; if (!cdef) return null;
     const n = M.npcs[cdef.npc] || {};
     const m = ADV.buildMonster({ name: cdef.name || n.name || id, type: "Human", difficulty: "medium", sprite: "humanoid", mods: [], ...(cdef.build || {}) });
-    return { id: "co_" + id, name: m.name, short: (m.name || id).split(" ")[0], portrait: n.portrait || "", attackBonus: cdef.attack != null ? cdef.attack : m.attack + 1, er: m.er, br: m.br, mr: m.mr, sr: m.sr,
+    return { id: "co_" + id, name: m.name, short: (() => { const w = String(m.name || id).split(" "); return /^(Brother|Sister|Agent|Father|Mr\.|Mrs\.|Dr\.|Constable|Sheriff|Lieutenant|Master|Lt\.|Pandit|Qadi|Dona)$/.test(w[0]) && w[1] ? w[1].replace(/[“”"]/g, "") : w[0]; })(), portrait: n.portrait || "", attackBonus: cdef.attack != null ? cdef.attack : m.attack + 1, er: m.er, br: m.br, mr: m.mr, sr: m.sr,
       pools: { health: { cur: m.health, max: m.health }, sanity: { cur: m.sanity, max: m.sanity }, stability: { cur: m.stability, max: m.stability } }, companion: id };
   };
   api.join = async (id) => {
