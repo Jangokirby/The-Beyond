@@ -13,8 +13,9 @@ const ES = require("./era-style.js");
 const MP = require("./monster-prompts.js");
 const OUT = require("./v6-outfits.js");
 const MON = require("./v6-monsters.js");
-const PA = require("./v6-places-a.js"), PB = require("./v6-places-b.js");
-const LOCALE = { ...PA.LOCALE, ...PB.LOCALE }, PLACE = { ...PA.PLACE, ...PB.PLACE };
+const PA = require("./v6-places-a.js"), PB = require("./v6-places-b.js"), PC = require("./v6-places-c.js");
+const LOCALE = { ...PA.LOCALE, ...PB.LOCALE, ...PC.LOCALE }, PLACE = { ...PA.PLACE, ...PB.PLACE, ...PC.PLACE };
+Object.assign(MON.M, PC.MONSTERS);
 const url = process.argv[2] || "http://localhost:3000", out = process.argv[3] || path.join(__dirname, "..");
 const v5src = fs.readFileSync(path.join(__dirname, "asset-list.js"), "utf8");
 const grab = (name) => {
@@ -34,8 +35,8 @@ const grab = (name) => {
     const cases = [];
     for (const a of Object.values(ADV.LIBRARY)) {
       if (a.custom || a.generated) continue;
-      cases.push({ id: a.id, title: a.title, year: a.year, era: eraOf(a.year), setting: a.setting, region: a.region || "",
-        npcs: Object.entries(a.npcs || {}).map(([id, n]) => ({ id, name: n.name, tag: n.tag || "", look: n.look || "", sex: (n.face && n.face.sex) || "", recurs: n.recurs || "" })),
+      cases.push({ id: a.id, title: a.title, year: a.year, era: eraOf(a.year), setting: a.setting, region: a.region || (CAMP.regionOfCase ? CAMP.regionOfCase(a) : ""),
+        npcs: Object.entries(a.npcs || {}).map(([id, n]) => ({ skin: n.face ? ART.SKIN.indexOf(n.face.skin) : -1, id, name: n.name, tag: n.tag || "", look: n.look || "", sex: (n.face && n.face.sex) || "", recurs: n.recurs || "" })),
         enemies: Object.entries(a.enemies || {}).map(([id, e]) => { const x = e.build || e; return { id, name: x.name, type: x.type || "", dies: x.dies || "" }; }),
         scenes: Object.entries(a.scenes || {}).map(([id, s]) => ({ id, name: s.name, theme: s.theme || "street" })),
         fights: Object.entries(a.encounters || {}).map(([id, e]) => ({ id, name: e.name, theme: e.theme || "interior" })) });
@@ -74,8 +75,10 @@ const grab = (name) => {
     f: ["young woman, sharp eyes", "woman in her thirties, tired but determined", "older woman with grey hair, stern", "woman in her twenties, freckles, wary smile", "woman in her forties, a scar on her cheek", "woman with cropped hair and a steady gaze", "elderly woman with deep lines", "teenage girl, serious and watchful", "woman in her fifties with a strong jaw", "woman in her late twenties, a crooked smile"],
     m: ["young man, clean-shaven, nervous", "man in his thirties, stubble, haunted look", "older man with a white beard, calm", "man in his twenties, broad shoulders, crooked nose", "man in his forties with a moustache, sardonic", "lean man with sunken cheeks and sharp eyes", "elderly man, bald, deeply lined", "teenage boy, serious and watchful", "man in his fifties, heavy-set, kind eyes", "man in his late twenties, a chipped tooth, easy grin"]
   };
+  /* two of each group per era and sex, weighted to where the agencies are from (France and England, the Bahamas and the Americas, Japan, China, India and the Middle East) */
+  const HERITAGE10 = ["white British", "white French", "white Italian", "Polish", "white American", "Black West African", "Afro-Caribbean", "Black American", "Japanese", "Chinese", "Vietnamese", "Indian", "Arab", "Persian", "Mexican", "Brazilian"];
   for (const e of data.eras.filter((x) => OUT[x.id])) for (const sex of ["f", "m"]) LOOKS[sex].forEach((lk, i) => {
-    const n = String(i + 1).padStart(2, "0"), outfit = OUT[e.id][sex][i], her = ES.HERITAGE[(i * 3 + (sex === "f" ? 0 : 1) + data.eras.indexOf(e)) % 10];
+    const n = String(i + 1).padStart(2, "0"), outfit = OUT[e.id][sex][i], her = HERITAGE10[(i + (sex === "f" ? 0 : 8) + data.eras.indexOf(e) * 3) % HERITAGE10.length];
     add("Agent portraits (character creator)", `portraits/agents/${e.id}-${sex}-${n}.png`, SQ, `${e.name}: ${sex === "f" ? "woman" : "man"} ${n}`,
       `head-and-shoulders portrait of (${aOrAn(her)} ${her} ${lk}:1.3), wearing (${outfit}:1.3), ${ES.POSES[(i * 3 + 1) % 10]}, ${ES.EXPRESSIONS[(i * 7 + 2) % 10]}, a dim plain wall, face in the upper middle`,
       "Every agent of an era and sex has a different outfit. Heritage, age and build vary within the era.", "(multiple people:1.3), (signature, text, watermark:1.5)" + (e.id === "modern" || e.id === "now" ? "" : ", (modern clothes:1.2)"), { era: e.id });
@@ -107,11 +110,15 @@ const grab = (name) => {
     const ek = ES.eraKey(c.era, c.year), era = eraCol(c.era, c.year), eid = OUT[era] ? era : "now", h = hsh(n.name);
     const sx = n.sex === "f" ? "f" : "m";
     const clothed = CLOTHES.test(n.look || "");
+    const REG = { europe: ["white European", "white European", "white European", "Mediterranean", "Black"], "asia-east": ["East Asian", "East Asian", "East Asian", "East Asian", "East Asian"], "asia-south": ["South Asian", "South Asian", "South Asian", "South Asian", "South Asian"], "africa-me": ["Arab", "Arab", "Arab", "North African", "Black West African"], "americas-north": ["white American", "white American", "Latino", "Black American", "Black American"], "americas-south": ["Latin American", "Latin American", "Latin American", "Indigenous Amazonian", "Afro-Brazilian"], oceania: ["white Australian", "white Australian", "Maori", "Aboriginal", "Aboriginal"] };
+    const OVER = { "long-count": "Black Nigerian", "lantern-on-the-water": "Black Bahamian", "white-shoes": "Brazilian river-villager", "last-reef": "Pacific Islander", "heat-dome": "Indian" };
+    let her = (REG[c.region || "europe"] || REG.europe)[!(n.skin >= 0) ? hsh(n.name) % 5 : Math.min(4, n.skin)];
+    if (OVER[c.id] && (n.skin >= 3 || n.skin < 0)) her = OVER[c.id];
     const outfit = clothed ? "" : `, wearing (${OUT[eid][sx][h % 10]}:1.3)`;
     const sexw = n.sex === "f" ? "woman" : n.sex === "m" ? "man" : "person";
     const lk = String(n.look || n.tag).replace(/\.\s*$/, "").split(/(?<=\.)\s+/).slice(0, 2).join(" ").replace(/\.$/, "");
     const row = add(`Characters: ${c.title} (${c.year})`, n.recurs ? `portraits/npc/recurring-${n.recurs}.png` : `portraits/npc/${c.id}-${n.id}.png`, SQ, `${n.name}, ${n.tag}`,
-      `head-and-shoulders portrait of (${aOrAn(sexw)} ${sexw}, ${n.tag ? n.tag.split(" · ")[0] + ", " : ""}${lk}:1.3)${outfit}, ${ES.POSES[h % 10]}, ${ES.EXPRESSIONS[(h >>> 3) % 10]}, a dim plain wall, face in the upper middle`,
+      `head-and-shoulders portrait of (${aOrAn(her)} ${her} ${sexw}, ${n.tag ? n.tag.split(" · ")[0] + ", " : ""}${lk}:1.3)${outfit}, ${ES.POSES[h % 10]}, ${ES.EXPRESSIONS[(h >>> 3) % 10]}, a dim plain wall, face in the upper middle`,
       n.recurs ? `Recurring: appears in several cases of ${c.title.split(":")[0]}; one picture serves all.` : "", "(multiple people:1.3), (signature, text, watermark:1.5)" + (era === "modern" || era === "now" ? "" : ", (modern clothes:1.2)"), { era, year: c.year });
     if (n.recurs) recurring[n.recurs] = row;
   };

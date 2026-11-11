@@ -3,12 +3,12 @@
 Written 2026-11-11, after the game's cases were rebuilt. This is the list your v6 instructions asked for.
 
 Files (in this folder):
-- `asset-list-v6.csv`: every picture the game uses (813 rows). Columns: file, size, subject, group, era, kind, year, hero, prompt, negative, note. The `style` column is gone.
-- `asset-list-v6-todo.csv`: the same, without the patrons and the title screen (which keep the rulebook's art): 795 rows to make.
+- `asset-list-v6.csv`: every picture the game uses (907 rows). Columns: file, size, subject, group, era, kind, year, hero, prompt, negative, note. The `style` column is gone.
+- `asset-list-v6-todo.csv`: the same, without the patrons and the title screen (which keep the rulebook's art): 889 rows to make.
 - `ASSET-LIST-v6.md`: the same list to read, grouped by case.
 - `V6-PICTURE-RULES.md`: your v6 rules, which the list was written to.
 
-What is in it: 253 portraits (120 agents with 120 different outfits, 12 knights and soldiers, and every named person of every case), 347 places (every scene and fight backdrop of 29 cases, all the Death of a Bloodline places that were missing, and the generic ones), 127 monsters (every enemy of every case, the Death of a Bloodline boss forms, and the generic ones by era), 57 items, 6 hideouts, 5 emblems, plus the title screen and patrons (marked keep).
+What is in it: 280 portraits (120 agents with 120 different outfits across 16 heritages (British, French, Italian, Polish, American, West African, Afro-Caribbean, Black American, Japanese, Chinese, Vietnamese, Indian, Arab, Persian, Mexican, Brazilian; about eight of each, spread across every era and sex), and named people take their heritage from where their case is set, 12 knights and soldiers, and every named person of every case), 399 places (every scene and fight backdrop of 36 cases, all the Death of a Bloodline places that were missing, and the generic ones), 142 monsters (every enemy of every case, the Death of a Bloodline boss forms, and the generic ones by era), 57 items, 6 hideouts, 5 emblems, plus the title screen and patrons (marked keep).
 
 How each rule was met:
 1. No style words: the `style` column is empty, and a check script scans every prompt for the banned list (none left).
