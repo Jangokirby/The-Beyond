@@ -71,14 +71,16 @@ const grab = (name) => {
   const missing = [];
 
   /* 1. agent portraits: 120 (6 eras x 2 sexes x 10), every outfit different */
+  /* adults who could be agents: mostly twenties to forties, one in fifty is older, nobody frail */
   const LOOKS = {
-    f: ["young woman, sharp eyes", "woman in her thirties, tired but determined", "older woman with grey hair, stern", "woman in her twenties, freckles, wary smile", "woman in her forties, a scar on her cheek", "woman with cropped hair and a steady gaze", "elderly woman with deep lines", "teenage girl, serious and watchful", "woman in her fifties with a strong jaw", "woman in her late twenties, a crooked smile"],
-    m: ["young man, clean-shaven, nervous", "man in his thirties, stubble, haunted look", "older man with a white beard, calm", "man in his twenties, broad shoulders, crooked nose", "man in his forties with a moustache, sardonic", "lean man with sunken cheeks and sharp eyes", "elderly man, bald, deeply lined", "teenage boy, serious and watchful", "man in his fifties, heavy-set, kind eyes", "man in his late twenties, a chipped tooth, easy grin"]
+    f: ["young woman in her early twenties, sharp eyes", "woman in her thirties, tired but determined", "woman in her forties with a firm jaw, a few grey strands", "woman in her twenties, freckles, wary smile", "woman in her forties, a scar on her cheek", "woman in her thirties with cropped hair and a steady gaze", "woman in her late twenties, a crooked smile", "woman in her mid-thirties, strong shoulders, calm eyes", "woman in her fifties, weathered and lean, still upright", "woman in her early thirties, high cheekbones, watchful"],
+    m: ["young man in his early twenties, clean-shaven, nervous", "man in his thirties, stubble, haunted look", "man in his forties with a moustache, sardonic", "man in his twenties, broad shoulders, crooked nose", "man in his thirties, lean with sunken cheeks and sharp eyes", "man in his late twenties, a chipped tooth, easy grin", "man in his mid-thirties, heavy-set, kind eyes", "man in his forties with a short beard, calm", "man in his fifties, weathered and lean, still upright", "man in his early thirties, dark circles under steady eyes"]
   };
+
   /* two of each group per era and sex, weighted to where the agencies are from (France and England, the Bahamas and the Americas, Japan, China, India and the Middle East) */
-  const HERITAGE10 = ["white British", "white French", "white Italian", "Polish", "white American", "Black West African", "Afro-Caribbean", "Black American", "Japanese", "Chinese", "Vietnamese", "Indian", "Arab", "Persian", "Mexican", "Brazilian"];
+  const HERITAGE10 = ["white British", "white Italian", "Polish", "Black West African", "Japanese", "white French", "Turkish", "Mexican", "white American", "Pacific Islander", "Afro-Caribbean", "Chinese", "Russian", "Brazilian", "Irish", "Black American", "Korean", "Indian", "Maori", "Arab", "Scandinavian", "Filipino"];
   for (const e of data.eras.filter((x) => OUT[x.id])) for (const sex of ["f", "m"]) LOOKS[sex].forEach((lk, i) => {
-    const n = String(i + 1).padStart(2, "0"), outfit = OUT[e.id][sex][i], her = HERITAGE10[(i + (sex === "f" ? 0 : 8) + data.eras.indexOf(e) * 3) % HERITAGE10.length];
+    const n = String(i + 1).padStart(2, "0"), outfit = OUT[e.id][sex][i], her = HERITAGE10[(i * 2 + (sex === "f" ? 0 : 7) + data.eras.indexOf(e) * 5) % HERITAGE10.length];
     add("Agent portraits (character creator)", `portraits/agents/${e.id}-${sex}-${n}.png`, SQ, `${e.name}: ${sex === "f" ? "woman" : "man"} ${n}`,
       `head-and-shoulders portrait of (${aOrAn(her)} ${her} ${lk}:1.3), wearing (${outfit}:1.3), ${ES.POSES[(i * 3 + 1) % 10]}, ${ES.EXPRESSIONS[(i * 7 + 2) % 10]}, a dim plain wall, face in the upper middle`,
       "Every agent of an era and sex has a different outfit. Heritage, age and build vary within the era.", "(multiple people:1.3), (signature, text, watermark:1.5)" + (e.id === "modern" || e.id === "now" ? "" : ", (modern clothes:1.2)"), { era: e.id });
