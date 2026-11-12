@@ -8,6 +8,13 @@ Files (in this folder):
 - `ASSET-LIST-v6.md`: the same list to read, grouped by case.
 - `V6-PICTURE-RULES.md`: your v6 rules, which the list was written to.
 
+## Delivery size (please)
+The game shows portraits at 28 to 96 pixels, so **512x512 is plenty** for portraits, monsters, items and emblems; places and fight backdrops are **1344x768**. Please send **JPEG at about 80% quality** (same base file name, any extension). The size column in the CSV is now that delivery size. The full set comes to under 100 MB; full-size PNGs are not needed and are too big to move around. Generating larger and scaling down is fine.
+
+## Changes since the first v6 list
+- Agent portraits are adults, mostly in their twenties to forties, with a few in their fifties. No frail elders, and no old soldiers.
+- Heritage pool widened to 22 (British, Italian, Polish, Russian, Irish, French, American, Scandinavian, Turkish, Pacific Islander, Maori, Filipino, Korean, Japanese, Chinese, Indian, Arab, West African, Afro-Caribbean, Black American, Mexican, Brazilian). Every group of ten has ten different heritages. Named people take theirs from where their case is set.
+
 What is in it: 280 portraits (120 agents with 120 different outfits across 16 heritages (British, French, Italian, Polish, American, West African, Afro-Caribbean, Black American, Japanese, Chinese, Vietnamese, Indian, Arab, Persian, Mexican, Brazilian; about eight of each, spread across every era and sex), and named people take their heritage from where their case is set, 12 knights and soldiers, and every named person of every case), 399 places (every scene and fight backdrop of 36 cases, all the Death of a Bloodline places that were missing, and the generic ones), 142 monsters (every enemy of every case, the Death of a Bloodline boss forms, and the generic ones by era), 57 items, 6 hideouts, 5 emblems, plus the title screen and patrons (marked keep).
 
 How each rule was met:

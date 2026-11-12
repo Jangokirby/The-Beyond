@@ -64,7 +64,7 @@ const grab = (name) => {
     const row = { file, size, subject, group, era: meta.era || "", kind, year: meta.year || (group.match(/\((\d{4})\)/) || [])[1] || "", hero: meta.hero || String(subject).split(" (")[0], prompt: meta.keep ? prompt : scrub(prompt), negative, note, redo: meta.redo || "v6" };
     rows.push(row); return row;
   };
-  const SQ = "1024x1024", WIDE = "1344x768";
+  const SQ = "512x512", WIDE = "1344x768";
   const hsh = (t) => [...String(t)].reduce((h, ch) => (Math.imul(h, 31) + ch.charCodeAt(0)) >>> 0, 7);
   const aOrAn = (s) => (/^[aeiou]/i.test(s) ? "an" : "a");
   const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -208,7 +208,7 @@ const grab = (name) => {
   fs.writeFileSync(path.join(out, "art", "asset-list-v6-todo.csv"), csv(rows.filter((r) => r.redo !== "keep")));
   const groups = [...new Set(rows.map((r) => r.group))];
   let md = `# The Beyond: picture list v6\n\n${rows.length} pictures, written to the owner's v6 rules (art/V6-PICTURE-RULES.md). \`asset-list-v6.csv\` has every row; \`asset-list-v6-todo.csv\` has only what has to be made (everything except the patrons and the title screen).\n\n`;
-  md += `Columns: file, size, subject, group, era, kind, year, hero, prompt, negative, note. The \`style\` column is gone: the generator adds the fixed tail.\n\n`;
+  md += `**Deliver small.** The size column is the size the game needs: 512x512 for portraits, monsters, items and emblems; 1344x768 for places, fight backdrops and hideouts. Save as JPEG at about 80% quality (the base file name stays the same; the extension may be .jpg). The whole set then comes to under 100 MB. Generating larger and scaling down is fine.\n\nColumns: file, size, subject, group, era, kind, year, hero, prompt, negative, note. The \`style\` column is gone: the generator adds the fixed tail.\n\n`;
   md += `## What changed from v5\n- No style, palette, lighting or mood words in any row. Light sources appear only as objects.\n- Era and place come from content: three weighted era objects in every row, and the case's country, city and building repeated in every place row.\n- Hero subject first, once per picture. Interiors list indoor objects; places have no people; fight backdrops keep the bottom third plain.\n- Agent portraits: 120 different outfits (two to three garments and one detail each), every agent portrait ends "face in the upper middle".\n- Monsters are written to look like monsters: wrongness in anatomy and materials, "eldritch horror" or "monstrous" in every creature row.\n- The old rows for jobs that no longer exist (the generated side jobs and their "threat" monsters) are gone. Death of a Bloodline's places are all listed.\n- Every case, person and enemy is new or rewritten: see the group list below.\n\n`;
   md += `| Group | Pictures |\n|---|---|\n`;
   for (const g of groups) md += `| ${g} | ${rows.filter((r) => r.group === g).length} |\n`;
