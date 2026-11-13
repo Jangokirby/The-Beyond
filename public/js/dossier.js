@@ -66,13 +66,15 @@
   ART.scene = (theme, seed = "") => { if (seed === "title" && window.ASSETS.scenes.title) return "title"; const s = D.sceneFor(theme, null, seed); return s ? reg("scenes", "ph:", s) : A0.scene(theme, seed); };
 
   /* ---------------------------------------------------------------- monsters */
-  D.monsterFor = (kind, name = "", jp = false, avoid) => {
+  D.monsterFor = (kind, name = "", jp = false, avoid, era) => {
     const n = String(name).toLowerCase();
     let pool = LIB.monsters.filter((m) => !m.pin && (!m.jp || jp));
     const named = pool.filter((m) => (m.names || []).some((w) => n.includes(w)));
     if (named.length) pool = named;
     else { const k = pool.filter((m) => m.kinds.includes(kind)); if (!k.length) return null; pool = k; }
     if (jp) { const j = pool.filter((m) => m.jp); if (j.length) pool = j; }
+    era = era || D.ctxEra;
+    if (era && pool.some((m) => m.era)) for (const e of nearEras(era)) { const m = pool.filter((x) => (x.era || []).includes(e)); if (m.length) { pool = m; break; } }
     const fresh = avoid ? pool.filter((m) => !avoid.has(m.id)) : pool;
     const p = (fresh.length ? fresh : pool)[hash(kind + name) % (fresh.length || pool.length)];
     if (avoid) avoid.add(p.id);
@@ -104,7 +106,7 @@
     for (const id of Object.values(pk.npcs || {})) usedP.add(id);
     for (const [id, n] of Object.entries(a.npcs || {})) {
       if (n.portraitKey && window.ASSETS.portraits[n.portraitKey]) { M.npcs[id].portrait = n.portraitKey; continue; }   // someone met before keeps their face
-      const want = (pk.npcs || {})[id] || (n.face && n.face.photo);
+      const want = (pk.npcs || {})[id] || (n.recurs && (PICKS._recurring || {})[n.recurs]) || (n.face && n.face.photo);
       if (want && byId[want]) { M.npcs[id].portrait = D.portraitKey(want); continue; }
       const g = { ...D.guess(n), ...(n.face && n.face.sex ? { sex: n.face.sex } : {}), ...(n.face && n.face.tags ? { tags: n.face.tags } : {}), ...(pk.who || {})[id] };
       if (n.recurs) g.age = (n.face && n.face.age) || "adult";   // a recurring person is picked the same way in every case, whatever each case says about them
@@ -117,7 +119,7 @@
     }
     for (const [id, e] of Object.entries(a.enemies || {})) {
       const want = (pk.enemies || {})[id];
-      const m = want && byId[want] ? byId[want] : D.monsterFor((e.build || e).sprite || "humanoid", (e.build || e).name || e.name || id, jp, usedM);
+      const m = want && byId[want] ? byId[want] : D.monsterFor((e.build || e).sprite || "humanoid", (e.build || e).name || e.name || id, jp, usedM, era);
       if (m) { usedM.add(m.id); M.enemies[id].sprite = reg("sprites", "ph:", m); }
     }
     for (const [id, loc] of Object.entries(M.locations)) {
