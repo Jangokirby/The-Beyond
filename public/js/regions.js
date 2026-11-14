@@ -112,8 +112,8 @@
       el("p", { class: "hqsay" }, `“${hq[3]} ${list.length ? `There ${list.length === 1 ? "is one matter" : `are ${list.length} matters`} on the desk.` : "Nothing on the desk for this period just now."}”`)));
     if (!list.length) wrap.append(note(`${hq[0]} has nothing for the ${ag.short} in this period. Choose another period above.`));
     const cover = (a) => { try { return a.id === "death-of-a-bloodline" ? "title" : window.DOSSIER && DOSSIER.coverKey ? DOSSIER.coverKey(a) : null; } catch (e) { return null; } };
-    const ROM = { I: 1, II: 2, III: 3, IV: 4, V: 5 }, arcOf = (m) => { const x = /^(.+?) (I|II|III|IV|V): /.exec(m.title || ""); return x ? { name: x[1], part: ROM[x[2]] } : null; };
-    const arcParts = (a) => CAMP.allAdventures().filter((o) => (arcOf(o) || {}).name === a.name).length;
+    const arcOf = (m) => { const r = window.ARCS && ARCS.of(m.id); return r ? { name: r.title, part: r.parts.indexOf(m.id) + 1, of: r.parts.length } : null; };
+    const arcParts = (a) => a.of;
     if (list.some(arcOf)) wrap.append(el("p", { class: "small muted" }, "Single missions stand alone. Story arcs are linked parts played in order, and your choices carry into the next part."));
     const grid = el("div", { class: "cardgrid" });
     for (const m of list) {
