@@ -208,6 +208,12 @@
     for (const [k, f] of Object.entries(ITEMS)) if (window.ASSETS.items) window.ASSETS.items[k] = f;
     if (window.PROPS) { const src0 = PROPS.src; PROPS.src = (k) => ITEMS[k] || src0(k); }
   }
+  /* the picture for a job's card on the board: the case's own painting of where it begins */
+  D.coverKey = (a) => {
+    const pk = (PICKS[a.id] || {}).scenes || {}, start = a.start || Object.keys(a.scenes || {})[0];
+    const want = pk[start] || Object.values(pk)[0];
+    return want && byId[want] ? reg("scenes", "ph:", byId[want]) : null;
+  };
   D.src = (id) => (byId[id] ? byId[id].f : "");
   document.documentElement.classList.add("ed-dossier", PAINTED ? "ed-painted" : "ed-photo");
 })();

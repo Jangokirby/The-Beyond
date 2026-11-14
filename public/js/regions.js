@@ -111,6 +111,10 @@
       el("p", { class: "small muted" }, `Reaches you by ${hq[2]}.`),
       el("p", { class: "hqsay" }, `“${hq[3]} ${list.length ? `There ${list.length === 1 ? "is one matter" : `are ${list.length} matters`} on the desk.` : "Nothing on the desk for this period just now."}”`)));
     if (!list.length) wrap.append(note(`${hq[0]} has nothing for the ${ag.short} in this period. Choose another period above.`));
+    const cover = (a) => { try { return a.id === "death-of-a-bloodline" ? "title" : window.DOSSIER && DOSSIER.coverKey ? DOSSIER.coverKey(a) : null; } catch (e) { return null; } };
+    const ROM = { I: 1, II: 2, III: 3, IV: 4, V: 5 }, arcOf = (m) => { const x = /^(.+?) (I|II|III|IV|V): /.exec(m.title || ""); return x ? { name: x[1], part: ROM[x[2]] } : null; };
+    const arcParts = (a) => CAMP.allAdventures().filter((o) => (arcOf(o) || {}).name === a.name).length;
+    if (list.some(arcOf)) wrap.append(el("p", { class: "small muted" }, "Single missions stand alone. Story arcs are linked parts played in order, and your choices carry into the next part."));
     const grid = el("div", { class: "cardgrid" });
     for (const m of list) {
       const done = c.history.filter((h) => h.adv === m.id), joint = !CAMP.isLead(m, c.agency), rg = C.regionOf(CAMP.regionOfCase(m));
@@ -120,8 +124,9 @@
         if (to !== here) { const ok = await ui.travel(to); if (!ok) return; }
         ui.briefing(m.id);
       } },
-        el("img", { src: U.img(m.art || window.ART.scene(m.theme || "street", m.id)), alt: "" }),
+        el("img", { src: U.img(m.art || cover(m) || window.ART.scene(m.theme || "street", m.id)), alt: "" }),
         el("div", { class: "etxt" }, el("b", {}, m.title), el("span", { class: "mono" }, `${m.setting} · ${rg.name}`), el("small", {}, m.summary || ""),
+          (() => { const a = arcOf(m); return el("span", { class: "tag " + (a ? "arc" : "") }, a ? `Story arc: ${a.name} · part ${a.part} of ${arcParts(a)}` : "Single mission"); })(),
           joint ? el("span", { class: "tag" }, "Joint operation") : null,
           done.length ? el("span", { class: "tag ok" }, done[0].result) : null)));
     }
