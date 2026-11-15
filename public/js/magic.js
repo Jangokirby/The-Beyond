@@ -406,6 +406,7 @@
     await MAGIC.run(env, { kind: "agent", uid: a.id, ref: a, name: a.short }, spell, T);
     G().refreshParty();
     await U.modal({ title: "The words take hold", body: `<ul>${lines.map((l) => `<li>${l}</li>`).join("")}</ul>`, buttons: [{ id: "ok", label: "OK", cls: "primary" }] });
+    return spell;
   };
 
   /* ---------------------------------------------------------------- lasting effects of Disorders and Mutations

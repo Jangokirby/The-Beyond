@@ -190,6 +190,8 @@
     for (const a of loc.actions || []) if (!a.if || a.if(G.api)) wrap.append(el("button", { class: "btn choice idle", onclick: () => { U.click(); G.run(() => a.run(G.api)); } }, el("span", { class: "lbl" }, a.label)));
     if (FOCUS.on() && G.active().some((a) => FOCUS.get(a).cur < FOCUS.get(a).max))
       wrap.append(el("button", { class: "btn choice idle ghost", onclick: () => { U.click(); G.run(async () => { await FOCUS.regroupAsk(); }); } }, el("span", { class: "lbl" }, "Regroup"), el("small", { class: "spotinfo" }, "Refill Focus · 2 Stability each")));
+    if (G.castInScene && G.casters().length)
+      wrap.append(el("button", { class: "btn choice idle magic", onclick: () => { U.click(); G.castInScene(); } }, el("span", { class: "lbl" }, "Speak a string of words…"), el("small", { class: "spotinfo" }, "Magic, outside a fight")));
     if (G.improvise && G.visibleHotspots().some((x) => x.src))
       wrap.append(el("button", { class: "btn choice idle improv", onclick: () => { U.click(); G.improvise(); } }, el("span", { class: "lbl" }, "Try something else…"), el("small", { class: "spotinfo" }, "Say what you do, and how")));
     /* safety net: a scene with nothing left to do never leaves the table stuck */

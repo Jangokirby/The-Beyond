@@ -449,7 +449,7 @@
     G.refreshParty();
   };
 
-  G.visibleHotspots = () => (G.loc().hotspots || []).filter((h) => !h.if || h.if(api));
+  G.visibleHotspots = () => (G.loc().hotspots || []).filter((h) => (!h.if || h.if(api)) && !(h.src && h.src.magic && !G._spellWords));
   G.renderHotspots = () => {
     const box = U.$("#hotspots");
     box.innerHTML = "";
@@ -517,6 +517,24 @@
     box.append(wrap);
     const free = el("button", { class: "btn choice idle improv", onclick: () => G.improvise() }, el("span", { class: "lbl" }, "Try something else…"), el("small", {}, "Say what you do and how"));
     wrap.append(free);
+  };
+
+  /* ================================================================== magic in the scene
+     "Speak a string of words" is cast for real (Words spent, Stability paid). Then the place answers: any option
+     the author marked { magic: ["Element"] } that matches a word spoken becomes available, with no Focus cost. */
+  G.casters = () => G.active().filter((a) => a.magic && R.potency(a) > 0);
+  G.castInScene = async () => {
+    const cs = G.casters(); if (!cs.length) return U.toast("Nobody here can speak the words.");
+    const who = cs.length === 1 ? cs[0].id : await U.choose("Who speaks?", cs.map((a) => ({ id: a.id, label: `${a.short} · Potency ${R.potency(a)}` })));
+    const a = cs.find((x) => x.id === who); if (!a) return;
+    const spell = await window.MAGIC.freeCast(a); if (!spell) return;
+    G.refreshParty(); G.paintLight();
+    G._spellWords = spell.words || [];
+    const hits = G.visibleHotspots().filter((h) => h.src && h.src.magic && h.src.magic.some((w) => G._spellWords.includes(w)));
+    if (!hits.length) { const lit = (spell.words || []).includes("Brightness"); G._spellWords = null; await G.run(async () => { await api.narrate(lit ? "The light rises, and the place is a little less sure of itself." : "The words are spoken and spent. The place does not answer them, this time."); }); return; }
+    let h = hits[0];
+    if (hits.length > 1) { const id = await U.choose("The words reach for something here.", hits.map((x) => ({ id: x.id, label: x.label }))); h = hits.find((x) => x.id === id) || hits[0]; }
+    await G.run(async () => { try { await h.run(api); } finally { G._spellWords = null; } });
   };
 
   /* ================================================================== improvise
