@@ -56,8 +56,8 @@ function check(a, opts = {}) {
         else if (st.objective) { x.o.add(st.objective); next.push(x); }
         else if (st.arcSet) { x.a.add(st.arcSet); next.push(x); }
         else if (st.arcUnset) { x.a.delete(st.arcUnset); x.au.add(st.arcUnset); next.push(x); }
-        else if (st.check || st.group || st.read || st.trap) {
-          const c = st.check || st.group || st.read || st.trap;
+        else if (st.check || st.group || st.read || st.trap || st.puzzle) {
+          const c = st.check || st.group || st.read || st.trap || st.puzzle;
           next.push(...run(c.ok, clone(x), depth + 1), ...run(c.fail, clone(x), depth + 1));
         } else if (st.combat) {
           const w = run(st.win, clone(x), depth + 1);

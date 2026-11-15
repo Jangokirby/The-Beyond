@@ -194,6 +194,9 @@
       } else if (st.heal) {
         for (const a of window.GAME.active()) { if (!R.canHeal(a)) continue; const p = a.pools[st.heal.pool]; p.cur = Math.min(p.max, p.cur + st.heal.amount); }
         window.GAME.refreshParty(); window.AudioMan.sfx("heal");
+      } else if (st.puzzle) {
+        const pz = st.puzzle, ok = await window.PUZZLE.run(pz, g);
+        if (await ADV.exec(ok ? pz.ok : pz.fail, g, M)) return true;
       } else if (st.converse) {
         /* a conversation: the players pick what to ask, in any order, until they're done */
         const cv = st.converse, npcId = cv.npc, G = window.GAME;

@@ -220,6 +220,8 @@
             K.t("Will you read them aloud, in the ward?", [{ say: "He closes the notebook on his thumb." }, "At full voice, at 4 a.m.? I have never done a more ungodly thing in my life. Yes."], { cha: 8, set: "adair_help" })
           ], { label: "Talk to Father Adair", name: "Father Adair", bye: ["Go with God. And a loud voice."] }),
           K.find("Read the half-sentences", "faith", "medium", "Forty-one entries, each one a sentence cut off at the same point, a word short of its end. Put together, in order, they make a single sentence, written in forty-one hands. It is a very ordinary sentence, and it is a plea: 'Please. Somebody. Hear me say it.'", "A notebook of broken prayers.", { clue: "c_last", hint: "Faith, Medium", tags: ["voice"] }),
+          { label: "Say the whole office for the dying, from memory", once: true, hint: "A puzzle · Faith 6", steps: [{ puzzle: { kind: "sequence", length: 5, glyphs: ["✝", "☩", "✚", "☦", "♰", "☥"], aspect: "faith", cr: "medium", label: "Recall the rite", needs: { aspect: "faith", min: 6 }, lockedText: "The words are Latin, and long, and not yours. Father Adair watches you try, and shakes his head, kindly.", prompt: "The old office has its responses in a fixed order. Father Adair says it through once.",
+            ok: [{ say: "You say it all, to the end, and Father Adair says Amen. He tells you what he has heard it say, at the end of every night." }, { clue: "c_last" }], fail: [{ say: "You lose your place, and cannot find it." }] } }] },
           K.go("Down to Ward 9, tonight", "ward", { if: { all: [{ clue: "c_air" }, { clue: "c_bed" }, { clue: "c_echo" }] } }),
           K.go("Back to the sisters' room", "office")] },
       ward: { name: "Ward 9, 4 a.m.", theme: "interior", mood: "boss", lighting: "shadow", weather: "none",
@@ -344,6 +346,8 @@
             K.t("What did you hear in the war?", [{ say: "He lifts the needle." }, "The Hush, at Ypres. I gave it my hand to let go of me. I think it was the one it wanted. I have been waiting seven years for it to come and finish the job."], { cha: 8, clue: "c_same" })
           ], { label: "Talk to Anton", name: "Anton", bye: ["Keep the horn pointing at it."] }),
           K.find("Play the backwards cylinder", "awareness", "medium", "The needle runs the wax in reverse, and the room does something you cannot name. A pressure on the eardrums, a roughness in the quiet, like a hand against a pane of glass. Somewhere in the walls, for a second, something steps back.", "Hiss, and a faint hum.", { clue: "c_record", hint: "Awareness, Medium", tags: ["record"] }),
+          { label: "Set the lathe to run backwards", once: true, hint: "A puzzle", steps: [{ puzzle: { kind: "sequence", length: 4, glyphs: ["I", "II", "III", "IV", "V", "VI"], aspect: "awareness", cr: "medium", label: "Listen to the lathe's rhythm", prompt: "Anton's lathe runs backwards only if you set its gears in the right order: he plays you the order, once.",
+            ok: [{ say: "The lathe runs backwards. The needle trembles, and a roughness fills the little room." }, { clue: "c_record" }], fail: [{ say: "The gears bind. You will need Anton to do it." }] } }] },
           K.go("To the Stille Stunde, tonight", "stage", { if: { all: [{ clue: "c_record" }, { clue: "c_door" }, { clue: "c_price" }] } }),
           K.go("Back to the Institute", "lab")] },
       stage: { name: "The Stille Stunde, eleven o'clock", theme: "interior", mood: "boss", lighting: "shadow", weather: "none",
@@ -456,6 +460,8 @@
             K.t("Will you do it with us?", [{ say: "He puts down the iron, and picks up the pistol, and puts that down too." }, "I have been through two revolutions and I cannot stand a quiet room. Yes."], { cha: 8, set: "konstantin_help" })
           ], { label: "Talk to Konstantin", name: "Konstantin", bye: ["Bring a crowbar. And your voice."] }),
           K.find("Examine the valve", "iq", "medium", "A thermionic valve of an unfamiliar make, hot, with a blue glow, on no schematic. Etched into the glass in tiny characters, in no language, a single repeated mark: a head, tilted to one side. It is fed by a wire that runs not to the rack but up through the roof, to the long-wire aerial.", "A glowing glass bulb.", { clue: "c_tube", hint: "Intelligence, Medium", tags: ["jam"] }),
+          { label: "Read the code etched into the valve's base", once: true, hint: "A puzzle", steps: [{ puzzle: { kind: "cipher", text: "BREAK THE VALVE THEN GROUND THE WIRE", shift: 11, aspect: "iq", cr: "medium", label: "Study the etching", prompt: "A line of letters scratched round the base of the valve, in no language you know. Turn the dial until it reads.",
+            ok: [{ say: "It reads, as a plain instruction, left by someone who wanted to be found: break the valve, then ground the wire." }, { clue: "c_cut" }, { set: "cut_known" }], fail: [{ say: "It stays letters. Whoever left it knew what they were about." }] } }] },
           K.go("Up to the roof, at eleven", "roof", { if: { all: [{ clue: "c_loop" }, { clue: "c_cut" }, { clue: "c_voice" }] } }),
           K.go("Back to the lobby", "lobby")] },
       lane: { name: "A lane behind the Settlement", theme: "street", mood: "weird", lighting: "normal", weather: "rain", cast: ["wen"],
