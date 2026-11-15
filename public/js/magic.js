@@ -400,7 +400,7 @@
       log: (h) => lines.push(h), alive: () => true, familiar: async () => {},
       hurt: async () => {}, heal: (t, pl, n) => { const p = t.ref.pools[pl], b = p.cur; p.cur = Math.min(p.max, p.cur + n); return p.cur - b; },
       statuses: (t) => t.ref.statuses || (t.ref.statuses = []), removeStatus: (t, sid) => { t.ref.statuses = (t.ref.statuses || []).filter((x) => x.id !== sid); },
-      addStatus: (t, st) => { (t.ref.statuses = t.ref.statuses || []).push(st); }, allyBoost: () => {}, speed: () => {}, light: () => {}, zoneOf: () => null, zoneName: () => "the area",
+      addStatus: (t, st) => { (t.ref.statuses = t.ref.statuses || []).push(st); }, allyBoost: () => {}, speed: () => {}, light: () => { const g = G(); if (g.state) { g.state.spellLight = g.state.loc; window.dispatchEvent(new Event("beyond:light")); } }, zoneOf: () => null, zoneName: () => "the area",
       move: async () => {}, mimic: () => {}, spawn: async () => {}, weather: () => {}
     };
     await MAGIC.run(env, { kind: "agent", uid: a.id, ref: a, name: a.short }, spell, T);

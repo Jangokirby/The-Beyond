@@ -503,3 +503,15 @@ body[data-mode="combat"] #story { min-height: 3.5rem; }
 /* flavor: Japanese labels only show inside an adventure flagged flavor "jp" */
 :root:not(.jp-flavor) .jp, .no-jp .jp { display: none !important; }
 .jp-flavor .ico.en { display: none; }
+
+/* ---- darkness on the picture: a dim sheet that lifts around the cursor, wider when the party carries a light */
+#scene-dim { position: absolute; inset: 0; z-index: 4; pointer-events: none; opacity: 0; transition: opacity .5s; --lx: 50%; --ly: 58%; --r: 160px; --dk: .0; --warm: 0;
+  background: radial-gradient(circle at var(--lx) var(--ly), rgba(255, 196, 110, var(--warm)) 0, rgba(255, 196, 110, 0) calc(var(--r) * .6), rgba(3, 4, 9, 0) calc(var(--r) * .2), rgba(3, 4, 9, calc(var(--dk) * .5)) calc(var(--r) * .65), rgba(3, 4, 9, var(--dk)) calc(var(--r) * 1.15)); }
+#scene-dim[data-dark="shadow"] { opacity: 1; --dk: .46; --r: 300px; }
+#scene-dim[data-dark="dark"] { opacity: 1; --dk: .84; --r: 130px; }
+#scene-dim[data-dark="pitch"] { opacity: 1; --dk: .95; --r: 90px; }
+#scene-dim[data-dark="shadow"][data-lit="1"] { --dk: .18; --r: 420px; --warm: .14; }
+#scene-dim[data-dark="dark"][data-lit="1"] { --dk: .6; --r: 340px; --warm: .16; }
+#scene-dim[data-dark="pitch"][data-lit="1"] { --dk: .78; --r: 280px; --warm: .16; }
+#scene.combat #scene-dim { display: none; }
+@media (prefers-reduced-motion: reduce) { #scene-dim { transition: none; } }

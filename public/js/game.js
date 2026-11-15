@@ -54,6 +54,11 @@
   G.active = () => G.state.agents.filter((a) => !a.dead && !a.out);
   G.agentById = (id) => G.state.agents.find((a) => a.id === id);
   G.partyGlow = () => G.active().some((a) => a.traits && a.traits.torchBearer);
+  /* a carried light (a flashlight or lantern in the kit), a torch-bearer, or a Brightness spell cast in this place */
+  G.partyLight = () => G.active().some((a) => (a.traits && a.traits.torchBearer) || (a.items || []).some((it) => { const d = it.def || (M.items || {})[it.id]; return d && d.light && it.uses > 0; })) || !!(G.state && G.state.spellLight && G.state.spellLight === G.state.loc);
+  const DARKS = ["shadow", "dark", "pitch"];
+  /* darkness hurts what you do with your eyes and hands, never what you say or believe */
+  const UNSEEN_OK = ["charisma", "willpower", "mindfulness", "faith", "morality", "occult", "ancient", "potency"];
 
   /* ================================================================== rolls
      roll({ agent, label, aspect, target, targetLabel, mods:[{label,value}], tags, crShift, kind }) */
@@ -70,16 +75,19 @@
     mods.push({ label: R.ASPECT_LABEL[opts.aspect] || opts.aspect, value: val, base: true });
     if (opts.aspect === "iq" && agent.traits && agent.traits.autoIQ) mods.push({ label: "The Never Speak's Collection", value: 50 });
     const lighting = ctx.lighting || (G.loc() && G.loc().lighting) || "normal";
-    const glow = ctx.glow !== undefined ? ctx.glow : G.partyGlow();
-    if (lighting === "shadow" && agent.vision !== "dark") {
-      if (glow) mods.push({ label: "Shadow, lit by a lantern", value: 0, note: true });
-      else mods.push({ label: "Shadow", value: -R.SHADOW_PENALTY });
+    const lit = ctx.glow !== undefined ? ctx.glow : G.partyLight();
+    const sees = UNSEEN_OK.includes(opts.aspect) || (opts.tags || []).includes("talk");   // talking and believing need no light
+    const sun = agent.traits && agent.traits.sunSight;
+    if (DARKS.includes(lighting) && agent.vision !== "dark" && !sees) {
+      if (lit) mods.push({ label: "Dark, but you carry a light", value: 0, note: true });
+      else if (lighting === "shadow") mods.push({ label: "Shadow: no light", value: -R.SHADOW_PENALTY });
+      else mods.push({ label: lighting === "pitch" ? "Pitch black: no light" : "Too dark: no light", value: -R.BLIND_PENALTY });
     }
     if ((agent.injuries || []).some((i) => i.blind)) mods.push({ label: "Blind (Maimed)", value: -R.BLIND_PENALTY });
     if (R.fx(agent, "dependent") && G.active().length < 2) mods.push({ label: "Alone (Dependent)", value: -2 });
     if (R.has(agent, "blind")) mods.push({ label: "Blind", value: -R.BLIND_PENALTY });
-    if ((lighting === "bright" && !(agent.traits && agent.traits.sunSight)) || (lighting === "dark" && agent.vision !== "dark")) mods.push({ label: lighting === "bright" ? "Too bright: Blind" : "Too dark: Blind", value: -R.BLIND_PENALTY });
-    if ((lighting === "blinding" && !(agent.traits && agent.traits.sunSight)) || (lighting === "pitch" && agent.vision !== "dark")) mods.push({ label: lighting === "blinding" ? "Blinding light" : "Pitch black", value: -R.BLIND_PENALTY, });
+    if (lighting === "bright" && !sun && !sees) mods.push({ label: "Too bright: Blind", value: -R.BLIND_PENALTY });
+    if (lighting === "blinding" && !sun && !sees) mods.push({ label: "Blinding light", value: -R.BLIND_PENALTY });
     if (opts.aspect === "charisma" && agent.prop && agent.prop.decorated && ((G.loc() && G.loc().theme) || "") === "interior") mods.push({ label: "Well Decorated", value: 2 });
     const sev = ctx.severity !== undefined ? ctx.severity : ((G.loc() && G.loc().severity) || 0);
     if (R.weatherMod(sev)) mods.push({ label: `Weather ${sev}`, value: R.weatherMod(sev) });
@@ -397,6 +405,20 @@
 
   /* ================================================================== exploration */
   G.loc = () => M.locations[G.state && G.state.loc];
+  /* the light in the place, shown on the picture and in the badge: a dim sheet that lifts around a light you carry */
+  G.paintLight = () => {
+    const loc = G.loc(); if (!loc) return;
+    const L = loc.lighting || "normal", dark = DARKS.includes(L), lit = G.partyLight(), sc = U.$("#scene");
+    const badge = U.$("#loc-light");
+    badge.dataset.l = L;
+    badge.textContent = !dark ? "Lit" : lit ? `${L === "shadow" ? "Shadow" : L === "pitch" ? "Pitch black" : "Dark"} · your light holds it back` : `${L === "shadow" ? "Shadow −2" : L === "pitch" ? "Pitch black −4" : "Dark −4"} · no light (sight rolls only)`;
+    let dim = U.$("#scene-dim");
+    if (!dim) { dim = el("div", { id: "scene-dim", "aria-hidden": "true" }); sc.append(dim);
+      const move = (e) => { const r = sc.getBoundingClientRect(), p = e.touches ? e.touches[0] : e; dim.style.setProperty("--lx", `${p.clientX - r.left}px`); dim.style.setProperty("--ly", `${p.clientY - r.top}px`); };
+      sc.addEventListener("pointermove", move); sc.addEventListener("touchmove", move, { passive: true }); }
+    dim.dataset.dark = dark ? L : "none"; dim.dataset.lit = lit ? "1" : "0";
+  };
+  window.addEventListener("beyond:light", () => { try { G.paintLight(); } catch (e) {} });
   G.goto = async (id) => {
     G.state.loc = id;
     AudioMan.sfx("footsteps", { volume: 0.6 });
@@ -418,9 +440,7 @@
     bg.alt = loc.name;
     U.$("#loc-name").textContent = loc.name;
     U.$("#loc-jp").textContent = loc.jp || "";
-    const light = loc.lighting === "shadow" ? (G.partyGlow() ? "Shadow · lantern: Glow" : "Shadow −2") : "Lit";
-    U.$("#loc-light").textContent = light;
-    U.$("#loc-light").dataset.l = loc.lighting;
+    G.paintLight();
     AudioMan.music(loc.music);
     AudioMan.ambience(loc.ambience || null);
     U.particles(loc.particles || (loc.paper ? "lilies" : "none"));
@@ -842,7 +862,17 @@
     U.modal({ title: "Settings", jp: "設定", body });
   };
   G.powersModal = async () => {
+    const casters = G.active().filter((a) => a.magic && R.potency(a) > 0);
     const act = G.active().filter((a) => window.MECH.powers(a).length);
+    if (casters.length) {
+      const first = await U.choose("What do you reach for?", [{ id: "magic", label: "Speak a string of magic words", hint: "Heal, Treat, Protect and Brightness all work between fights" }, ...(act.length ? [{ id: "gifts", label: "A patron's gift or an artifact" }] : [])]);
+      if (first === "magic") {
+        const who = casters.length === 1 ? casters[0].id : await U.choose("Who speaks?", casters.map((a) => ({ id: a.id, label: `${a.short} · Potency ${R.potency(a)}` })));
+        const a = casters.find((x) => x.id === who); if (a) { await window.MAGIC.freeCast(a); G.paintLight(); }
+        return;
+      }
+      if (first !== "gifts") return;
+    }
     if (!act.length) return U.toast("No one here has a patron's gift or a usable artifact.");
     const who = act.length === 1 ? act[0].id : await U.choose("Whose power?", act.map((a) => ({ id: a.id, label: a.short })));
     const a = act.find((x) => x.id === who); if (!a) return;

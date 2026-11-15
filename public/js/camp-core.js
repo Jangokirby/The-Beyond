@@ -26,7 +26,7 @@
 
   /* ---------------------------------------------------------------- shop catalog (items usable in checks) */
   CAMP.ITEMS = {
-    flashlight: { name: "Flashlight", old: ["Oil lantern", 1900], icon: "flashlight", applies: ["aspect:awareness"], text: "Searching, spotting, noticing.", size: 1 },
+    flashlight: { name: "Flashlight", old: ["Oil lantern", 1900], icon: "flashlight", applies: ["aspect:awareness"], text: "Searching, spotting, noticing. A carried light: it lifts the penalty for dark places.", size: 1, light: true },
     lockpicks: { name: "Lockpick set", icon: "lockpicks", applies: ["tag:lock", "aspect:iq"], text: "Locks and latches.", size: 1 },
     crowbar: { name: "Crowbar", icon: "crowbar", applies: ["aspect:strength"], text: "Forcing, lifting, prying.", size: 1 },
     rope: { name: "Rope", icon: "rope", applies: ["aspect:agility"], text: "Climbing, securing, binding.", size: 1 },
