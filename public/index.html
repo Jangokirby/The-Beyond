@@ -79,9 +79,10 @@
 (function () {
   var q = (location.search.match(/[?&]art=(painted|photo|drawn|pixel)\b/) || [])[1], s = null;
   try { s = localStorage.getItem("beyond.artStyle"); } catch (e) {}
-  s = q || s || window.ART_STYLE_DEFAULT || "painted";
+  s = window.ART_STYLE_FORCE || q || s || window.ART_STYLE_DEFAULT || "painted";
   if (!/^(painted|photo|drawn|pixel)$/.test(s)) s = "painted";
   window.ART_STYLE = s;
+  if (s === "pixel") document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"><link rel="stylesheet" href="css/pixel.css">');
   if (s !== "drawn") document.write('<script src="js/art/' + s + '/lib.js"><\/script><script src="js/art/' + s + '/picks.js"><\/script><script src="js/dossier.js"><\/script>');
 })();
 </script>

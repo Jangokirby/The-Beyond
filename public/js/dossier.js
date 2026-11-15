@@ -215,5 +215,7 @@
     return want && byId[want] ? reg("scenes", "ph:", byId[want]) : null;
   };
   D.src = (id) => (byId[id] ? byId[id].f : "");
+  window.PIXEL_MONO = (() => { try { return localStorage.getItem("beyond.pixelMono") !== "0"; } catch (e) { return true; } })();
+  document.documentElement.classList.toggle("mono", STYLE === "pixel" && window.PIXEL_MONO);
   document.documentElement.classList.add("ed-dossier", PAINTED ? "ed-painted" : "ed-photo"); if (STYLE === "pixel") document.documentElement.classList.add("ed-pixel");
 })();

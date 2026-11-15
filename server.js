@@ -50,6 +50,14 @@ function notify(room, p) {
 const server = http.createServer((req, res) => {
   let u = decodeURIComponent((req.url || "/").split("?")[0]);
   if (u === "/healthz") { res.end("ok"); return; }
+  if (u === "/pixel" || u === "/pixel/") {   /* the Pixel edition: the same game with its own look, started from the same page */
+    fs.readFile(path.join(PUB, "index.html"), "utf8", (err, html) => {
+      if (err) { res.writeHead(500); res.end(); return; }
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-cache" });
+      res.end(html.replace('<meta charset="utf-8">', '<meta charset="utf-8"><base href="/"><script>window.ART_STYLE_FORCE="pixel";window.PIXEL_EDITION=true;</script>').replace(/<title>[^<]*<\/title>/, "<title>The Beyond: Pixel Edition</title>"));
+    });
+    return;
+  }
   if (u.endsWith("/")) u += "index.html";
   const f = path.normalize(path.join(PUB, u));
   if (!f.startsWith(PUB)) { res.writeHead(403); res.end(); return; }

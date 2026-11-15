@@ -36,6 +36,9 @@
         chk("Colour-blind friendly bars", () => S.colour, (v) => (S.colour = v)),
         chk("Reduce motion (no shakes or flashes)", () => S.still, (v) => (S.still = v)),
         el("h4", { class: "set-head" }, "Pictures"),
+        window.PIXEL_EDITION ? el("div", {}, el("label", { class: "set" }, el("span", {}, "Palette"), el("select", { onchange: (e) => { try { localStorage.setItem("beyond.pixelMono", e.target.value); } catch (err) {} document.documentElement.classList.toggle("mono", e.target.value !== "0"); window.PIXEL_MONO = e.target.value !== "0"; } },
+          el("option", { value: "1", selected: window.PIXEL_MONO ? "selected" : null }, "Black and white"), el("option", { value: "0", selected: window.PIXEL_MONO ? null : "selected" }, "Colour"))),
+          el("p", { class: "small muted set-note" }, "This is the Pixel edition. Your saves are shared with the main game. "), el("a", { href: "/", class: "small" }, "Play the painted edition")) :
         window.ART_STYLE_FIXED ? el("p", { class: "small muted set-note" }, `This page shows the ${window.ART_STYLE || "painted"} style only. The full game switches between Painted, Photo and Drawn here.`) :
         el("label", { class: "set" }, el("span", {}, "Art style"), el("select", { onchange: async (e) => {
           const v = e.target.value, was = window.ART_STYLE || "painted";
@@ -45,8 +48,8 @@
           if (/[?&]art=/.test(location.search)) { const u = new URL(location.href); u.searchParams.delete("art"); history.replaceState(null, "", u); }
           window.UI.toast("Changing the pictures. The game reloads; your campaign is saved.");
           setTimeout(() => location.reload(), 700);
-        } }, ...[["painted", "Painted (oil paintings)"], ["pixel", "Pixel (retro pixel art)"], ["photo", "Photo (old photos and engravings)"], ["drawn", "Drawn (vector drawings)"]].map(([v, t]) => el("option", { value: v, selected: (window.ART_STYLE || "painted") === v ? "selected" : null }, t)))),
-        el("p", { class: "small muted set-note" }, "The same game in three looks. The rulebook's own art for the patrons and the title stays in every style."),
+        } }, ...[["painted", "Painted (oil paintings)"], ["photo", "Photo (old photos and engravings)"], ["drawn", "Drawn (vector drawings)"]].map(([v, t]) => el("option", { value: v, selected: (window.ART_STYLE || "painted") === v ? "selected" : null }, t)))),
+        el("p", { class: "small muted set-note" }, window.PIXEL_EDITION ? "" : el("a", { href: "/pixel" }, "Open the Pixel edition (its own look and interface). "), "The same game in three looks. The rulebook's own art for the patrons and the title stays in every style."),
         el("h4", { class: "set-head" }, "Atmosphere"),
         chk("Era styles for the screen", () => (window.ERASKIN ? ERASKIN.on() : true), (v) => window.ERASKIN && ERASKIN.set(v)),
         chk("Sanity effects (what low Sanity does to the screen)", () => (window.MADNESS ? MADNESS.on() : true), (v) => window.MADNESS && MADNESS.set(v)),

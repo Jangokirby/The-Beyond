@@ -1,0 +1,52 @@
+/* ============================================================================
+   PIXEL EDITION: the same game with its own interface. Square corners, hard
+   edges, a pixel font, a tight palette, black and white by default (html.mono).
+   Loaded only when the Pixel edition is running (see index.html).
+   ========================================================================== */
+html.ed-pixel {
+  --night: #0b0b0e; --night-2: #15151b; --night-3: #2b2b36;
+  --washi: #cfd0d6; --washi-2: #aeb0ba; --sumi: #0e0e12; --sumi-2: #3c3c48;
+  --hanko: #d8453c; --hanko-2: #a52f28; --siren: #56a8ff; --sodium: #f2c14e;
+  --fog: #9a9cab; --bone: #ecebe4; --grid: #7fd3a0;
+  --health: #e0594b; --sanity: #5fa0ff; --stability: #b79cff; --ok: #6bd08a;
+  --display: "Press Start 2P", "VT323", monospace; --serif: "VT323", ui-monospace, monospace; --mono: "VT323", ui-monospace, monospace;
+  --fs-0: .95rem; --fs-1: 1.1rem; --fs-2: 1.25rem; --fs-3: 1.4rem; --fs-4: 1.6rem; --fs-5: clamp(1.6rem, 5vw, 3.2rem);
+  --r: 0px;
+}
+html.ed-pixel.mono {
+  --night: #080808; --night-2: #121212; --night-3: #2a2a2a;
+  --washi: #d4d4d4; --washi-2: #b0b0b0; --sumi: #0c0c0c; --sumi-2: #3a3a3a;
+  --hanko: #e8e8e8; --hanko-2: #bdbdbd; --siren: #dcdcdc; --sodium: #ffffff;
+  --fog: #9c9c9c; --bone: #ececec; --grid: #cfcfcf;
+  --health: #e8e8e8; --sanity: #bdbdbd; --stability: #9a9a9a; --ok: #d8d8d8;
+  filter: grayscale(1) contrast(1.08);
+}
+.ed-pixel body { background: var(--night); font-size: 1.2rem; line-height: 1.25; letter-spacing: .01em; }
+.ed-pixel * { border-radius: 0 !important; text-shadow: none; }
+.ed-pixel h1, .ed-pixel h2, .ed-pixel h3, .ed-pixel .title, .ed-pixel .yearbig { font-family: var(--display); font-weight: 400; line-height: 1.5; letter-spacing: 0; text-transform: uppercase; }
+.ed-pixel h2 { font-size: clamp(1rem, 3vw, 1.5rem); } .ed-pixel h3 { font-size: .85rem; }
+.ed-pixel .eyebrow, .ed-pixel .tag, .ed-pixel .mono { font-family: var(--mono); letter-spacing: .06em; }
+.ed-pixel button, .ed-pixel .btn, .ed-pixel .segbtn, .ed-pixel input, .ed-pixel select, .ed-pixel textarea { font-family: var(--mono); font-size: 1.15rem; border: 2px solid var(--bone); box-shadow: 3px 3px 0 #000; background: var(--night-2); color: var(--bone); }
+.ed-pixel button:hover:not(:disabled), .ed-pixel .segbtn:hover { background: var(--bone); color: var(--night); transform: translate(1px, 1px); box-shadow: 2px 2px 0 #000; }
+.ed-pixel button:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none; }
+.ed-pixel .primary, .ed-pixel .segbtn.on, .ed-pixel .region.on { background: var(--sodium); color: #000; border-color: var(--sodium); }
+.ed-pixel .cpanel, .ed-pixel .modal, .ed-pixel .mcard, .ed-pixel .hqcard, .ed-pixel .wpin, .ed-pixel .campaign-card, .ed-pixel .panel, .ed-pixel .card, .ed-pixel article {
+  background: var(--night-2); color: var(--bone); border: 3px solid var(--bone); box-shadow: 5px 5px 0 #000; background-image: none; }
+.ed-pixel .wpin, .ed-pixel .wpin * { color: var(--sumi); } .ed-pixel .wpin { background: var(--washi); transform: none !important; }
+.ed-pixel .wall { background: var(--night-3); border: 3px solid var(--bone); box-shadow: none; }
+.ed-pixel .mcard img, .ed-pixel .polaroid img, .ed-pixel .einspect img, .ed-pixel .hroom .hbg, .ed-pixel .pp img, .ed-pixel .portrait img { border: 0; box-shadow: none; }
+.ed-pixel .polaroid, .ed-pixel .photo { background: var(--bone); border: 3px solid #000; padding: 4px; box-shadow: 4px 4px 0 #000; transform: none !important; }
+.ed-pixel .tag { border: 2px solid var(--fog); background: transparent; }
+.ed-pixel .tag.arc, .ed-pixel .mcard .tag.arc { background: var(--sodium); color: #000; border-color: var(--sodium); }
+.ed-pixel .meter .track, .ed-pixel .bar, .ed-pixel .track { border: 2px solid var(--bone); background: #000; height: 12px; }
+.ed-pixel .meter .track > i, .ed-pixel .bar > i { background: var(--bone); }
+.ed-pixel hr { border: 0; border-top: 2px dashed var(--fog); }
+.ed-pixel .modal-back, .ed-pixel .backdrop { background: rgba(0, 0, 0, .8); }
+.ed-pixel ::selection { background: var(--sodium); color: #000; }
+.ed-pixel ::-webkit-scrollbar { width: 14px; background: #000; } .ed-pixel ::-webkit-scrollbar-thumb { background: var(--bone); border: 3px solid #000; }
+/* a faint scanline sheet over everything, so even clean pictures feel like a screen */
+.ed-pixel body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 99999; background: repeating-linear-gradient(0deg, rgba(0,0,0,.14) 0 1px, transparent 1px 3px); mix-blend-mode: multiply; }
+.ed-pixel .crest.sealed { border: 3px solid var(--bone); box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .ed-pixel body::after { display: none; } }
+.ed-pixel .wpin .eyebrow, .ed-pixel .wpin h4, .ed-pixel .wpin small { color: #222; }
+.ed-pixel .title, .ed-pixel #camp-root h2 { overflow-wrap: anywhere; font-size: clamp(1rem, 3.2vw, 1.9rem); }
