@@ -187,10 +187,10 @@
     return wrap;
   };
   /* ---------------------------------------------------------------- hideout rooms and agency seals */
-  const ROOMS = ["medieval", "victorian", "wars", "atomic", "modern", "now"];
+  const ROOMS = ["medieval", "victorian", "wars", "atomic", "modern", "now", "future"];
   const SEALS = { OID: "oid", WCA: "wca", NSBD: "nsbd", EHG: "ehg", BFV: "bfv" };
   if (PAINTED) document.addEventListener("DOMContentLoaded", () => {
-    const H = window.HIDE; if (H && H.room) { const room0 = H.room; H.room = (id) => { const e = id || (window.CAMP && CAMP.camp ? D.eraOf(CAMP.camp.year) : "modern"); return ROOMS.includes(e) ? `assets/painted/h/${e}.jpg` : room0(id); }; }
+    const H = window.HIDE; if (H && H.room) { const room0 = H.room; H.room = (id) => { const e = id || (window.CAMP && CAMP.camp ? (CAMP.camp.year > 2100 ? "future" : D.eraOf(CAMP.camp.year)) : "modern"); return ROOMS.includes(e) ? `assets/painted/h/${e}.jpg` : room0(id); }; }
     /* the painted rooms all share one layout: notice board, weapon rack, door, phone, shelves, cabinet, archway, two benches and a chest */
     const BOX = { board: [0, 26, 11, 28], armory: [14, 24, 12, 38], door: [30, 8, 10, 58], phone: [45, 26, 8, 20], archive: [58, 4, 14, 62],
       vault: [75, 38, 10, 30], garage: [89, 10, 11, 58], table: [2, 78, 30, 18], log: [42, 80, 18, 16], cot: [70, 80, 30, 16] };
