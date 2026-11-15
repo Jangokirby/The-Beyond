@@ -56,7 +56,7 @@ const server = http.createServer((req, res) => {
   fs.readFile(f, (err, buf) => {
     if (err) { res.writeHead(404); res.end("not found"); return; }
     const ext = path.extname(f).toLowerCase();
-    res.writeHead(200, { "Content-Type": MIME[ext] || "application/octet-stream", "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=3600" });
+    res.writeHead(200, { "Content-Type": MIME[ext] || "application/octet-stream", "Cache-Control": ext === ".html" || ext === ".js" || ext === ".css" ? "no-cache" : "public, max-age=3600" });
     res.end(buf);
   });
 });

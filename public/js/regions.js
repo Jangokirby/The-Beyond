@@ -93,13 +93,41 @@
     return Object.values(t)[0];
   };
   /* the jobs of the player's chosen period: every one of them, sorted by year */
-  CAMP.periodJobs = () => { const c = CAMP.camp, era = C.eraOf(c.year); return CAMP.allAdventures().filter((m) => m.year >= era.from && m.year <= era.to && CAMP.canTake(m, c.agency) && !CAMP.isBlank(m)).sort((x, y) => x.year - y.year); };
+  CAMP.periodJobs = () => { const c = CAMP.camp, era = C.eraOf(c.year); return CAMP.allAdventures().filter((m) => m.year >= era.from && m.year <= era.to && CAMP.canTake(m, c.agency) && !CAMP.isBlank(m) && !(window.ARCS && ARCS.of(m.id))).sort((x, y) => x.year - y.year); };
   CAMP.isBlank = (m) => { const src = m.src || m; return !!(m.custom || src.custom) && ((m.title || "") === "Untitled case" || !(m.summary || (src && src.summary))); };
   ui.board = (wrap) => {
     const c = CAMP.camp, era = C.eraOf(c.year), ag = CAMP.agency(), here = c.region || CAMP.homeRegion(c.agency);
     const list = CAMP.periodJobs(), hq = CAMP.hq(c.agency, c.year);
+    const arcs = window.ARCS ? ARCS.all().filter((r) => { const f = CAMP.advMeta(r.parts[0]) || window.ADV.LIBRARY[r.parts[0]]; return f && CAMP.canTake(f, c.agency); }) : [];
+    const tab = arcs.length ? (c.boardTab || "campaigns") : "jobs";
+    if (arcs.length) wrap.append(el("div", { class: "seg boardtabs" },
+      el("button", { class: "segbtn" + (tab === "campaigns" ? " on" : ""), onclick: () => { c.boardTab = "campaigns"; CAMP.save(); ui.hub("missions"); } }, `Story campaigns (${arcs.length})`),
+      el("button", { class: "segbtn" + (tab === "jobs" ? " on" : ""), onclick: () => { c.boardTab = "jobs"; CAMP.save(); ui.hub("missions"); } }, "Single missions")));
+    if (tab === "campaigns") {
+      wrap.append(el("p", { class: "small muted" }, "A campaign is a chain of linked jobs across years. What you choose in one part is remembered in the next, and the thing behind it all is still there at the end."));
+      const grid = el("div", { class: "cardgrid" });
+      for (const r of arcs) {
+        const st = ARCS.state(r.id), parts = r.parts.map((id) => window.ADV.LIBRARY[id] || CAMP.advMeta(id)).filter(Boolean), nxt = parts[st.part], done = !nxt;
+        const cover = (a) => { try { return window.DOSSIER && DOSSIER.coverKey ? DOSSIER.coverKey(a) : null; } catch (e) { return null; } };
+        grid.append(el("button", { class: "mcard arccard" + (done ? " done" : ""), onclick: async () => {
+          U.click(); if (done) return U.toast("This campaign is finished.");
+          if (!CAMP.active().length) return U.toast("You need an active agent.");
+          if (nxt.year < era.from || nxt.year > era.to) { c.year = nxt.year; CAMP.logAdd(`The campaign moved to ${c.year}.`); CAMP.save(); }
+          const to = CAMP.regionOfCase(nxt); if (to !== here) { const ok = await ui.travel(to); if (!ok) return; }
+          ui.briefing(nxt.id);
+        } },
+          el("img", { src: U.img(cover(nxt || parts[parts.length - 1]) || window.ART.scene((nxt || parts[0]).theme || "street", r.id)), alt: "" }),
+          el("div", { class: "etxt" }, el("span", { class: "arctag" }, `Story campaign · ${parts.length} parts · ${parts[0].year}–${parts[parts.length - 1].year}`),
+            el("b", {}, r.title), el("small", {}, r.summary || ""),
+            r.villain ? el("small", { class: "muted" }, `Behind it: ${r.villain}`) : null,
+            el("ol", { class: "arcparts" }, ...parts.map((a, i) => el("li", { class: i < st.part ? "ok" : i === st.part ? "next" : "" }, `${a.title.replace(/^.*?: /, "")} · ${a.year}${i < st.part ? " ✓" : i === st.part ? " ← next" : ""}`))),
+            el("span", { class: "tag " + (done ? "ok" : "arc") }, done ? "Finished" : st.part ? `Continue: part ${st.part + 1} of ${parts.length}` : "Begin the campaign"))));
+      }
+      wrap.append(grid);
+      return wrap;
+    }
     wrap.append(el("h3", { class: "sect" }, `Choose the period · ${ag.short}`));
-    const all = CAMP.allAdventures().filter((m) => !CAMP.isBlank(m));
+    const all = CAMP.allAdventures().filter((m) => !CAMP.isBlank(m) && !(window.ARCS && ARCS.of(m.id)));
     wrap.append(el("div", { class: "regionbar eras" }, ...C.ERAS.filter((e) => ag.founded <= e.to).map((e) => {
       const n = all.filter((m) => m.year >= e.from && m.year <= e.to && CAMP.canTake(m, c.agency)).length;
       return el("button", { class: "region" + (e.id === era.id ? " on" : ""), onclick: () => { if (e.id === era.id) return; c.year = Math.max(e.from, Math.min(e.to, Math.max(e.sample, ag.founded))); CAMP.logAdd(`The campaign moved to ${c.year}.`); CAMP.save(); ui.hub("missions"); } },

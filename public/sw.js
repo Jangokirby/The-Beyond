@@ -1,6 +1,6 @@
 /* Offline support for the installed game. Code and pages: network first, so updates arrive as soon as
    you're online. Pictures and sounds: cache first. The live table always needs a connection. */
-const CACHE = "beyond-v1";
+const CACHE = "beyond-v2-art";
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(["./", "./index.html", "./manifest.webmanifest"]).catch(() => {}))); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener("fetch", (e) => {
