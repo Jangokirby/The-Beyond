@@ -243,7 +243,7 @@
       oven_house: { name: "The old brewhouse", theme: "interior", mood: "weird", lighting: "shadow", weather: "fire",
         onEnter: [{ once: "in", steps: [{ say: "A long stone shed with a vaulted oven at one end, the size of a cottage. The brick is hot to the touch, and the fire is not wood: it is low, and white, and steady. Racks of dark round loaves line the walls." }] }],
         options: [
-          K.find("Examine the oven and the fire", "occult", "medium", "The oven has not gone cold since the first week of the plague, and nobody feeds it. At its back, a hatch, and in the hatch a thing like a woman in a bread-oven's shape, banked down, listening.", "A very hot oven.", { clue: "c_oven", hint: "Occult, Medium" }),
+          K.find("Examine the oven and the fire", "occult", "medium", "The oven has not gone cold since the first week of the plague, and nobody feeds it. At its back, a hatch, and in the hatch a thing like a woman in a bread-oven's shape, banked down, listening.", "A very hot oven.", { clue: "c_oven", hint: "Occult, Medium", failClue: "c_oven" }),
           K.find("Take apart one of the loaves", "iq", "easy", "Inside the dark crust: ash. Grey, fine, and gritty, with a sweet, cold smell. Not grain ash. Bone ash.", "Bread.", { clue: "c_ash", obj: "so3", hint: "Easy" }),
           K.go("Back to the village", "arrive"),
           K.go("Send for Sister Aleid, the beguine from Ypres", "aleid", { if: { clue: "c_oven" } })] },

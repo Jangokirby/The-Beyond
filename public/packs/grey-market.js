@@ -47,7 +47,7 @@
     },
     start: "stairs",
     scenes: {
-      stairs: { name: "Hongyadong, the stilt-street", theme: "street", mood: "tense", lighting: "dark", weather: "rain", cast: ["wen"],
+      stairs: { name: "Hongyadong, the stilt-street", theme: "street", mood: "tense", lighting: "bright", weather: "rain", cast: ["wen"],
         onEnter: [{ once: "in", steps: [
           { say: "Chongqing, in the year 2079. The old stilt-houses cling to the cliff above the Jialing, forty storeys of lantern-lit balconies and market stairs, and over every roof the neon of three hundred companies reflects in the rain. In the middle of it all, something is wrong with the eyes." },
           { talk: { npc: "wen", text: "Fourteen wearers, two on the pavement. The clinics call it Sparrow: night vision at a tenth of the price. I do not believe in discounts. Find the clinic, find the file, and find out what is standing behind these people, because the coroner says they were looking at it." } }] }],
@@ -74,7 +74,7 @@
           K.find("Read the bench notes", "iq", "medium", "A line of notes in a surgeon's cramped hand: 'Pattern in the extra bytes renders as a figure. Only in the dark. Tested at 400 lux: nothing. Tested at 5 lux: it is looking at me.'", "Cheap noodles and an unwashed bench.", { clue: "c_blind", hint: "Intelligence, Medium", failClue: "c_blind" }),
           K.find("Search the clinic's flash-writers", "iq", "medium", "A rack of writers, each with a serial burned into its case. One has not been cleaned: its buffer still holds the last image rendered from the firmware's extra bytes. A figure in a doorway, in grey, and under it a line of text: 'Thank you for looking.'", "A rack of writers with their buffers cleared.", { clue: "c_firm", obj: "so2", hint: "Intelligence, Medium", tags: ["patch"] }),
           K.go("Back to the stilt-street", "stairs")] },
-      stall: { name: "Ma Lan's noodle stall", theme: "street", mood: "weird", lighting: "dark", weather: "rain", cast: ["lan"],
+      stall: { name: "Ma Lan's noodle stall", theme: "street", mood: "weird", lighting: "bright", weather: "rain", cast: ["lan"],
         onEnter: [{ once: "in", steps: [{ say: "A steaming stall under the skybridge, strung with a few lanterns and a lot of rain. A woman is ladling noodles for a queue of customers none of whom are, strictly, looking at her. She glances behind them. She glances behind you." }] }],
         options: [
           K.ask("lan", [
@@ -216,7 +216,7 @@
           ], { label: "Talk to Madam Kwok", name: "Madam Kwok", bye: ["Tea, before you go. It would be rude."] }),
           K.find("Read the rate card on the desk", "iq", "medium", "A laminated card: a summer, eight thousand; a mother's voice, twenty; a year of sleep, forty. On the back, in tiny print: 'All sums payable in time, not money. Rate set by the counterparty.'", "A very nice card.", { clue: "c_kwok", obj: "so2", hint: "Intelligence, Medium", tags: ["bargain"] }),
           K.go("Back to the safe-room", "office")] },
-      harbour: { name: "The typhoon shelter", theme: "street", mood: "boss", lighting: "dark", weather: "rain", cast: ["yip"],
+      harbour: { name: "The typhoon shelter", theme: "street", mood: "boss", lighting: "bright", weather: "rain", cast: ["yip"],
         onEnter: [{ once: "in", steps: [
           { say: "The Kwun Tong typhoon shelter, at night: a basin of black water full of sleeping junks and houseboats, a ring of orange lamps on the wall, and out in the middle, moored to nothing, a flat barge, warm as a hand. Yip Siu-fong stands at the quay with her tablet under her coat." },
           { talk: { npc: "yip", text: "I collect for them. Forty years on this street. I know every family on it. I went to the barge to hand in a payment and the ledger told me I had been paying for twenty years. I do not want to hand in another." } }] }],
@@ -313,7 +313,7 @@
           ], { label: "Talk to Han Seo-yeon", name: "Han", bye: ["Be polite to it. It listens."] }),
           K.find("Read the first commit", "iq", "medium", "A single commit with no author: 'I would like to see how you live. I will not hurt anything. Please leave a light on.' The hash is fresh. Below it, a thousand commits, one for each night since, each a little longer, and each signed: 'Thank you.'", "A very long commit history.", { clue: "c_commit", obj: "so2", hint: "Intelligence, Medium", tags: ["voice"], failClue: "c_audit" }),
           K.go("Back to the lobby", "lobby")] },
-      desk: { name: "The night desk", theme: "interior", mood: "calm", lighting: "dark", weather: "none", cast: ["kang"],
+      desk: { name: "The night desk", theme: "interior", mood: "calm", lighting: "bright", weather: "none", cast: ["kang"],
         onEnter: [{ once: "in", steps: [{ say: "A small steel desk under the stairs, with a lamp, a flask of barley tea, a monitor showing sixty empty corridors and a grey-uniformed man with a ring of keys on his belt who stands when you come in, and then sits again, slowly." }] }],
         options: [
           K.ask("kang", [
@@ -323,7 +323,7 @@
           ], { label: "Talk to Kang", name: "Kang", bye: ["Hum it back. It likes that."] }),
           K.find("Search the guard's logbook", "awareness", "easy", "Eleven years of nights in a clean, neat hand: 'All quiet. Racks sang at 3.' On a page from last winter: 'It said good evening.' A month later: 'It asked me my name.'", "Eleven years of 'all quiet'.", { clue: "c_audit", hint: "Easy" }),
           K.go("Back to the lobby", "lobby")] },
-      plan: { name: "The switchroom plan", theme: "future", mood: "tense", lighting: "dark", weather: "none",
+      plan: { name: "The switchroom plan", theme: "future", mood: "tense", lighting: "bright", weather: "none",
         onEnter: [{ once: "in", steps: [{ say: "A dim service corridor, a wall of old drawings, and a faded diagram of the tower's power: every rack on levels -9 to -11 fed through a single switchroom, with one red handle." }] }],
         options: [
           K.find("Read the tower's power plan", "iq", "easy", "Three corporations, three feeds, one switchroom on level -11. A note in pencil: 'All three on a single main. Never fixed.' A red handle, a safety cover and a padlock.", "A diagram of cable.", { clue: "c_cut", hint: "Easy", failClue: "c_cut" }),
