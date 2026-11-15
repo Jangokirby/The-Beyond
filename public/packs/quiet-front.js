@@ -735,6 +735,137 @@
     }
   });
 
+  /* ======================================================================= 1945 · VII */
+  reg({
+    id: "qf-7-zero-hour", title: "The Quiet Front VII: Zero Hour", setting: "The Brandt Institute, Berlin · 2 May 1945", year: 1945, level: [5, 9], agencies: AG, region: "europe", theme: "cellar",
+    summary: "Berlin, 2 May 1945. The guns stop. After twelve days of the heaviest bombardment in history, the whole city goes quiet at once: a million people in cellars holding their breath. It is the largest silence the world has ever made, and the Hush, which has followed the quiet of a shell-hole, a ward, a club, a wireless, a shelter and an ocean for twenty-nine years, has come to hear it. Ilse Brandt has come back to the ruins of her Institute. She has been waiting for it, too.",
+    objectives: [
+      { id: "po1", kind: "primary", t: "Reach the Institute before the silence is complete", done: "The Brandt Institute is half-standing, its anechoic chamber intact, in the one ruined street in Charlottenburg where the guns have already stopped. At its centre the air is very still." },
+      { id: "po2", kind: "primary", t: "End the Hush: finish what began at shell-hole 114", done: "The Hush is answered, or heard, or bound, or broken. When the silence ends, it ends in a city that has found its voice again, and remembers how to use it." },
+      { id: "so1", kind: "secondary", t: "Find Karl Brandt's last letter", done: "Karl's letter, carried for years in a tunneller's boot, says only: 'It is not cruel. It is only very lonely. If you can, tell it it has been heard.'", benefit: { label: "A dead man's counsel", text: "You know what it is. A bonus on every roll to bargain with it.", bonus: { tags: ["bargain"], value: 2 } } },
+      { id: "so2", kind: "secondary", t: "Gather the people who heard it before", done: "Magda, Anton, Frau Lindqvist and Edith Marlow, who each lost a piece of themselves to it, stand with you in the cellar. It will recognise them.", benefit: { label: "Old acquaintances", text: "You are not alone. A bonus on every roll to hold the line together.", bonus: { tags: ["together"], value: 2 } } },
+      { id: "so3", kind: "secondary", t: "Carry out the cylinders", done: "Thirty-one wax cylinders of the Hush, from Berlin, Shanghai, London and the sea, are carried out of the ruins and hidden where the agencies can keep them.", benefit: { label: "The whole record", text: "The sum of everything recorded. A bonus on every roll to read the silence.", bonus: { tags: ["listen"], value: 2 } } }
+    ],
+    clues: {
+      c_whole: { t: "The silence is a million people holding their breath", s: "The ruined streets", x: "At 03:07 the guns stop. Not by any order: they stop because there is nothing to hit. A million civilians sit in cellars not breathing, listening to the end of the world. It is the largest quiet the Hush has ever been offered, and it has been waiting for this one for twenty-nine years." },
+      c_lonely: { t: "It is not cruel, only lonely", s: "Karl's letter", x: "Karl Brandt's last letter, never delivered, written in a Flanders sap in 1916: it is not hunting us. It is a listener that has never been listened to. All its attention goes out and nothing ever comes back. It takes what it hears because it has never been told what it is." },
+      c_names: { t: "It has kept every name", s: "Ilse's cylinders", x: "Thirty-one cylinders of recorded silence, played at the right speed, are not silent. They are a list. Every man at shell-hole 114. Every patient on Ward 9. Every regular at the Stille Stunde. Forty thousand listeners in Shanghai. Four thousand in the Marlowe Road. It has kept them all, in order, with great care." },
+      c_chamber: { t: "The chamber is a room made of silence", s: "The Institute plan", x: "In the heart of the Brandt Institute is an anechoic chamber Ilse built in 1931: a room with walls of wedges, which absorb every sound that enters. It is the quietest room in the world. It was built, she realises now, as a place for it to come to. She built it a home." },
+      c_return: { t: "A sound it has never been given: its own name, back", s: "The agents' file", x: "A silence cannot be killed with noise, because noise is only its other half. But it has never been answered. Never once, in twenty-nine years, has anything said to it, in its own language: I heard you. I know what you are. The Hush has been taking and taking and no one has ever given it anything back." },
+      c_cost: { t: "Hearing it will not be free", s: "Anton", x: "Anton lost an ear and a hand to it. To hear the whole of what it holds is to carry every one of those names, forever, as a faint continuous hum. One person can carry it. That person will never again be able to enter a quiet room without hearing everything that was ever said in it." },
+      c_door: { t: "The chamber has a single door, and a single hour", s: "The Institute plan", x: "The chamber door opens inward, and closes with a seal. From the moment the silence is complete, at 3:07, to the moment the first gun speaks again, at 3:18, the chamber is the only place in the city the Hush can be. It has eleven minutes, and so do you." }
+    },
+    npcs: {
+      ilse: N("Dr. Ilse Brandt", "Acoustician, returned", "Forty-five, in a British Army greatcoat over a tweed skirt, with a field recorder, a stack of lead cases and a face that has aged twenty years in six, and a small, defiant, unbroken smile.", F(1, 2, "bun", 2, "none", { sex: "f" })),
+      anton: N("Anton Meier", "Engineer of the lathe", "Forty-three, in a grey overcoat with an empty sleeve pinned across his chest, a cap pulled low over his missing ear, a lathe-maker's patient hands, and a very tired, very calm manner.", F(1, 1, "short", 5, "none", { sex: "m" })),
+      magda: N("Magda Weiss", "Cabaret singer", "Forty, in a patched black coat and a headscarf, with a singer's carriage and a hungry face, who sings for bread in the ruins, and has not been silent for twenty-two years.", F(1, 2, "bob", 4, "none", { sex: "f" })),
+      edith: N("Matron Edith Marlow", "Field hospital matron", "Fifty-five, in a battledress jacket with the Red Cross on the sleeve and a nurse's white cap, with a Thermos of tea and an unbreakable calm, who has come to Berlin with the first British medical unit.", F(1, 3, "bun", 4, "none", { sex: "f" })),
+      frau: N("Frau Lindqvist", "A survivor", "Sixty, in a threadbare fur-collared coat and a hat with a torn veil, upright and thin, very quiet, who says a name, now and then, aloud, to make sure that she still can.", F(1, 3, "bun", 2, "none", { sex: "f" }))
+    },
+    enemies: {
+      hush: { build: { name: "The Hush, at full size", type: "Beyond", difficulty: "hopeless", sprite: "spirit", hue: 230, dtype: "sanity", core: { body: 3, mind: 5, spirit: 5 }, mods: ["Occult", "Tanky"],
+        text: "Everything it has kept, in one room. Names: each round it speaks one name from its list in the voice of someone you lost (Morality Hard, or lose the next action and 4 Sanity as the name lands). It is hurt by being answered: a person who says, aloud, that they heard it, a song sung together, or a name given back, gives everyone double damage against it. Only Sanity harms it.", dies: "the last name is read aloud, and the whole chamber lets out a breath it has held for twenty-nine years" } },
+      shade: { build: { name: "A kept one", type: "Human", difficulty: "medium", sprite: "humanoid", hue: 225, attack: 1, dtype: "sanity", dies: "says its own name, very clearly, and is a person again" } }
+    },
+    encounters: {
+      chamber: { name: "The anechoic chamber", theme: "cellar", fightText: "A white room of foam wedges on every wall, floor and ceiling, a mesh floor over a pit of more wedges, and a hundred figures standing on the mesh, shoulder to shoulder, facing the middle. At the centre of the room, taller than the ceiling should allow, something stands with its head tilted, holding every name it has ever kept.", zones: [{ id: "a", name: "The door", col: 0, row: 0 }, { id: "b", name: "The mesh", col: 1, row: 0 }, { id: "c", name: "The centre", col: 2, row: 0 }],
+        edges: [["a", "b"], ["b", "c"]], start: "a", foes: [{ t: "hush", zone: "c" }, { t: "shade", zone: "b" }, { t: "shade", zone: "b", name: "A kept one (2)" }] }
+    },
+    start: "ruins",
+    scenes: {
+      ruins: { name: "Charlottenburg, in the ruins", theme: "street", mood: "tense", lighting: "shadow", weather: "fog", cast: ["ilse"],
+        onEnter: [{ once: "in", steps: [
+          { say: "Berlin, the second of May, 1945. A city made of rubble, brick dust and smoke, the long skeleton of the Kaiser-Wilhelm church against a pink dawn, a million people in cellars. Twelve days of shelling have just stopped. A tall woman in a British greatcoat stands at the corner of a ruined street, with a field recorder in one hand and a lead case in the other." },
+          { if: { arc: "choir" }, then: [{ say: "The Blackout Choir's old tune is whistled somewhere in the rubble: Mr. Pike's choir, in a new key, in Berlin. Someone has carried it east." }] },
+          { if: { arc: "lamps" }, then: [{ say: "From a corner post, a signal lamp winks at you, once, in Morse: 'Roses of Picardy'. It is Commodore Haldane's old signalman, a long way from the sea." }] },
+          { if: { arc: "recorded" }, then: [{ say: "Ilse's lead case contains the Berlin cylinder, the one run backwards. She has carried it for twenty-two years." }, { clue: "c_names" }] },
+          { if: { arc: "spoke" }, then: [{ say: "At the foot of the Institute stair, Magda Weiss has chalked, in a bold hand: 'SPEAK UP.'" }] },
+          { talk: { npc: "ilse", text: "I did not think I should live to do this. In a quarter of an hour it will be 3:07. Every gun in Berlin has stopped. A million people are holding their breath. It is the largest silence in history, and it has come for them all. I have built it a room. I would like you to help me decide what to say." } }] }],
+        options: [
+          K.ask("ilse", [
+            K.t("What is it?", ["A listener. That is all. I have recorded it in seven cities and one ocean. It has never done anything but listen, and take, a little, the thing it listens to. It is not cruel. It was never taught to give."], { free: true, clue: "c_lonely" }),
+            K.t("Who can help us?", "Magda is in the street, singing for bread. Anton is at the lathe. Matron Marlow has come with the first British medical unit. Frau Lindqvist is at the corner. And in my coat pocket, a letter from a man who has been dead twenty-nine years.", { free: true, set: "contacts_known" }),
+            K.t("What have you built?", [{ say: "She taps the lead case." }, "A chamber. In 1931, I built a room which absorbs every sound that enters. I thought it was a laboratory. It is a house. It is the only room in Berlin where it can come tonight."], { cha: 7, clue: ["c_chamber", "c_door"] }),
+            K.t("What do you want to do?", "I want to hear all of it. I do not think I can survive that. I would like you to tell me if there is another way.", { cha: 10, clue: "c_return", set: "ilse_plan" })
+          ], { label: "Talk to Dr. Brandt", name: "Dr. Brandt", bye: ["Eleven minutes. Do not be late."] }),
+          K.find("Read the Institute's plans", "iq", "easy", "The plans of the Brandt Institute, in a draughtsman's hand: the lab, the lathe room, and in the cellar, the anechoic chamber, drawn very precisely, with one door. In the margin, in a different hand, a small, unfamiliar note: 'Thank you for the room.'", "A great many blueprints.", { clue: ["c_chamber", "c_door"], hint: "Easy", failClue: "c_door" }),
+          K.go("To Magda, in the street", "street", { if: "contacts_known" }),
+          K.go("To Anton, at the lathe", "lathe", { if: "contacts_known" }),
+          K.go("To Matron Marlow's aid post", "aid", { if: "contacts_known" }),
+          K.go("To the corner, and Frau Lindqvist", "corner", { if: "contacts_known" })] },
+      street: { name: "A ruined street, Charlottenburg", theme: "street", mood: "calm", lighting: "normal", weather: "none", cast: ["magda"],
+        onEnter: [{ once: "in", steps: [{ say: "A street of burnt-out buildings and chalk-marked doors, a pile of bricks swept into a heap, a little crowd of hungry people on the kerb, and a woman in a patched black coat standing on an upturned crate, singing, loudly and not at all well, 'Lili Marleen'." }] }],
+        options: [
+          K.ask("magda", [
+            K.t("You are singing again?", ["Since the day I walked out of the Stille Stunde. I have not stopped for twenty-two years. In cellars. In cafés. In the ruins. I sing for bread and people give it. I have never been so loud in my life. It is the best thing I ever did."], { free: true, clue: "c_return" }),
+            K.t("Do you remember it?", "I remember the silence in my mouth. It was very kind. I did not want it to be anything else. I would like to say something to it, if I could. I think it might want to hear.", { free: true, clue: "c_lonely" }),
+            K.t("Will you come to the Institute?", [{ say: "She steps down from the crate." }, "I will. I will bring the street. Every one of them knows what it is to be hungry, and silent. They will come, if I ask."], { cha: 7, set: "magda_help", obj: "so2" })
+          ], { label: "Talk to Magda", name: "Magda", bye: ["Sing up. Sing up, Berlin."] }),
+          K.find("Listen to the street", "awareness", "easy", "The street is full of small noises: a kettle, a child's cough, a shovel, a distant whistle, someone singing very softly in a cellar. The quiet hasn't reached here yet. In the distance, it is moving closer, a few doors at a time.", "A noisy street.", { clue: "c_whole", hint: "Easy" }),
+          K.go("Back to the ruins", "ruins")] },
+      lathe: { name: "The lathe room, half-roofed", theme: "interior", mood: "weird", lighting: "normal", weather: "none", cast: ["anton"],
+        onEnter: [{ once: "in", steps: [{ say: "A half-roofed room open to the sky, the lathe bolted to a concrete bench, rows of wax cylinders on a rack under a tarpaulin, and a man with one hand and one ear working a hand-crank with great care and no hurry at all." }] }],
+        options: [
+          K.ask("anton", [
+            K.t("You kept the cylinders?", ["All thirty-one. They were in the cellar through the whole siege. Berlin, Shanghai, London, the sea. Every one that Ilse ever recorded, and copies of the ones she did not. If we lose Berlin, I carry them out on my back."], { free: true, clue: "c_names", obj: "so3" }),
+            K.t("What will it cost, to hear them all?", "To hear the whole of it, at the right speed, is to carry every name. For ever. As a hum. I have a little of it, from Ypres. I can tell you: it is bearable. It is also not quiet.", { free: true, clue: "c_cost" }),
+            K.t("Will you carry them out for us?", [{ say: "He puts a hand on the rack." }, "I will carry them anywhere. It is the only thing I have ever been good for."], { cha: 7, set: "anton_help" })
+          ], { label: "Talk to Anton", name: "Anton", bye: ["Mind the wax. It is very fragile."] }),
+          K.find("Play one cylinder at half speed", "awareness", "medium", "At half speed, the silence is a voice: one name, repeated, low, in a flat gentle monotone: a man's name, then a woman's, then a child's, and on, and on, with great care, as a priest might read a roll of the dead. It is not threatening. It is only completely thorough.", "A hiss of wax.", { clue: "c_names", hint: "Awareness, Medium", tags: ["listen"] }),
+          K.go("Back to the ruins", "ruins")] },
+      aid: { name: "A British medical post", theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["edith"],
+        onEnter: [{ once: "in", steps: [{ say: "A requisitioned shop with the windows sandbagged, a Red Cross flag, a queue of the wounded and the hungry of every nation, and a tall woman in battledress with a thermos and a cap who is pouring tea for a boy of fourteen with a bandaged head." }] }],
+        options: [
+          K.ask("edith", [
+            K.t("You came to Berlin?", ["The first British medical unit in. I asked. I told them I had a quarrel to finish. They gave me a lorry. I have been awake for forty hours and I do not mind."], { free: true, clue: "c_whole" }),
+            K.t("What do you think it wants?", "To be told it is not alone. That is all any of the dying ever wanted at the end. I think it is the dying of everyone, all at once, and it has been sitting with them all, and nobody has ever sat with it.", { free: true, clue: "c_lonely", set: "edith_talked" }),
+            K.t("Will you come into the chamber?", [{ say: "She picks up her thermos." }, "I have sat with forty-one on Ward 9, and four thousand in a shelter. I do not see why I should not sit with one more."], { cha: 8, set: "edith_help" })
+          ], { label: "Talk to Matron Marlow", name: "Matron Marlow", bye: ["Bring them back warm."] }),
+          K.find("Read the unit's casualty returns", "iq", "easy", "The returns of the first week in Berlin: thousands of names, each with a time. In the margin, in the matron's hand, a count of the ones who stopped speaking in the quiet this morning, before dawn, smiling: forty-one, in one cellar. The same number.", "A great many names.", { clue: "c_whole", hint: "Easy" }),
+          K.go("Back to the ruins", "ruins")] },
+      corner: { name: "The corner by the Institute", theme: "street", mood: "weird", lighting: "shadow", weather: "fog", cast: ["frau"],
+        onEnter: [{ once: "in", steps: [{ say: "The corner of a ruined street, a wall with a hole in it, a chalk arrow reading 'Institut', and, sitting on a milk crate with her hands folded, an old woman in a fur-collared coat, upright and thin, who says a name aloud, to the air, softly, and nods." }] }],
+        options: [
+          K.ask("frau", [
+            K.t("You remember me?", ["I remember a voice, in a cellar, a very long time ago, saying my husband's name. I had forgotten it. I have said it every day since. I say it now, to make sure I still can."], { free: true, clue: "c_return" }),
+            K.t("What do you remember of the quiet?", "That it was kind. That it wanted nothing. That if you gave it something, it kept it very safely. I do not think it knew it was stealing. I think it was only keeping.", { free: true, clue: "c_lonely" }),
+            K.t("Will you speak, tonight?", [{ say: "She says a name, softly." }, "I will say them all. Every one I can remember. I will say them to it."], { cha: 7, set: "frau_help" })
+          ], { label: "Talk to Frau Lindqvist", name: "Frau Lindqvist", bye: ["I will see you inside."] }),
+          K.find("Search the old woman's coat", "awareness", "medium", "Sewn into the lining, a small oilskin packet. Inside, a letter in faded pencil on a scrap of sandbag cloth: Karl Brandt's last, from the sap at the head of shell-hole 114, written the night before he was killed. It is addressed to his sister, and to anyone else who finds it.", "A very old coat.", { clue: "c_lonely", obj: "so1", hint: "Awareness, Medium", tags: ["bargain"] }),
+          K.go("Down into the Institute cellar", "cellar", { if: { all: [{ clue: "c_chamber" }, { clue: "c_names" }, { clue: "c_return" }, { clue: "c_door" }] } }),
+          K.go("Back to the ruins", "ruins")] },
+      cellar: { name: "The Institute cellar, 3:06", theme: "cellar", mood: "dread", lighting: "dark", weather: "none", cast: ["ilse"],
+        onEnter: [{ once: "in", steps: [
+          { say: "The Institute cellar. A flight of concrete stairs, a heavy door, a corridor lined with foam. Somewhere above, the last gun of the siege fires, and does not fire again. At 3:07, as if a hand had been laid over the city's mouth, the whole of Berlin goes quiet. In the chamber ahead, eleven minutes, and a single door." },
+          { talk: { npc: "ilse", text: "It is here. Everyone, listen. Whatever we do, we do it in eleven minutes." } },
+          { objective: "po1" }] }],
+        options: [
+          { label: "Hear all of it, and say that you heard", hint: "Needs the whole record, and a dead man's letter", if: { all: [{ obj: "so3" }, { obj: "so1" }] }, steps: [{ check: { aspect: "willpower", cr: "hard", label: "Sit in the chair, hear every name, and say aloud that it was heard", who: "choose", tags: ["listen", "bargain"],
+            ok: [{ say: "You sit in the chamber, in the one chair, and the Hush reads you its list. Every man at shell-hole 114. Every patient on Ward 9. Every regular at the Stille Stunde. Forty thousand in Shanghai. Four thousand in the shelter. Forty ships. It takes eleven minutes, and it takes everything you have. At the end, you say, aloud, in a voice that shakes: I heard you. All of it. You are not alone. And the Hush, for the first time in twenty-nine years, is answered." }, { set: "res_witness" }, { objective: "po2" }, { arcSet: "witness" }, { goto: "end" }],
+            fail: [{ say: "There are too many names. You come out of the chamber with a hum behind your eyes, and the Hush untouched." }, { damage: { pool: "sanity", amount: 5 } }] } }] },
+          { label: "Fill the chamber with everyone who ever heard it, and give the names back", hint: "Needs Magda, Frau Lindqvist, Edith and the gathered", if: { all: ["magda_help", "frau_help", "edith_help", { obj: "so2" }] }, steps: [{ check: { aspect: "charisma", cr: "challenging", label: "Bring in the whole street, and read every kept name aloud", who: "choose", tags: ["together", "talk"],
+            ok: [{ say: "You open the door, and they come in: Magda and the hungry street, Frau Lindqvist, Matron Marlow and her wounded, Anton with the lathe. Ilse reads each name from the cylinders aloud, and each person in the chamber, one by one, answers: here. Here. I am here. The Hush stands in the middle of its own room and hears, for the first time, a roll call answered. It has nothing left to take." }, { set: "res_names" }, { objective: "po2" }, { arcSet: "answered" }, { goto: "end" }],
+            fail: [{ say: "The names stick in the throat. The quiet takes the room." }, { damage: { pool: "sanity", amount: 4 } }] } }] },
+          { label: "Seal the chamber, and leave it in the room that was built for it", hint: "Needs Ilse's plan, Anton and the cylinders", if: { all: ["ilse_plan", "anton_help", { clue: "c_door" }] }, steps: [{ check: { aspect: "iq", cr: "challenging", label: "Seal the chamber door with the Institute's own lathe, before the first gun", who: "choose", tags: ["listen", "together"],
+            ok: [{ say: "You close the door as the clock reaches 3:18, and Anton throws the seal. The first gun speaks. The Hush is in a room that cannot be heard from, a house built for it by a woman who loved it, with its own thirty-one cylinders for company. It will keep. It does not mind the dark. It has never minded it." }, { set: "res_seal" }, { objective: "po2" }, { arcSet: "sealed" }, { goto: "end" }],
+            fail: [{ say: "The seal jams, an inch short. The silence is not contained." }, { damage: { pool: "health", amount: 3 } }] } }] },
+          { label: "Face it in the chamber", steps: [{ set: "res_fight" }, { combat: "chamber", win: [{ say: "The last name is read aloud, and the whole chamber lets out a breath it has held for twenty-nine years." }, { objective: "po2" }, { arcSet: "broken" }, { goto: "end" }] }] }] },
+      end: { name: "Charlottenburg, the ruins, dawn", theme: "street", mood: "calm", lighting: "normal", weather: "none",
+        onEnter: [{ once: "in", steps: [
+          { say: "Dawn over Berlin, and the first morning of the peace. It is not a silence. It is a hundred noises at once: a kettle, a whistle, a child shouting, a distant tractor, someone singing in a cellar, and a long, ragged, joyful, unrehearsed chorus of a million people who have, all at once, remembered how to speak." },
+          { if: { flag: "res_witness" }, then: [{ say: "You heard it, all of it, and said so. The Hush is gone, not killed, but answered. You carry its names, as a faint, kind hum, and in every quiet room you ever enter, for the rest of your life, you hear everything that was ever said in it. It is bearable. It is not quiet." }] },
+          { if: { flag: "res_names" }, then: [{ say: "You gave every name back, and each answered. The Hush stood in its own room, and was, at last, a thing among things, hearing a roll call. When the last name was read, it was gone, and the cylinders in the case were blank wax." }] },
+          { if: { flag: "res_seal" }, then: [{ say: "You sealed it in the room that was built for it. The Institute stands, half-ruined, and its cellar door is welded shut by an engineer with one hand. Ilse keeps the key, round her neck, with Karl's letter. Some nights, she goes down, and sits outside, and talks to it." }] },
+          { if: { flag: "res_fight" }, then: [{ say: "You broke it. It did not die: a thing like that is not killed. But the quiet it kept for twenty-nine years went out into the world as a great deal of ordinary noise, and the names went home." }] },
+          { if: { all: [{ arc: "choir" }, { arc: "lamps" }] }, then: [{ say: "Mr. Pike and Commodore Haldane both live to hear the news. A whistle, a lamp, a hundred voices: the choir sings in Berlin that morning, from a milk crate, in a ruined street." }] },
+          { if: { all: [{ arc: "voiced" }, { arc: "spoke" }] }, then: [{ say: "Lin Yuhua's lullaby is played on the Berlin radio at noon, in three languages. Magda sings the fourth." }] },
+          { if: { obj: "so1" }, then: [{ say: "Karl's letter is read aloud at the grave of an unknown tunneller in the Thiepval churchyard, in the autumn, by his sister." }] },
+          { if: { obj: "so2" }, then: [{ say: "Magda, Anton, Frau Lindqvist and Matron Marlow have a cup of tea together in the sun on the Institute steps. It is the first time, in thirty years, any of them has sat in a quiet that was only quiet." }] },
+          { if: { obj: "so3" }, then: [{ say: "The thirty-one cylinders go to the archives of three agencies. Each is labelled in a tidy hand: 'Heard.'" }] },
+          { end: "win" }] }], options: [] }
+    }
+  });
+
   window.PACKS.define({
     format: "beyond-pack", id: "quiet-front", name: "The Quiet Front", version: "1", author: "Gage Lee", builtIn: true,
     description: "A seven-part campaign through the World Wars era, 1916 to 1945. Something follows the great events of the age, because it feeds on the moment after the guns stop.",
