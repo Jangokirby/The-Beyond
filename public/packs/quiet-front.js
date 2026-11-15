@@ -245,6 +245,250 @@
     }
   });
 
+  /* ======================================================================= 1923 · III */
+  reg({
+    id: "qf-3-listening", title: "The Quiet Front III: Lessons in Listening", setting: "Berlin, Germany · November 1923", year: 1923, level: [3, 6], agencies: AG, region: "europe", theme: "street",
+    summary: "Berlin, November 1923. A loaf of bread costs a hundred billion marks. In a cellar club called the Stille Stunde, hungry people pay their last coins to sit for eleven minutes in a perfect silence, performed by a singer who does not sing. Dr. Ilse Brandt, an acoustician, has been recording it. She writes to you, because the recordings have started to answer.",
+    objectives: [
+      { id: "po1", kind: "primary", t: "Find out how the club makes its silence", done: "The Stille Stunde is not making silence. It is hosting it. The singer is a door, and the audience, eleven minutes at a time, is the price of keeping it open." },
+      { id: "po2", kind: "primary", t: "Close the door without hurting the people behind it", done: "The silence is turned away, or answered, or cut. Magda is free of it, and the club is just a club." },
+      { id: "so1", kind: "secondary", t: "Hear the singer's story", done: "Magda says it began the night she stopped being able to sing, and a stranger in the front row said it did not matter, that she had the best silence in Berlin.", benefit: { label: "A way to refuse it", text: "You know what it said to her. A bonus on every roll to turn down its offers.", bonus: { tags: ["refuse"], value: 2 } } },
+      { id: "so2", kind: "secondary", t: "Get Ilse's recordings", done: "Ilse's wax cylinders capture the eleven minutes. On playback the silence is not empty: there is a very faint breathing, and under it a voice repeating a sentence you almost know.", benefit: { label: "A recorded silence", text: "You can hear it coming. A bonus on every roll to catch it out.", bonus: { tags: ["record"], value: 2 } } },
+      { id: "so3", kind: "secondary", t: "Find the owner's ledger", done: "Kessler's books show the club grew from nothing in a month, on coins the audience had no business having, from people who then lost every other thing they had.", benefit: { label: "Follow the money", text: "You know what the club takes. A bonus on every roll to bargain with the owner.", bonus: { tags: ["bargain"], value: 2 } } }
+    ],
+    clues: {
+      c_club: { t: "A cellar club that sells silence", s: "The street handbill", x: "A hand-lettered poster on a lamp-post: 'Stille Stunde. Every night at eleven. Admission one million marks. Silence guaranteed.' People queue down the stairs for it in the rain, in the one winter when nobody in Berlin can afford to eat." },
+      c_eleven: { t: "Eleven minutes, the same eleven", s: "Ilse's records", x: "Ilse's cylinders time the silence at exactly eleven minutes, every night, like the quiet on the Somme. The audience leaves very calm, and very light, and, she has found, very slightly deaf to the voices of the people they love." },
+      c_door: { t: "The singer is a door", s: "Magda", x: "Magda stands at the front of the little stage in a black dress and does not sing. She says she is not holding the silence. She is only the shape it uses to come into the room, the way a draught uses a keyhole." },
+      c_price: { t: "It takes the last thing a person has said", s: "Kessler's ledger", x: "The club's books show every regular customer has, within a fortnight of their first visit, lost something that was theirs: a trade, a marriage, a pension, a friend. The silence is not free. It collects the one conversation people would otherwise have used to save themselves." },
+      c_record: { t: "Silence recorded is silence stored", s: "Ilse's lab", x: "A wax cylinder of the eleven minutes, played back very loudly in a closed room, does what the original does: it empties the room of sound. But the machine can be run backwards, and a backwards silence, Ilse thinks, is a noise it cannot stand." },
+      c_karl: { t: "Her brother wrote of it", s: "Ilse's letter", x: "Ilse's brother Karl wrote to her from the Somme in 1916 about the silence at 3:07. She did not believe him. After the war, when he did not come home, she built a laboratory to hear what he had heard. It has been the work of seven years." },
+      c_same: { t: "The Somme thing, wearing a ballroom", s: "The agents' own file", x: "Compare the silence at the Stille Stunde with the silence at shell-hole 114 and Ward 9. It is the same size. It has the same tilt of the head, in the dark, in the middle. It is following the quiet after wars, and the quiet after wars, in Berlin in 1923, is everywhere." }
+    },
+    npcs: {
+      ilse: N("Dr. Ilse Brandt", "Acoustician", "Thirties, in a white laboratory coat over a tweed skirt, with a headband of black wire and a very still, very precise face, and a small photograph of a soldier pinned over her desk.", F(1, 2, "bun", 2, "none", { sex: "f" })),
+      magda: N("Magda Weiss", "The singer who does not sing", "Late twenties, in a black cabaret dress and long gloves, with bobbed dark hair, very pale powder and a mouth that opens, sometimes, on nothing.", F(1, 2, "bob", 4, "none", { sex: "f" })),
+      kessler: N("Herr Kessler", "Club owner", "Fifties, in a loud check suit and a very new watch-chain, with a cigar and a cheerful, hungry smile and the fidgeting fingers of a man who counts constantly.", F(1, 3, "short", 0, "none", { sex: "m" })),
+      anton: N("Anton Meier", "Ilse's assistant", "Early thirties, in a lab apron, who lost a hand and an ear in the war, and works the recording lathe with the one he has left, and does not look at the doorway.", F(1, 1, "short", 5, "none", { sex: "m" })),
+      frau: N("Frau Lindqvist", "A regular", "Forties, in a threadbare fur-collared coat and a hat with a veil, very upright, who has been to the club every night for a month and does not remember why.", F(1, 3, "bun", 2, "none", { sex: "f" }))
+    },
+    enemies: {
+      guest: { build: { name: "The Guest of the Stille Stunde", type: "Beyond", difficulty: "challenging", sprite: "spirit", hue: 40, dtype: "sanity", core: { body: 2, mind: 4, spirit: 3 }, mods: ["Occult", "Tanky"],
+        text: "The Hush, at home. Invitation: each round it offers one agent a quiet they have wanted (Morality Hard, or lose the next action and 3 Sanity, and the agent's next roll is made in silence). It is hurt by a recording played backwards, and by a crowd that will not be quiet: a song, a heckle, or a run of the machine backwards gives everyone double damage against it. Only Sanity harms it.", dies: "the room breathes in, and out, and the whole audience claps, uncertainly, and then does not stop" } },
+      patron: { build: { name: "A quiet patron", type: "Human", difficulty: "easy", sprite: "humanoid", hue: 45, attack: 1, dtype: "health", dies: "sits down, blinking, and asks for the bill" } }
+    },
+    encounters: {
+      club: { name: "The Stille Stunde", theme: "interior", fightText: "A low cellar club, red lamps, round tables, a hundred silent faces turned to a small stage. On it a woman in black stands with her mouth open on nothing. Behind her in the dark, at the edge of the light, a tall quiet shape stands with its head on one side, listening to the audience for the last thing it will ever say.", zones: [{ id: "a", name: "The stairs", col: 0, row: 0 }, { id: "b", name: "The tables", col: 1, row: 0 }, { id: "c", name: "The stage", col: 2, row: 0 }],
+        edges: [["a", "b"], ["b", "c"]], start: "a", foes: [{ t: "guest", zone: "c" }, { t: "patron", zone: "b" }, { t: "patron", zone: "b", name: "A quiet patron (2)" }] }
+    },
+    start: "lab",
+    scenes: {
+      lab: { name: "The Brandt Institute, Charlottenburg", theme: "interior", mood: "tense", lighting: "normal", weather: "rain", cast: ["ilse"],
+        onEnter: [{ once: "in", steps: [
+          { say: "Berlin, November 1923. A city of hungry people with trillions in their pockets and nothing to buy: women pushing prams full of banknotes, men with armfuls of paper in the rain. In Charlottenburg, in a lab full of wax cylinders, copper horns and humming lathes, a tall woman in a white coat is waiting for you with a letter in her hand." },
+          { if: { arc: "truce" }, then: [{ say: "Ilse has your letter from the Somme on her desk, with the note she wrote back: 'Karl lived to write to you. He did not live to come home. Thank you for the quiet that was an honest one.'" }] },
+          { if: { arc: "sang" }, then: [{ say: "Ilse says: 'My brother wrote that a captain made them sing. I am told it was you. I am sorry I did not know, at the time, how much the singing mattered.'" }] },
+          { talk: { npc: "ilse", text: "The cylinders answer back. That is what I wanted to tell someone. I record the silence at the Stille Stunde, every night, for eleven minutes. Last week, on playback, there was a voice in it. It said my brother's name." } }] }],
+        options: [
+          K.ask("ilse", [
+            K.t("What is the Stille Stunde?", ["A cellar club in Kreuzberg, with a singer who does not sing, and a silence people pay to sit in. Eleven minutes. It has been open a month, and half Berlin has been. It is the most successful thing that has happened in this city since the mark fell."], { free: true, clue: "c_club" }),
+            K.t("Who can we talk to?", "Magda Weiss, the singer. Kessler, who owns the club. Anton, my assistant, who has seen too much of the recordings. And Frau Lindqvist, who goes every night, and cannot say why.", { free: true, set: "contacts_known" }),
+            K.t("What do the cylinders show?", [{ say: "She turns the horn towards you." }, "The silence is not empty. It is full of the audience's last remarks. Everything a person might have said, and did not, that night. It keeps them. It is collecting them, I think, the way you collect pressed flowers."], { cha: 7, clue: "c_eleven" }),
+            K.t("Is this about Karl?", "It was always about Karl. I built all of this to hear what he heard. And now I have heard it, and it is not what I expected.", { cha: 10, clue: "c_karl", set: "ilse_help" })
+          ], { label: "Talk to Dr. Brandt", name: "Dr. Brandt", bye: ["Be careful with sound. It remembers."] }),
+          K.find("Listen to last night's cylinder", "awareness", "medium", "Eleven minutes of apparent nothing, then a faint sound under it, like a held breath, and a voice, slow and gentle, repeating a sentence you almost know. You realise it is the last sentence you said to someone you have lost.", "Eleven minutes of wax hiss.", { clue: "c_eleven", hint: "Awareness, Medium", tags: ["record"] }),
+          K.go("To the Stille Stunde, in Kreuzberg", "club", { if: "contacts_known" }),
+          K.go("To Magda's dressing room", "dressing", { if: "contacts_known" }),
+          K.go("To Kessler's office", "office", { if: "contacts_known" }),
+          K.go("To Anton, at the recording lathe", "lathe", { if: "contacts_known" })] },
+      club: { name: "The Stille Stunde, before the doors", theme: "interior", mood: "weird", lighting: "shadow", weather: "none", cast: ["frau"],
+        onEnter: [{ once: "in", steps: [{ say: "A low cellar in Kreuzberg, red lamps, round tables, a little stage with a black curtain. At a table near the door, before the doors have even opened, a woman in a fur-collared coat and a veiled hat is sitting very straight, with a full glass of nothing in front of her." }] }],
+        options: [
+          K.ask("frau", [
+            K.t("Why do you come here?", ["I do not know. I have not known for a month. It is so very peaceful. I used to talk a great deal, you see. To my husband. I find I cannot remember what about."], { free: true, clue: "c_price" }),
+            K.t("Do you remember what happens?", "Eleven minutes. Then we all go home, and sleep. It is the best sleep I have had since the war. I am not sure what I leave behind. I think it is only noise.", { free: true, clue: "c_door" }),
+            K.t("Would you stay away tonight?", [{ say: "She looks at the stage curtain for a long time." }, "If someone spoke to me. Loudly. Until I remembered what I was going to say."], { cha: 8, set: "frau_help" })
+          ], { label: "Talk to Frau Lindqvist", name: "Frau Lindqvist", bye: ["I will see you inside. I think."] }),
+          K.find("Read the handbill and the door-list", "iq", "easy", "A door-list of regulars, in a clerk's copperplate. Beside each name, a date they first came, and, in a second column in a different ink, a note of what they lost the month after: 'Employment', 'Wife', 'Voice'.", "A very long door-list.", { clue: "c_price", hint: "Easy" }),
+          K.go("Back to the Institute", "lab")] },
+      dressing: { name: "Magda's dressing room", theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["magda"],
+        onEnter: [{ once: "in", steps: [{ say: "A cramped dressing room behind the stage, a mirror ringed with bulbs, a rail of black dresses, a jar of white powder, and a woman sitting very still in front of the glass with her gloves off and her mouth very slightly open." }] }],
+        options: [
+          K.ask("magda", [
+            K.t("What do you do on stage?", ["Nothing. That is the act. I stand, and I open my mouth, and the room does the rest. Eleven minutes. I used to sing, before. Then I stopped, and a man in the front row said it did not matter. That I had the best silence in Berlin."], { free: true, clue: "c_door", obj: "so1" }),
+            K.t("Who was the man?", "I never saw his face. He was very still, and he listened. Everyone is so grateful to be listened to. I do not know if he was a man.", { free: true, clue: "c_same" }),
+            K.t("Do you want to stop?", [{ say: "She picks up a glove and puts it down." }, "More than anything. But if I stop, the room will be full of people who have nowhere to put their silence. They will take it home."], { cha: 7, set: "magda_help" })
+          ], { label: "Talk to Magda", name: "Magda", bye: ["Do not clap. It frightens it."] }),
+          K.find("Read the dressing-room notes", "iq", "medium", "A pile of letters from regulars. A pattern in the dates: each began coming, within a week of losing something dear, and each said the same thing in their first letter: 'It was the first quiet that did not feel like being alone.'", "A pile of fan letters.", { clue: "c_price", hint: "Intelligence, Medium", tags: ["refuse"] }),
+          K.go("Back to the Institute", "lab")] },
+      office: { name: "Kessler's office", theme: "interior", mood: "tense", lighting: "normal", weather: "none", cast: ["kessler"],
+        onEnter: [{ once: "in", steps: [{ say: "A cluttered back office with a safe, three telephones and a desk heaped with banknotes in bundles, and a stout man in a check suit who rises and holds out his arms as if you were an old friend and a creditor." }] }],
+        options: [
+          K.ask("kessler", [
+            K.t("How did you open so fast?", ["A friend lent me the cellar. Another friend lent me the singer. The coins, I will confess, I found on the doorstep. Gold. Pre-war. I did not ask. In this city, my dear, one does not ask."], { free: true, clue: "c_price" }),
+            K.t("What does the club take?", "From the audience? A little something. They leave lighter. I think of it as a laundry service. Eleven minutes, and they go away with nothing on their minds.", { free: true, clue: "c_door", set: "kessler_talked" }),
+            K.t("Will you close it?", [{ say: "He laughs, and stops." }, "If you can show me where the gold goes. I do not like a friend who does not come for dinner."], { cha: 9, set: "kessler_help", obj: "so3" })
+          ], { label: "Talk to Herr Kessler", name: "Herr Kessler", bye: ["A pleasure. Do come to a show."] }),
+          K.find("Open the ledger on the desk", "iq", "easy", "A ledger of the club's money. Every night, the same coins, pre-war gold, in the same number, come in by the box office, and go out the same way, to a name that is only a mark: a small circle, with a line through it. The books balance perfectly.", "A tidy ledger.", { clue: "c_price", obj: "so3", hint: "Easy", tags: ["bargain"] }),
+          K.go("Back to the Institute", "lab")] },
+      lathe: { name: "The recording lathe", theme: "interior", mood: "weird", lighting: "normal", weather: "none", cast: ["anton"],
+        onEnter: [{ once: "in", steps: [{ say: "A soundproofed lab room lined with felt, a recording lathe, a copper horn, a stack of wax cylinders each labelled with a date, and a one-handed man in an apron who is running a cylinder backwards and watching the needle with great care." }] }],
+        options: [
+          K.ask("anton", [
+            K.t("What are you playing?", ["Last night's silence, backwards. It does something to the room. Not quite a sound. A sort of pressure, as if the wall were being very politely pushed. I think it hurts it. I think it is the only thing I have found that does."], { free: true, clue: "c_record", obj: "so2" }),
+            K.t("Could we use it in the club?", "With a big enough horn, yes. And with someone running the lathe who does not mind the thing noticing. I would do it. I lost my ear to the war. I have nothing left to listen with that it can take.", { free: true, set: "anton_help" }),
+            K.t("What did you hear in the war?", [{ say: "He lifts the needle." }, "The Hush, at Ypres. I gave it my hand to let go of me. I think it was the one it wanted. I have been waiting seven years for it to come and finish the job."], { cha: 8, clue: "c_same" })
+          ], { label: "Talk to Anton", name: "Anton", bye: ["Keep the horn pointing at it."] }),
+          K.find("Play the backwards cylinder", "awareness", "medium", "The needle runs the wax in reverse, and the room does something you cannot name. A pressure on the eardrums, a roughness in the quiet, like a hand against a pane of glass. Somewhere in the walls, for a second, something steps back.", "Hiss, and a faint hum.", { clue: "c_record", hint: "Awareness, Medium", tags: ["record"] }),
+          K.go("To the Stille Stunde, tonight", "stage", { if: { all: [{ clue: "c_record" }, { clue: "c_door" }, { clue: "c_price" }] } }),
+          K.go("Back to the Institute", "lab")] },
+      stage: { name: "The Stille Stunde, eleven o'clock", theme: "interior", mood: "boss", lighting: "shadow", weather: "none",
+        onEnter: [{ once: "in", steps: [
+          { say: "Eleven o'clock. The red lamps dim. A hundred faces turn to the little stage. Magda steps out in her black dress, and opens her mouth, and the sound goes out of the room like water out of a basin. At the edge of the light, behind her, something tall and attentive stands with its head on one side." },
+          { objective: "po1" }] }],
+        options: [
+          { label: "Run Ilse's recording backwards through a horn, and break the silence", hint: "Needs Ilse, Anton and the cylinder", if: { all: ["ilse_help", "anton_help", { obj: "so2" }] }, steps: [{ check: { aspect: "iq", cr: "challenging", label: "Rig the horn, and run the cylinder backwards at the exact moment the silence begins", who: "choose", tags: ["record"],
+            ok: [{ say: "Anton starts the lathe backwards. The horn, hidden in the stage curtain, sends a roughness out into the quiet. The tall shape flinches. The audience, who have not heard anything for a month, hear something. A woman laughs. A man swears. In the third row, Frau Lindqvist stands up and says, very clearly, her husband's name. The silence tears like a sheet." }, { set: "res_record" }, { objective: "po2" }, { arcSet: "recorded" }, { goto: "end" }],
+            fail: [{ say: "The horn feeds back. For a second, the silence is complete." }, { damage: { pool: "sanity", amount: 3 } }] } }] },
+          { label: "Win the audience: stand and make the whole room speak", hint: "Needs Magda or Frau Lindqvist", if: { any: ["magda_help", "frau_help"] }, steps: [{ check: { aspect: "charisma", cr: "medium", label: "Stand up in the silence, and get a hundred people to say what they did not say", who: "choose", tags: ["talk", "refuse"],
+            ok: [{ say: "You stand in the dark, and in the silence, and say aloud the last thing you did not say to someone. It costs you something. Magda, on the stage, begins to sing, badly. A woman in the third row says her husband's name. A man laughs. In a minute the whole cellar is speaking, all at once, about nothing, and the tall quiet thing at the edge of the light has nothing left to listen for." }, { set: "res_speak" }, { objective: "po2" }, { arcSet: "spoke" }, { goto: "end" }],
+            fail: [{ say: "Your voice is the only sound in the room, and it is gone in a breath." }, { damage: { pool: "sanity", amount: 3 } }] } }] },
+          { label: "Face it on the stage", steps: [{ set: "res_fight" }, { combat: "club", win: [{ say: "The room breathes in, and out, and the whole audience claps, uncertainly, and then does not stop." }, { objective: "po2" }, { arcSet: "fought3" }, { goto: "end" }] }] }] },
+      end: { name: "The Stille Stunde, after midnight", theme: "interior", mood: "calm", lighting: "normal", weather: "rain",
+        onEnter: [{ once: "in", steps: [
+          { say: "After midnight, the cellar is empty and loud with the sound of chairs. Somewhere down the street a drunk is singing. Kessler counts the till and finds, for the first time, only paper. Magda sits on the edge of the stage with her gloves off and her feet bare, and hums a tune you do not recognise." },
+          { if: { flag: "res_record" }, then: [{ say: "You ran it backwards. Ilse keeps the cylinder in a lead case. She says the silence on it is the only one in Berlin that has ever been afraid." }] },
+          { if: { flag: "res_speak" }, then: [{ say: "You made the room speak. It was not a miracle. It was a hundred people, saying a hundred ordinary things. The club reopens as a cabaret, and Magda sings." }] },
+          { if: { flag: "res_fight" }, then: [{ say: "You broke it on the stage. It did not die. It went out through the cellar door, into the rain, and the whole street went quiet as it passed." }] },
+          { if: { obj: "so1" }, then: [{ say: "Magda tells her story, and the second night she refuses the front row, and sings." }] },
+          { if: { obj: "so2" }, then: [{ say: "Ilse's cylinders are copied for every agency's archive. One of them is labelled in a tidy hand: 'For K.'" }] },
+          { if: { obj: "so3" }, then: [{ say: "Kessler burns his ledger, and starts a bakery, to the astonishment of everyone, including himself." }] },
+          { end: "win" }] }], options: [] }
+    }
+  });
+
+  /* ======================================================================= 1937 · IV */
+  reg({
+    id: "qf-4-last-broadcast", title: "The Quiet Front IV: The Quiet Hour", setting: "Radio Station XQHA, Shanghai · August 1937", year: 1937, level: [3, 7], agencies: AG, region: "asia-east", theme: "street",
+    summary: "Shanghai, August 1937. The city is under bombardment, and the people of the International Settlement have found one comfort: the Quiet Hour, eleven minutes at eleven each night when Station XQHA broadcasts nothing at all, and the neighbours in every flat, in every language, sit down together and are still. The announcer swears there is no such programme. The engineers say the carrier is on. Something is using the wireless to reach everyone at once.",
+    objectives: [
+      { id: "po1", kind: "primary", t: "Find the source of the Quiet Hour", done: "The carrier wave of Station XQHA is being held open from somewhere that is not in the building: a loop of silence, sent out through the aerial, that every set in the city has begun to tune to by itself." },
+      { id: "po2", kind: "primary", t: "Take the silence off the air", done: "The eleven o'clock quiet ends, and the radios of Shanghai are only radios again." },
+      { id: "so1", kind: "secondary", t: "Hear the wireless operator's account", done: "Mieko Tanaka, who has listened to the carrier for six weeks, says the hush has a rhythm, a slow count, and that it is not counting seconds.", benefit: { label: "A true count", text: "You know its rhythm. A bonus on every roll to time your move.", bonus: { tags: ["carrier"], value: 2 } } },
+      { id: "so2", kind: "secondary", t: "Get the announcer to read the true news", done: "Lin Yuhua agrees, once, to read a live bulletin in three languages at eleven, and finds the hush will not take a voice it cannot predict.", benefit: { label: "A trusted voice", text: "A voice the city listens to. A bonus on every roll to rally a crowd.", bonus: { tags: ["voice"], value: 2 } } },
+      { id: "so3", kind: "secondary", t: "Find the tube that is not on the schematic", done: "Konstantin, the station's White Russian engineer, shows you a valve in the transmitter hall that nobody installed.", benefit: { label: "A foreign part", text: "You know where it is anchored. A bonus on every roll to cut or jam it.", bonus: { tags: ["jam"], value: 2 } } }
+    ],
+    clues: {
+      c_hour: { t: "Eleven minutes, every night, on the dot", s: "The programme sheet", x: "The station's programme sheet shows no Quiet Hour. The announcer's logbook shows the microphone switched off at 10:59 and on at 11:11. In between, the carrier is open, and every receiver in the settlement is playing something that is not music, and not static, and not nothing." },
+      c_count: { t: "It is counting, not timing", s: "Mieko's log", x: "Mieko's receiver log has a pencilled tally of the carrier's tiny fluctuations: a slow, steady count of what might be heartbeats. Forty thousand in eleven minutes. Every listener's, she thinks. Added up, and held." },
+      c_tube: { t: "A valve that nobody installed", s: "Konstantin", x: "In the middle of the transmitter hall, between two perfectly standard rectifiers, a thermionic valve glows with a faint blue light. It is not on any schematic. It is warm to the touch when the carrier is open, and cold at all other times, and nobody on the staff remembers its being fitted." },
+      c_loop: { t: "The silence arrives from outside, and goes round", s: "The aerial log", x: "The station's own aerial log shows the quiet coming in on the receiving side, not leaving on the sending side. It arrives from the harbour, in the dark, from a ship or a pole or a roof; the station only repeats it. It is not the transmitter. It is the receiver that is being listened through." },
+      c_voice: { t: "It cannot predict a live human voice", s: "Lin's experiment", x: "Lin Yuhua, last Thursday, ad-libbed a lullaby into the open microphone at 11:02, as a joke. For four seconds, every radio in the settlement played it. For four seconds, the hush did not know what a song would do." },
+      c_cut: { t: "The valve can be broken, and the aerial grounded", s: "The engineer's notes", x: "Konstantin's notes: break the valve, and ground the long-wire aerial for a minute, and the loop opens. It is not hard, he says. It is only that the hall is full, between 10:55 and 11:15, of men who no longer know why they are standing there." },
+      c_same: { t: "It is the same silence, learning a wider room", s: "The agents' file", x: "Berlin, the Somme, Ward 9 and now a radio. The Hush has learned a trick: do not go to the quiet; make the quiet come to you. A broadcast reaches forty thousand homes, and a silence delivered to them is a larger feast than a shell-hole." }
+    },
+    npcs: {
+      mieko: N("Mieko Tanaka", "Wireless operator", "Late twenties, a Japanese-born operator in a white blouse and a headset, with an inky pencil behind one ear and a carefully neutral face, who has been listening to the carrier for six weeks.", F(2, 1, "bob", 4, "none", { sex: "f" })),
+      lin: N("Lin Yuhua", "Announcer", "Thirties, in a silk qipao and a fox-fur stole, with a silver microphone-brooch and a velvet, practised voice that has comforted the city every night for years.", F(2, 1, "bun", 2, "none", { sex: "f" })),
+      konstantin: N("Konstantin Volkov", "Chief engineer", "Fifties, a White Russian in a stained cardigan over a collar and tie, with a soldering iron in his hand and a very dry sense of humour, who has been through two revolutions and does not scare easily.", F(1, 2, "short", 5, "none", { sex: "m" })),
+      holt: N("Mr. Holt", "Station manager", "Forties, an Englishman in a tropical-weight suit and a club tie, with a ledger of advertising rates, a glass of whisky, and the brittle courtesy of a man who is certain this will all be settled by Friday.", F(0, 2, "short", 0, "none", { sex: "m" })),
+      wen: N("Auntie Wen", "A listener", "Sixties, in a quilted jacket, sitting on a doorstep with a little wooden radio on her knees, perfectly still, with her eyes open and her teacup cold.", F(2, 4, "bun", 3, "none", { sex: "f" }))
+    },
+    enemies: {
+      carrier: { build: { name: "The Carrier", type: "Beyond", difficulty: "dangerous", sprite: "spirit", hue: 215, dtype: "sanity", core: { body: 2, mind: 4, spirit: 4 }, mods: ["Occult", "Tanky"],
+        text: "The Hush riding a wave. Broadcast: each round it hushes one zone of the field entirely (Willpower Medium, or lose the next action and 3 Sanity as your heartbeat is counted). It is hurt by a live voice and by a broken valve: a song, a shout or a cut wire gives everyone double damage against it. Only Sanity harms it.", dies: "the blue light goes out of the valve, and ten thousand radios across the city crackle, and play, very faintly, a waltz" } },
+      hushed: { build: { name: "A hushed listener", type: "Human", difficulty: "easy", sprite: "humanoid", hue: 210, attack: 1, dtype: "health", dies: "blinks, and puts down the receiver, and looks at the clock" } }
+    },
+    encounters: {
+      hall: { name: "The transmitter hall", theme: "interior", fightText: "A long hall of racks and humming transformers, with thick cables overhead and the blue glow of a single valve in the middle. A dozen of the staff stand in a ring round the rack with their heads tilted, listening. In the glow of the valve, something tall and attentive stands with its head on one side.", zones: [{ id: "a", name: "The door", col: 0, row: 0 }, { id: "b", name: "The racks", col: 1, row: 0 }, { id: "c", name: "The valve", col: 2, row: 0 }],
+        edges: [["a", "b"], ["b", "c"]], start: "a", foes: [{ t: "carrier", zone: "c" }, { t: "hushed", zone: "b" }, { t: "hushed", zone: "b", name: "A hushed listener (2)" }] }
+    },
+    start: "lobby",
+    scenes: {
+      lobby: { name: "Station XQHA, the lobby, Shanghai", theme: "interior", mood: "tense", lighting: "normal", weather: "rain", cast: ["holt"],
+        onEnter: [{ once: "in", steps: [
+          { say: "Shanghai, in August 1937. The Bund is a wall of gunboats and sandbags; across the Soochow Creek, Chapei burns. In the International Settlement, the cafés are full of every nation in the world, all pretending it is only weather. In a pale marble lobby on Avenue Edward VII, under a brass sunburst clock, a man in a tropical suit tries very hard to look unflustered." },
+          { if: { arc: "recorded" }, then: [{ say: "In your case, wrapped in a handkerchief, Ilse Brandt's wax cylinder of the Berlin silence. She wrote on the label: 'In case it comes to a larger room.'" }, { clue: "c_count" }] },
+          { if: { arc: "spoke" }, then: [{ say: "In your pocket, a note in Magda Weiss's hand, forwarded from Berlin: 'If you meet it in a wider room, speak, and make them speak. It cannot bear to be answered.'" }, { clue: "c_voice" }] },
+          { talk: { npc: "holt", text: "There is no Quiet Hour. I should like that on the record. Every listener in the Settlement swears by it and I have the programme sheet to prove it does not exist. Nevertheless, our advertising revenue has doubled." } }] }],
+        options: [
+          K.ask("holt", [
+            K.t("What is the Quiet Hour?", ["Eleven minutes at eleven. The microphone is off, and the carrier is on, and every set in the city plays something. Not music. Not static. Something so still it makes a room feel looked after. People write to thank us. I have no idea what to thank them for."], { free: true, clue: "c_hour" }),
+            K.t("Who runs the station?", "Mr. Konstantin Volkov, my engineer. Miss Lin, my announcer. And Miss Tanaka, who monitors the carrier, and who, I am told, has the most unsettling log in the building.", { free: true, set: "contacts_known" }),
+            K.t("Have you looked at the transmitter?", [{ say: "He glances at the lift." }, "Konstantin has. He says there is a valve in it that should not be. I told him to put it in the report. He told me what I could do with the report."], { cha: 7, clue: "c_tube" }),
+            K.t("Will you help us?", "I will give you the run of the building. I will not give you the aerial. That is Konstantin's and he is armed.", { cha: 10, set: "holt_help" })
+          ], { label: "Talk to Mr. Holt", name: "Mr. Holt", bye: ["Do mind the carpet."] }),
+          K.find("Read the programme sheet", "iq", "easy", "A neat sheet of nightly programmes, from a Chopin recital to the shipping forecasts. At 11:00 every night, a blank. And in the margin beside the blank, in several different hands, in several different languages: 'Do not touch.'", "A very tidy sheet.", { clue: "c_hour", hint: "Easy" }),
+          K.go("To the monitoring room", "monitor", { if: "contacts_known" }),
+          K.go("To the studio, and Miss Lin", "studio", { if: "contacts_known" }),
+          K.go("To the transmitter hall", "hall", { if: "contacts_known" }),
+          K.go("To Auntie Wen's doorstep, in the lane", "lane", { if: "contacts_known" })] },
+      monitor: { name: "The monitoring room", theme: "interior", mood: "weird", lighting: "normal", weather: "none", cast: ["mieko"],
+        onEnter: [{ once: "in", steps: [{ say: "A small soundproofed room lined with felt and receivers, a ticking oscilloscope, a stack of logbooks, and a young woman in a headset who does not look up until the clock reaches the quarter-hour." }] }],
+        options: [
+          K.ask("mieko", [
+            K.t("What do you hear?", ["A carrier with nothing on it, which is wrong by itself. And a count. A slow, regular fluctuation, like a heartbeat held very carefully. Forty thousand beats in eleven minutes. It is the whole settlement, I think. It is counting us."], { free: true, clue: "c_count", obj: "so1" }),
+            K.t("Where does it come from?", "From outside the building. It comes in, on the receiving side, from somewhere in the harbour. We only repeat it. We are not the voice. We are the ear.", { free: true, clue: "c_loop" }),
+            K.t("Why have you kept listening?", [{ say: "She takes off the headset, and holds it." }, "Because someone should. Because in this city every voice is shouting, and for eleven minutes, one thing is perfectly attentive. I have never been listened to like it. I am ashamed how much I like it."], { cha: 8, set: "mieko_help" })
+          ], { label: "Talk to Miss Tanaka", name: "Miss Tanaka", bye: ["If you hear the count, do not count with it."] }),
+          K.find("Read the carrier log", "iq", "medium", "A column of numbers in a careful hand, three weeks of nights. The heartbeats average seventy-one a minute, which is a living person's. It is the same average every night, to a decimal, however many are listening. It has learned the city's pulse, and it has set it as its own.", "A great many numerals.", { clue: "c_count", obj: "so1", hint: "Intelligence, Medium", tags: ["carrier"] }),
+          K.go("Back to the lobby", "lobby")] },
+      studio: { name: "Studio A", theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["lin"],
+        onEnter: [{ once: "in", steps: [{ say: "A velvet-hung studio with a standing microphone, a baby grand, a shelf of gramophone records, and a glamorous woman in a fox-fur stole who is smoking, very elegantly, at an open window, and does not turn round when you come in." }] }],
+        options: [
+          K.ask("lin", [
+            K.t("What do you know about the Quiet Hour?", ["That I do not read it. That I am told, every night at ten fifty-nine, to take my hand off the switch, and every night I have the strangest feeling that I should not be told. I have been announcing for nine years. I know when a room is listening."], { free: true, clue: "c_hour" }),
+            K.t("Have you tried to speak into it?", "Once. Thursday. A joke, a lullaby, at 11:02. For four seconds the radios of Shanghai played it. Then it was gone. I have not been able to stop thinking how the silence went, for a moment, like a child.", { free: true, clue: "c_voice", obj: "so2" }),
+            K.t("Would you read the news at eleven?", [{ say: "She stubs out the cigarette." }, "In three languages, live, with my own mouth. If Holt will let me. If he will not, I will do it from the roof."], { cha: 8, set: "lin_help" })
+          ], { label: "Talk to Miss Lin", name: "Miss Lin", bye: ["Tune in. Tonight, if you can."] }),
+          K.find("Search the announcer's script file", "awareness", "easy", "Folders of nightly scripts, annotated in a firm hand. The last folder is Thursday's. In the margin, in lipstick: 'It laughed.' And underneath, in a different pen: 'Do it again.'", "A file of scripts.", { clue: "c_voice", hint: "Easy" }),
+          K.go("Back to the lobby", "lobby")] },
+      hall: { name: "The transmitter hall", theme: "interior", mood: "dread", lighting: "shadow", weather: "none", cast: ["konstantin"],
+        onEnter: [{ once: "in", steps: [{ say: "A long hall of racks and humming transformers, thick cables overhead, the smell of hot dust, and in the very middle, between two perfectly standard rectifiers, a single valve with a blue glow that does not match anything else in the room. A tall man in a cardigan sits beside it with a soldering iron and a pistol." }] }],
+        options: [
+          K.ask("konstantin", [
+            K.t("What is the valve?", ["Not mine. Not anyone's. It is a thermionic valve, a very good one, better than any I have seen. It grew out of the rack like a mushroom out of a log, six weeks ago, the night the Quiet Hour began."], { free: true, clue: "c_tube", obj: "so3" }),
+            K.t("Can it be broken?", "It can be broken, and the aerial grounded for a minute. Between ten fifty-five and eleven fifteen the hall is full of men who do not know why they are standing here. I have sat with them. They are very kind. They will not let me near.", { free: true, clue: "c_cut", set: "cut_known" }),
+            K.t("Will you do it with us?", [{ say: "He puts down the iron, and picks up the pistol, and puts that down too." }, "I have been through two revolutions and I cannot stand a quiet room. Yes."], { cha: 8, set: "konstantin_help" })
+          ], { label: "Talk to Konstantin", name: "Konstantin", bye: ["Bring a crowbar. And your voice."] }),
+          K.find("Examine the valve", "iq", "medium", "A thermionic valve of an unfamiliar make, hot, with a blue glow, on no schematic. Etched into the glass in tiny characters, in no language, a single repeated mark: a head, tilted to one side. It is fed by a wire that runs not to the rack but up through the roof, to the long-wire aerial.", "A glowing glass bulb.", { clue: "c_tube", hint: "Intelligence, Medium", tags: ["jam"] }),
+          K.go("Up to the roof, at eleven", "roof", { if: { all: [{ clue: "c_loop" }, { clue: "c_cut" }, { clue: "c_voice" }] } }),
+          K.go("Back to the lobby", "lobby")] },
+      lane: { name: "A lane behind the Settlement", theme: "street", mood: "weird", lighting: "normal", weather: "rain", cast: ["wen"],
+        onEnter: [{ once: "in", steps: [{ say: "A narrow lane of tiled roofs and drying washing, a door with a red paper charm, and an old woman on the step in a quilted jacket with a wooden radio on her knees. She is perfectly still. She has been still, her neighbour says, since last night." }] }],
+        options: [
+          K.ask("wen", [
+            K.t("Can you hear me?", ["Yes. I can hear you. I can hear everything. It is only that I do not need to answer. It is so quiet. It is the quietest I have been since the war began."], { free: true, clue: "c_hour" }),
+            K.t("What do you hear in the quiet?", "Everyone. All of us. Breathing. One breath, in the whole city. It is the kindest thing I have ever heard. I do not think it wants anything. I think it only likes us.", { free: true, clue: "c_count" }),
+            K.t("Will you speak tonight?", [{ say: "A faint smile." }, "If the girl on the wireless does. I always answer her."], { cha: 7, set: "wen_help" })
+          ], { label: "Talk to Auntie Wen", name: "Auntie Wen", bye: ["Do not wake the neighbours."] }),
+          K.find("Look at the radio on her knee", "awareness", "easy", "A small wooden radio, switched off at the wall. It is playing, in a very low voice, at no station, the sound of eleven minutes of listening. When you turn the dial, it follows.", "A small wooden radio.", { clue: "c_loop", hint: "Easy" }),
+          K.go("Back to the lobby", "lobby")] },
+      roof: { name: "The aerial roof, 11:00 p.m.", theme: "street", mood: "boss", lighting: "dark", weather: "rain",
+        onEnter: [{ once: "in", steps: [
+          { say: "Eleven at night, the roof of Station XQHA, the long-wire aerial stretched between two masts against a sky lit by distant fire. Below, in the hall, the blue glow of the valve. Across the city, in forty thousand rooms, the microphone is off and every wireless is playing eleven minutes of attention, and the whole of Shanghai holds its breath." },
+          { objective: "po1" }] }],
+        options: [
+          { label: "Break the valve and ground the aerial", hint: "Needs Konstantin, the cut and the count", if: { all: ["konstantin_help", "cut_known", { obj: "so3" }] }, steps: [{ check: { aspect: "agility", cr: "challenging", label: "Swing across the mast, ground the aerial and break the valve before the quarter-hour", who: "choose", tags: ["jam", "carrier"],
+            ok: [{ say: "Konstantin breaks the valve with a spanner. You swing out along the long-wire and ground it against the mast. The blue light goes out. In forty thousand rooms, in six languages, ten thousand radios crackle, and play, very faintly, a waltz. On the doorstep in the lane, Auntie Wen puts her cup down, and sneezes." }, { set: "res_cut" }, { objective: "po2" }, { arcSet: "cut" }, { goto: "end" }],
+            fail: [{ say: "The aerial arcs. The wire sings, then falls silent, all at once." }, { damage: { pool: "health", amount: 3 } }] } }] },
+          { label: "Go on the air live, in three languages, at eleven", hint: "Needs Lin and the voice", if: { all: ["lin_help", { obj: "so2" }] }, steps: [{ check: { aspect: "charisma", cr: "medium", label: "Get a live voice into every set before the hush closes", who: "choose", tags: ["voice", "talk"],
+            ok: [{ say: "Lin Yuhua steps up to the microphone at 11:00 and reads the news, in three languages, in her own slightly shaking voice, and then, because she cannot help it, a lullaby. In every room in the settlement, the neighbours hear one real voice, and begin to answer it. By 11:08 there are forty thousand people talking. The carrier, which has never been spoken to by its listeners, does not know what to do." }, { set: "res_voice" }, { objective: "po2" }, { arcSet: "voiced" }, { goto: "end" }],
+            fail: [{ say: "Your voice is a single thread in a very large silence." }, { damage: { pool: "sanity", amount: 3 } }] } }] },
+          { label: "Face it in the transmitter hall", steps: [{ set: "res_fight" }, { combat: "hall", win: [{ say: "The blue light goes out of the valve, and ten thousand radios across the city crackle, and play, very faintly, a waltz." }, { objective: "po2" }, { arcSet: "fought4" }, { goto: "end" }] }] }] },
+      end: { name: "Station XQHA, the lobby, dawn", theme: "interior", mood: "calm", lighting: "normal", weather: "rain",
+        onEnter: [{ once: "in", steps: [
+          { say: "Dawn over the Bund, with the distant guns on the other side of the river, and, in the lobby of Station XQHA, the unfamiliar sound of an ordinary radio playing a very bad band. Holt pours the first whisky of the morning and looks at it for a long time." },
+          { if: { flag: "res_cut" }, then: [{ say: "You cut it off at the root. The valve is in a jar on Konstantin's desk, and has not glowed since. The Quiet Hour never returns, and some people write to ask for it back." }] },
+          { if: { flag: "res_voice" }, then: [{ say: "You answered it, with a city. Lin Yuhua's bulletin is repeated on every station, and the Quiet Hour is replaced, at eleven, with a lullaby, which all of Shanghai knows." }] },
+          { if: { flag: "res_fight" }, then: [{ say: "You faced it in the hall. It was not killed. It slid out through the aerial in the dark, towards the sea." }] },
+          { if: { obj: "so1" }, then: [{ say: "Mieko Tanaka keeps the log. She learned something about herself in the carrier, and does not say what." }] },
+          { if: { obj: "so2" }, then: [{ say: "Lin Yuhua is offered a new contract in three languages, and signs in all of them." }] },
+          { if: { obj: "so3" }, then: [{ say: "Konstantin says he will install a loud valve, to keep the quiet one company." }] },
+          { end: "win" }] }], options: [] }
+    }
+  });
+
   window.PACKS.define({
     format: "beyond-pack", id: "quiet-front", name: "The Quiet Front", version: "1", author: "Gage Lee", builtIn: true,
     description: "A seven-part campaign through the World Wars era, 1916 to 1945. Something follows the great events of the age, because it feeds on the moment after the guns stop.",
