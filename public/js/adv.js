@@ -228,7 +228,14 @@
           if (cv.limit && cap < 99 && used >= cap && left.every(({ t }) => !t.free)) { for (const l of cv.cutoff || ["That's all I have to say. I have things to do."]) await speak(l); break; }
           const npc = M.npcs[npcId] || {};
           const more = cv.limit && cap < 99 ? ` (${Math.max(0, cap - used)} question${cap - used === 1 ? "" : "s"} left)` : "";
-          const id = await g.choose((cv.prompt || `What do you ask ${npc.name || "them"}?`) + more, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask, hint: t.cha ? "Your Charisma draws this out" : t.free ? "" : undefined })), { id: "bye", label: cv.leave || "That's all for now" }]);
+          let id = await g.choose((cv.prompt || `What do you ask ${npc.name || "them"}?`) + more, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask, hint: t.cha ? "Your Charisma draws this out" : t.free ? "" : undefined })), { id: "_type", label: "Ask about something else…", hint: "Type your own question" }, { id: "bye", label: cv.leave || "That's all for now" }]);
+          if (id === "_type") {
+            const q = await ADV.askText(`Ask ${npc.name || "them"}`, "e.g. Who was here the night it happened?");
+            if (!q) continue;
+            const hit = ADV.matchTopic(q, left.map(({ t, i }) => ({ t, i })), M);
+            if (!hit) { await g.say(["I couldn't tell you anything about that.", "I don't know what you mean by that.", "That is not something I can help with.", "Ask me something I can answer, please."][Math.floor(Math.random() * 4)], { who: npcId }); continue; }
+            id = String(hit.i);
+          }
           if (id === "bye" || id == null) { for (const l of cv.bye || []) await speak(l); break; }
           const t = cv.topics[+id]; g.set(k(+id));
           for (const l of t.lines || []) { if (window.GAME.state.phase === "ending") return true; await speak(l); }
@@ -242,6 +249,26 @@
       else if (st.end) { await window.CAMP.endAdventure(st.end); return true; }
     }
     return false;
+  };
+
+  /* typed questions: no AI, just a small parser. The words you type are matched (by word-stem, with a few synonym groups)
+     against what each topic is about: its question, what is said in answer, and the clues it gives. */
+  const SYN = ["dead died death kill murder body corpse dying grave", "money pay paid coin price cash debt owe loan cost", "night dark midnight evening late", "afraid scared fear frightened terror", "wife husband mother father son daughter family brother sister child parent",
+    "work job employ shift boss office clerk", "hear sound noise quiet silence listen voice", "see saw look watch eye seen", "place location find street building", "name person man woman", "time hour day date", "sick ill flu disease fever ward", "ship boat sea ocean convoy", "radio wireless signal broadcast station", "letter note paper file record ledger book log", "key lock door open", "secret hide hidden lie truth", "help trust ask please", "fire burn flame light lamp"].map((s) => s.split(" "));
+  const stem = (w) => w.slice(0, 5);
+  const QSTOP = new Set("what who whom whose where when why how does did do you your yours the this that these those about tell me us our can could will would should shall have has had was were are and but for with from into over any some anyone someone know think there their they them his her him she its not just also very more much many than then out get got say said ask asked please want".split(" "));
+  const words = (t) => String(t || "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/).filter((w) => w.length > 2 && !QSTOP.has(w));
+  ADV.askText = (title, ph) => new Promise((resolve) => {
+    const U = window.UI, input = U.el("input", { type: "text", maxlength: "140", placeholder: ph, style: "width:100%" });
+    U.modal({ title, body: U.el("div", {}, U.el("p", { class: "small muted" }, "Ask in your own words. They answer what they know."), input), buttons: [{ id: "no", label: "Never mind" }, { id: "go", label: "Ask", cls: "primary" }] }).then((r) => resolve(r === "go" ? input.value.trim() : ""));
+    setTimeout(() => input.focus(), 50);
+  });
+  ADV.matchTopic = (text, topics, M) => {
+    const mine = new Set(); for (const w of words(text)) { mine.add(stem(w)); for (const g of SYN) if (g.includes(w) || g.some((x) => stem(x) === stem(w))) g.forEach((x) => mine.add(stem(x))); }
+    const body = (tp) => { const out = [tp.ask, ...(tp.keys || [])]; for (const l of tp.lines || []) out.push(typeof l === "string" ? l : l.say || l.text || l.you || ""); JSON.stringify(tp.then || []).replace(/"clue":"(\w+)"/g, (_, c) => { out.push(((M.clues || {})[c] || {}).t || ""); }); return out.join(" "); };
+    let best = null, bs = 0;
+    for (const x of topics) { const have = new Set(words(body(x.t)).map(stem)); let n = 0; for (const w of mine) if (have.has(w)) n++; const direct = words(text).filter((w) => have.has(stem(w))).length; const sc = n + direct; if (sc > bs) { bs = sc; best = x; } }
+    return bs >= 1 ? best : null;
   };
 
   ADV.compile = (a) => {
