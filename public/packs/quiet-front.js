@@ -489,6 +489,252 @@
     }
   });
 
+  /* ======================================================================= 1940 · V */
+  reg({
+    id: "qf-5-blackout-choir", title: "The Quiet Front V: The Blackout Choir", setting: "Marlowe Road deep shelter, London · December 1940", year: 1940, level: [4, 7], agencies: AG, region: "europe", theme: "cellar",
+    summary: "London, December 1940. In the Marlowe Road deep shelter, four thousand people sleep on bunks between the raids. The shelter has a choir, because someone started singing on the first night and nobody has been able to stop. But between the Raiders Passed and the All Clear there are eleven minutes of perfect quiet, and in them, one bunk at a time, people stop singing and do not wake. The matron on the first-aid post is a woman you have met before.",
+    objectives: [
+      { id: "po1", kind: "primary", t: "Learn why it comes between the sirens", done: "The Hush has found the one place where the world holds its breath on a timetable: the minutes after the raiders pass and before the all-clear sounds. Everyone waits. It waits with them." },
+      { id: "po2", kind: "primary", t: "Make the shelter safe from the quiet", done: "The eleven minutes are filled, or taken, or turned. Nobody sleeps through them who will not wake." },
+      { id: "so1", kind: "secondary", t: "Hear the choirmaster's secret", done: "Mr. Pike, who has led the shelter in song for ninety nights, is going deaf. The Hush has been taking a little of his hearing every night in exchange for the choir's survival, and he agreed.", benefit: { label: "A bargain known", text: "You know what it has been given. A bonus on every roll to refuse it.", bonus: { tags: ["refuse"], value: 2 } } },
+      { id: "so2", kind: "secondary", t: "Get the warden's torch and her log", done: "Mrs. Dobbs, the warden, logs every siren to the second. Her log shows the quiet is not eleven minutes but is stretching: three more seconds a night.", benefit: { label: "Light and time", text: "A torch, and a clock. A bonus on every roll made in the dark tunnels.", bonus: { tags: ["dark"], value: 2 } } },
+      { id: "so3", kind: "secondary", t: "Persuade Ilse Brandt to come down", done: "Dr. Ilse Brandt, who works for the Admiralty now, brings her field recorder to the shelter and sits through the quiet with it, for the first time in her life not afraid of what it will hear.", benefit: { label: "An ear", text: "A scientist who has heard it before. A bonus on every roll to read the quiet.", bonus: { tags: ["listen"], value: 2 } } }
+    ],
+    clues: {
+      c_gap: { t: "It comes between Raiders Passed and All Clear", s: "Mrs. Dobbs' log", x: "The warden's log shows the quiet starts at the moment the sirens give Raiders Passed, and ends when the All Clear sounds. It used to be eleven minutes. It is now eleven minutes and fifty-one seconds. It has been growing, by three seconds a night, since the first of October." },
+      c_choir: { t: "The choir is the only thing it respects", s: "Edith's post notes", x: "No one who stood with the choir in the quiet has been lost. Everyone lost slept on the far side of the shelter, away from the singing. The Hush cannot be where a hundred people are making noise on purpose. It is gathering where they have stopped." },
+      c_deaf: { t: "Pike has been going deaf", s: "Mr. Pike", x: "Pike, the choirmaster, has been losing his hearing a little each night. He says he made a bargain on the first night of the raids: the choir would live if he gave it his ears, a little at a time. It agreed, and it has been very patient." },
+      c_sleep: { t: "They do not die, they fall asleep for ever", s: "Matron Marlow", x: "The ones lost in the quiet have no injury, no sign of gas or fire. They lie smiling on their bunks with their hands folded. Matron Marlow has seen it in a field hospital in France, twenty-two years ago, and again in a lecture hall. She says it is not a death. It is a kind of listening that never stops." },
+      c_tunnel: { t: "It lives in the disused tunnel", s: "The warden", x: "Beyond the last bunk, behind a sandbagged door, is a half-finished tunnel never opened to the public. The quiet seems to come from it, and return to it. At All Clear, it is always the last thing left, faintly, down there in the dark." },
+      c_siren: { t: "The sirens are the clock it keeps", s: "Ilse's notes", x: "Ilse, in a note, says the Hush is not tied to the shelter but to the sirens. It is learning the signal that tells four thousand people to hold their breath together, on a timetable. A siren can be sounded early, or late, or by hand, and she thinks that would break its reckoning." },
+      c_same: { t: "It has followed the same people for twenty-four years", s: "The agents' file", x: "The Somme, the grey ward, Berlin, Shanghai, London. It is always in the moment a great crowd holds still. It is learning how many it can take at once. Every year the quiet is a little bigger. This winter, it has four thousand in a single room, on a timetable, and nothing to do but wait." }
+    },
+    npcs: {
+      edith: N("Matron Edith Marlow", "First-aid post matron", "Fifty, in a navy matron's uniform with a Red Cross armband and a tin hat on a peg, grey at the temples, very upright, with the same steady hands and an expression of enormous, tested kindness.", F(1, 3, "bun", 4, "none", { sex: "f" })),
+      pike: N("Mr. Pike", "The choirmaster", "Sixties, a bus conductor in his old uniform with a ticket punch on a string, conducting with a rolled-up newspaper, with a great gentle voice and a hand cupped, now and then, to one ear.", F(2, 3, "short", 5, "none", { sex: "m" })),
+      dobbs: N("Mrs. Dobbs", "ARP warden", "Forties, in a boiler suit and a white tin helmet marked W, with a whistle, a clipboard and a torch the size of a rolling pin, who has not lost an air-raid since the first night and does not intend to.", F(1, 3, "short", 3, "none", { sex: "f" })),
+      ilse: N("Dr. Ilse Brandt", "Admiralty acoustician", "Forty, in a tweed coat and a headscarf, with a field recorder in a leather case, a very precise manner, a new accent and a photograph she keeps in a pocket.", F(1, 2, "bun", 2, "none", { sex: "f" })),
+      tommy: N("Tommy", "A child, awake", "Nine, in a jersey and short trousers and a gas-mask case on a string, sitting up very straight on a bunk, wide-eyed, who has noticed what the grown-ups have decided not to.", F(1, 1, "short", 5, "none", { sex: "m" }))
+    },
+    enemies: {
+      interval: { build: { name: "The Interval", type: "Beyond", difficulty: "dangerous", sprite: "spirit", hue: 220, dtype: "sanity", core: { body: 2, mind: 4, spirit: 4 }, mods: ["Occult", "Tanky"],
+        text: "The Hush between the sirens, with a whole shelter to hold. Wait: each round it makes one sleeper smile and lie down (Willpower Medium, or lose the next action and 3 Sanity as the listening takes hold). It is hurt by a choir and by an early siren: a song, a rung bell or a hand-sounded alarm gives everyone double damage against it. Only Sanity harms it.", dies: "the long quiet breaks off, mid-breath, and somewhere above, very faintly, the All Clear begins to sound" } },
+      sleeper: { build: { name: "A smiling sleeper", type: "Human", difficulty: "easy", sprite: "humanoid", hue: 215, attack: 1, dtype: "health", dies: "wakes, and says sorry for the trouble, and asks for a cup of tea" } }
+    },
+    encounters: {
+      tunnel: { name: "The unopened tunnel", theme: "cellar", fightText: "A long, half-finished tunnel in the dark, bare concrete and exposed rock, with bunks laid out in rows that nobody put there. Hundreds of sleepers lie on them in perfect rows, smiling, their hands folded. At the far end, under a single bare bulb, something tall and still stands with its head tilted, waiting for the All Clear.", zones: [{ id: "a", name: "The sandbagged door", col: 0, row: 0 }, { id: "b", name: "The bunks", col: 1, row: 0 }, { id: "c", name: "The far end", col: 2, row: 0 }],
+        edges: [["a", "b"], ["b", "c"]], start: "a", foes: [{ t: "interval", zone: "c" }, { t: "sleeper", zone: "b" }, { t: "sleeper", zone: "b", name: "A smiling sleeper (2)" }] }
+    },
+    start: "shelter",
+    scenes: {
+      shelter: { name: "Marlowe Road deep shelter, London", theme: "cellar", mood: "tense", lighting: "normal", weather: "none", cast: ["edith"],
+        onEnter: [{ once: "in", steps: [
+          { say: "London, in December 1940. Ninety nights of the Blitz. In a deep shelter under a Tube station, four thousand people sleep on triple-tiered bunks under bare bulbs, with the thump of the bombs coming faintly down through eighty feet of earth, and a smell of tea, damp wool and disinfectant." },
+          { if: { arc: "noise" }, then: [{ say: "Matron Marlow has put a gramophone on the first-aid post, 'in memory of Ward 9, and the man who got it for us'. She nods to you, and very slightly smiles." }] },
+          { if: { arc: "voiced" }, then: [{ say: "On the shelter's tannoy, someone has been playing, every night at eleven, a lullaby in three languages. It is from a station in Shanghai. Nobody knows how it got here." }] },
+          { if: { arc: "cut" }, then: [{ say: "In Matron Marlow's drawer there is a small glass valve, labelled in Konstantin's hand: 'Warm, even now.'" }] },
+          { talk: { npc: "edith", text: "I did not think I should see you again. I hoped not. Every night, between Raiders Passed and All Clear, my shelter goes quiet. And every night, one or two of my people do not wake. I would not have written, if I did not know exactly what it was." } }] }],
+        options: [
+          K.ask("edith", [
+            K.t("What is happening?", ["They fall asleep in the quiet between the sirens, and do not wake. Smiling. No injury. No gas. Nine this week. It is so gentle that nobody has made a fuss. That is the worst of it. They think it is a good way to go."], { free: true, clue: "c_sleep" }),
+            K.t("Who can we talk to?", "Mr. Pike, who runs the choir. Mrs. Dobbs, the warden, who knows every minute of every raid. Dr. Brandt at the Admiralty, if she will come. And Tommy, a child on the third tier, who has noticed.", { free: true, set: "contacts_known" }),
+            K.t("Is it the same thing?", [{ say: "She folds her hands, and the tremor stops." }, "Yes. It has followed us for twenty-four years, I think. It is always where a crowd stops to wait."], { cha: 7, clue: "c_same" }),
+            K.t("What do you need from us?", "Do not make a speech. Do not make a fuss. Keep my people singing, and keep my shelter from learning why.", { cha: 10, clue: "c_choir", set: "edith_help" })
+          ], { label: "Talk to Matron Marlow", name: "Matron Marlow", bye: ["Mind the sleepers. Do not wake the ones who smile."] }),
+          K.find("Read the first-aid post's night register", "iq", "easy", "A register of every night since September. A column of 'Lost' beside the date, in numbers climbing slowly: 1, 1, 2, 2, 3. And beside each, a small clock, drawn in the matron's hand, with its hands set to the same time: the end of the quiet.", "A very long register.", { clue: "c_sleep", hint: "Easy" }),
+          K.go("To the choir, in the long gallery", "choir", { if: "contacts_known" }),
+          K.go("To the warden's post", "warden", { if: "contacts_known" }),
+          K.go("To the third-tier bunks, and the child", "bunk", { if: "contacts_known" }),
+          K.go("To the Admiralty, to fetch Dr. Brandt", "admiralty", { if: "contacts_known" })] },
+      choir: { name: "The long gallery, the choir", theme: "cellar", mood: "calm", lighting: "normal", weather: "none", cast: ["pike"],
+        onEnter: [{ once: "in", steps: [{ say: "A long arched gallery of whitewashed brick, rows of bunks, and a hundred people in dressing-gowns and overcoats sitting up in the lamplight singing 'Roll Out the Barrel', conducted with a rolled-up Daily Mirror by a very old bus conductor, who turns, with a tilted head, to listen to you." }] }],
+        options: [
+          K.ask("pike", [
+            K.t("How did the choir begin?", ["The first night. The ceiling shook, and a woman started to cry, and I could not think of anything to do but sing. It worked. It kept the whole gallery together. We have not missed a night since."], { free: true, clue: "c_choir" }),
+            K.t("What do you hear at the end of the raid?", "Less every night. I will tell you plainly: I am going deaf. A little each night. I made a bargain the first night, in the dark. I did not know who with.", { free: true, clue: "c_deaf", obj: "so1" }),
+            K.t("Will you keep the choir singing through the quiet?", [{ say: "He cups a hand to his ear, and nods very slowly." }, "If they sing in the quiet, it cannot have them. That is what I was given to understand. I would give the rest of my hearing, for that."], { cha: 8, set: "pike_help" })
+          ], { label: "Talk to Mr. Pike", name: "Mr. Pike", bye: ["Sing up! Sing up!"] }),
+          K.find("Watch the choir through the end of a raid", "awareness", "medium", "As the sirens give Raiders Passed, the choir falters, and falls silent, and at the far end of the gallery, where nobody is singing, one by one the sleepers lie back. Where the singing continues, nobody lies back. It is the clearest line you have ever seen drawn in a room.", "A choir of a hundred voices.", { clue: "c_choir", hint: "Awareness, Medium", tags: ["listen"] }),
+          K.go("Back to the first-aid post", "shelter")] },
+      warden: { name: "The warden's post", theme: "cellar", mood: "tense", lighting: "shadow", weather: "none", cast: ["dobbs"],
+        onEnter: [{ once: "in", steps: [{ say: "A small brick cubby by the lift shaft, with a telephone, a map of the borough, a clipboard hung on a nail, a gas rattle on a hook and a woman in a boiler suit and a white helmet, writing in a log without looking at the page." }] }],
+        options: [
+          K.ask("dobbs", [
+            K.t("You log every siren?", ["To the second. The Raiders Passed signal. The All Clear. I know the lot. The quiet in between was eleven minutes in October. It is eleven minutes and fifty-one seconds now. Three seconds more each night. I do not like arithmetic that goes the wrong way."], { free: true, clue: "c_gap", obj: "so2" }),
+            K.t("Where does the quiet go?", "Down the tunnel. The half-finished one, past the last bunk. I have been down there. It is not empty. There are bunks. Rows of bunks. Nobody put them there.", { free: true, clue: "c_tunnel" }),
+            K.t("Can we sound the siren early?", [{ say: "She taps her whistle." }, "By hand? There is a hand-siren at the top of the lift. Against regulations. I will go to prison, I expect. I will do it."], { cha: 8, set: "dobbs_help", clue: "c_siren" })
+          ], { label: "Talk to Mrs. Dobbs", name: "Mrs. Dobbs", bye: ["Mind the dark. Take a torch."] }),
+          K.find("Read the warden's log", "iq", "easy", "A log of ninety nights, in a neat blunt hand. 'Raiders Passed 11.41. All Clear 11.53 and 51 seconds.' Down the page, the gap grows by three seconds each night, in a column that ends, a week hence, in a number she has circled in red: the end of the year.", "A very long log.", { clue: "c_gap", obj: "so2", hint: "Easy", tags: ["dark"] }),
+          K.go("Back to the first-aid post", "shelter")] },
+      bunk: { name: "The third tier", theme: "cellar", mood: "weird", lighting: "shadow", weather: "none", cast: ["tommy"],
+        onEnter: [{ once: "in", steps: [{ say: "A third-tier bunk under the curve of the roof, a blanket pulled up to the chin, a gas-mask case, and a small boy sitting very upright, wide awake, with his eyes fixed on the dark gap at the end of the gallery." }] }],
+        options: [
+          K.ask("tommy", [
+            K.t("What have you seen?", ["It stands at the end. When the siren stops. It is tall, and it is not a man. It listens. And the people who stop singing go to it, in their sleep, a little. Like when you go to the sweet shop, but slower."], { free: true, clue: "c_tunnel" }),
+            K.t("Why aren't you asleep?", "I sing. Under the blanket. Very quiet, so the grown-ups do not mind. Mummy said it keeps the bombs off, and she was right, and I think she meant something else.", { free: true, clue: "c_choir" }),
+            K.t("Will you help us?", [{ say: "He thinks about it very seriously." }, "I will tell the others to sing. If it is only me, they will say I am a baby. If you tell them, they will."], { cha: 7, set: "tommy_help" })
+          ], { label: "Talk to Tommy", name: "Tommy", bye: ["Do not look at the end of the gallery. It looks back."] }),
+          K.find("Look at the end of the gallery from his bunk", "awareness", "medium", "From the top bunk, at the very end of the long dark, past the last row of sleepers, a doorway with sandbags, and a very faint movement, like someone breathing in. You realise you are being counted.", "Bunks, and a long dark gallery.", { clue: "c_tunnel", hint: "Awareness, Medium", tags: ["dark", "listen"] }),
+          K.go("Back to the first-aid post", "shelter")] },
+      admiralty: { name: "A requisitioned flat in Whitehall", theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["ilse"],
+        onEnter: [{ once: "in", steps: [{ say: "A drab second-floor flat above a chemist's, the blackout curtains drawn, wires and hydrophone cables across the carpet, a field recorder open on the table and a woman in a tweed coat and a headscarf who looks up with a start, and then, slowly, with relief." }] }],
+        options: [
+          K.ask("ilse", [
+            K.t("You came to London?", ["In thirty-eight. It was time. I work for the Admiralty now, on hydrophones: listening for submarines in the dark. It is, I am aware, a very silly joke. I spent seven years listening to nothing. Now I listen to the sea."], { free: true, clue: "c_siren" }),
+            K.t("Is it the same thing?", "It is the same animal, and it has learned to read a timetable. It is not hunting the dead any more. It is hunting the waiting. The thing that holds a city's breath is the thing it likes best.", { free: true, clue: "c_same" }),
+            K.t("Will you come to the shelter?", [{ say: "She closes the recorder, and opens it again." }, "I have never once been afraid of what I would hear. I am afraid now. Yes. I will come."], { cha: 7, set: "ilse_help", obj: "so3" })
+          ], { label: "Talk to Dr. Brandt", name: "Dr. Brandt", bye: ["Do not let them stop singing."] }),
+          K.find("Read Ilse's notes on the timetable", "iq", "medium", "Ilse's notes: the Hush is not a place but a rhythm. It keeps time with whatever a crowd does together. A siren, a bell, a broadcast, a march. If the signal comes early, or late, or from the wrong place, it loses count, and it loses the room.", "A great deal of shorthand.", { clue: "c_siren", hint: "Intelligence, Medium", tags: ["listen"] }),
+          K.go("Down to the unopened tunnel, tonight", "dark", { if: { all: [{ clue: "c_gap" }, { clue: "c_tunnel" }, { clue: "c_choir" }] } }),
+          K.go("Back to the first-aid post", "shelter")] },
+      dark: { name: "The unopened tunnel, All Clear minus one minute", theme: "cellar", mood: "boss", lighting: "dark", weather: "none",
+        onEnter: [{ once: "in", steps: [
+          { say: "Raiders Passed. The sirens fall away, and the choir, in the gallery behind, stops. Beyond the sandbagged door, in the half-finished tunnel, the bare bulbs burn very small, and in rows on the bunks nobody put there, hundreds of sleepers lie smiling with their hands folded, and at the far end something tall stands, with its head tilted, waiting for the All Clear." },
+          { objective: "po1" }] }],
+        options: [
+          { label: "Bring the whole shelter into the tunnel, singing", hint: "Needs Pike, Tommy and Edith", if: { all: ["pike_help", "tommy_help", "edith_help"] }, steps: [{ check: { aspect: "charisma", cr: "medium", label: "Lead four thousand people down the tunnel in song", who: "choose", tags: ["talk"],
+            ok: [{ say: "Tommy starts it, under his breath. Pike picks it up. Matron Marlow leads the first-aid post. In the gallery, a hundred voices, then a thousand, then four thousand, come down the long concrete tunnel together, in the dark, singing, and they walk past the sleepers, and every sleeper they pass, one by one, opens their eyes. The tall quiet thing at the end of the tunnel has nothing to wait for. It has been out-waited." }, { set: "res_choir" }, { objective: "po2" }, { arcSet: "choir" }, { goto: "end" }],
+            fail: [{ say: "Two verses in, the song falters. The quiet closes round the lamp." }, { damage: { pool: "sanity", amount: 3 } }] } }] },
+          { label: "Sound the siren by hand, early, from the top of the lift", hint: "Needs Mrs. Dobbs, and the timetable", if: { all: ["dobbs_help", { clue: "c_siren" }] }, steps: [{ check: { aspect: "strength", cr: "challenging", label: "Wind the hand-siren in the dark, and sound the All Clear a minute early", who: "choose", tags: ["dark"],
+            ok: [{ say: "Mrs. Dobbs winds the old hand-siren at the top of the lift. The All Clear, a minute early, wails out across the borough. The Hush, which has been counting seconds for ninety nights, loses its reckoning. In the tunnel, the sleepers wake in the middle of a yawn, and swear, and look for their shoes. At the far end, the tall thing finds itself waiting for a moment that has already gone by." }, { set: "res_siren" }, { objective: "po2" }, { arcSet: "siren" }, { goto: "end" }],
+            fail: [{ say: "The siren rasps, and sticks. The quiet goes on." }, { damage: { pool: "health", amount: 3 } }] } }] },
+          { label: "Go to the end of the tunnel, and face it", steps: [{ set: "res_fight" }, { combat: "tunnel", win: [{ say: "The long quiet breaks off, mid-breath, and somewhere above, very faintly, the All Clear begins to sound." }, { objective: "po2" }, { arcSet: "fought5" }, { goto: "end" }] }] }] },
+      end: { name: "Marlowe Road shelter, the morning", theme: "cellar", mood: "calm", lighting: "normal", weather: "none",
+        onEnter: [{ once: "in", steps: [
+          { say: "Morning, and the first grey light coming down the lift-shaft. Four thousand people queue for tea, wash in a bucket and fold their blankets, and grumble about a long night. Matron Marlow stands on the top step with her cap off and counts them as they go up the stairs. Nobody is missing." },
+          { if: { flag: "res_choir" }, then: [{ say: "You walked the choir down the tunnel. It has a name now, the Blackout Choir, and it sings in the shelter until the war is over." }] },
+          { if: { flag: "res_siren" }, then: [{ say: "You sounded the All Clear early, and broke its reckoning. Mrs. Dobbs is fined five shillings, and has it framed." }] },
+          { if: { flag: "res_fight" }, then: [{ say: "You faced it in the dark. It was not killed. It went out through the end of the tunnel, into the earth, and the sleepers woke, every one, and wanted breakfast." }] },
+          { if: { obj: "so1" }, then: [{ say: "Mr. Pike stays deaf. The choir has learned to conduct itself." }] },
+          { if: { obj: "so2" }, then: [{ say: "Mrs. Dobbs has the log typed, and sent to the Ministry, who file it as 'Morale'." }] },
+          { if: { obj: "so3" }, then: [{ say: "Ilse Brandt writes: 'I was not afraid. That is what I wanted to tell you. I was not afraid.'" }] },
+          { end: "win" }] }], options: [] }
+    }
+  });
+
+  /* ======================================================================= 1942 · VI */
+  reg({
+    id: "qf-6-silent-convoy", title: "The Quiet Front VI: The Silent Convoy", setting: "HMCS Larkspur, mid-Atlantic · March 1942", year: 1942, level: [4, 8], agencies: AG, region: "americas-north", theme: "sea",
+    summary: "The North Atlantic, March 1942. Convoy ON-71 has been under wireless silence for nine days, to hide it from the U-boats. On the tenth night, in the air gap where no aircraft can reach, every ship in the convoy goes silent at 3:07: engines, screws, voices, the sea itself. In the morning a merchantman is found out of line with every man aboard sitting at his post, smiling, listening to nothing. Dr. Ilse Brandt's hydrophones are aboard the escort. She has recognised it.",
+    objectives: [
+      { id: "po1", kind: "primary", t: "Find what is hiding in the convoy's silence", done: "The Hush has found the largest quiet in the world, a thousand miles of ocean, forty ships, and an order from the Admiralty that every one of them keep very still and say nothing. It is at home." },
+      { id: "po2", kind: "primary", t: "Break the silence without sinking the convoy", done: "The ships hear one another again. The convoy keeps its station, and the sea, for the first time in nine nights, makes a noise." },
+      { id: "so1", kind: "secondary", t: "Hear the sonar operator's night", done: "Able Seaman Delorme, the Asdic operator, has heard the quiet from the inside: a single enormous attentive ping, from below, answering the convoy's pings with its own silence.", benefit: { label: "A trained ear", text: "You know the shape of what answers. A bonus on every roll to read the sea.", bonus: { tags: ["sea"], value: 2 } } },
+      { id: "so2", kind: "secondary", t: "Get the commodore's secret order book", done: "Commodore Haldane's order book shows the wireless silence was not the Admiralty's idea. It was suggested, in a very polite signal, by a station that does not appear on any chart.", benefit: { label: "A true order of battle", text: "You know who suggested the silence. A bonus on every roll to give orders.", bonus: { tags: ["order"], value: 2 } } },
+      { id: "so3", kind: "secondary", t: "Bring the stewardess back from the drifter", done: "Mrs. Reilly, the stewardess of the drifting merchantman, is found awake in the galley, pouring tea for the silent crew. She is the only one who can say what they were told.", benefit: { label: "Someone who came back", text: "A witness. A bonus on every roll to talk the crew round.", bonus: { tags: ["talk"], value: 2 } } }
+    ],
+    clues: {
+      c_gap: { t: "The silence began where the aircraft stop", s: "The commodore's plot", x: "The silence reached the convoy on the night it entered the mid-ocean air gap: eight hundred miles from any airfield on either side. For the first time in the war, no friendly ear above or below. It is only here that the Hush can reach the whole convoy at once." },
+      c_station: { t: "The silence was suggested", s: "The signal log", x: "The Admiralty's order for complete wireless silence arrived in a signal with no originator, in a perfect hand, at the stroke of 3:07, nine nights ago. It did not come from London. It was written in the cipher, correctly, by someone who knew every key, and the cipher clerks all say it was very polite." },
+      c_ping: { t: "The sea answers pings with a silence", s: "Delorme's Asdic log", x: "The Asdic ping goes out, as always, and instead of an echo, there is a space, shaped like a ship, and then like a larger ship, and then like the entire convoy. The sea is not empty. It has an inside, and the inside is listening back." },
+      c_drifter: { t: "The drifter's crew are seated at their posts", s: "The boarding report", x: "The SS Anneliese Holt was found drifting, all lights on, every man aboard at his post: wheel, engine room, wireless, galley. All alive, all smiling, all still, all listening. None had eaten for three days. The only one who moved was the stewardess." },
+      c_loud: { t: "It cannot bear the escort's depth charges", s: "The captain's log", x: "On the fourth night, a depth-charge pattern thrown at a false contact broke the quiet over the stern of the Larkspur for forty seconds. Everyone aboard heard the sea. The Hush, which has no ear for violence, drew back, as if burned, and then returned." },
+      c_song: { t: "The lamps could sing", s: "Ilse's notes", x: "Ilse's note: the Hush rides the order of silence. A signal lamp, flashing a tune in Morse across the convoy, is not wireless and not sound. It is an answer in another medium. Forty ships, each repeating a song in lights, is a noise the silence has no ear for." },
+      c_same: { t: "It is the same thing, grown very large", s: "The agents' file", x: "A shell-hole, a ward, a cellar, a radio, a shelter. Now a whole ocean. Every quiet the world holds is a place it can hide. And it is learning how to ask us for the quiet, in our own handwriting, in our own cipher." }
+    },
+    npcs: {
+      rhodes: N("Lieutenant Commander Rhodes", "Captain, HMCS Larkspur", "Thirties, a Canadian reservist in a duffle coat and a battered cap, with binoculars on a cord, a steaming mug and the gentle gravity of a former schoolmaster who has spent three years doing something he never wanted to learn.", F(1, 2, "short", 0, "none", { sex: "m" })),
+      delorme: N("Able Seaman Delorme", "Asdic operator", "Twenties, a Québécois in a heavy sweater and headphones, with a hand on the dial and a very still, very slightly haunted face, who hums, always, without noticing.", F(1, 1, "short", 5, "none", { sex: "m" })),
+      haldane: N("Commodore Haldane", "Convoy commodore", "Sixties, a retired admiral in a greatcoat and a white scarf on the bridge of the lead merchantman, with an old-fashioned pipe, an order book and the unshakeable courtesy of the very old Navy.", F(0, 4, "short", 0, "none", { sex: "m" })),
+      reilly: N("Mrs. Annie Reilly", "Stewardess of the Anneliese Holt", "Forties, in a stewardess's apron and a boiler-room cardigan, with a tray of cold tea and warm, fierce eyes, standing in the galley of a ship full of smiling, listening men.", F(1, 3, "bun", 3, "none", { sex: "f" })),
+      ilse: N("Dr. Ilse Brandt", "Admiralty scientist", "Forty-one, in an oilskin and a woollen cap, with a hydrophone case lashed to the chart table and a thermos, who has not been seasick once and is quietly pleased about it.", F(1, 2, "bun", 2, "none", { sex: "f" }))
+    },
+    enemies: {
+      deep: { build: { name: "The Silence Below", type: "Beyond", difficulty: "dangerous", sprite: "spirit", hue: 205, dtype: "sanity", core: { body: 3, mind: 4, spirit: 4 }, mods: ["Occult", "Tanky"],
+        text: "The Hush, grown to the size of an ocean. Order: each round it asks one crew member to hold still (Willpower Medium, or lose the next action and 3 Sanity as the silence is obeyed). It is hurt by noise and by an answer in another medium: a depth charge, a lit song or a ping cuts its hold, and everyone takes double damage against it. Only Sanity harms it.", dies: "the sea gives one enormous groan, and then, very close, an ordinary gull" } },
+      listener: { build: { name: "A listening hand", type: "Human", difficulty: "easy", sprite: "humanoid", hue: 200, attack: 1, dtype: "health", dies: "sits down, rubs his eyes and asks whose watch it is" } }
+    },
+    encounters: {
+      drifter: { name: "The SS Anneliese Holt", theme: "sea", fightText: "A tramp steamer, dead in the water, every light burning on a calm black sea. On the bridge, in the engine room, along the rail, the crew stand at their posts with their heads tilted, smiling. In the middle of the foredeck, above the hatch, something tall and quiet stands with its head on one side, listening to a whole ship hold its breath.", zones: [{ id: "a", name: "The gangway", col: 0, row: 0 }, { id: "b", name: "The deck", col: 1, row: 0 }, { id: "c", name: "The hatch", col: 2, row: 0 }],
+        edges: [["a", "b"], ["b", "c"]], start: "a", foes: [{ t: "deep", zone: "c" }, { t: "listener", zone: "b" }, { t: "listener", zone: "b", name: "A listening hand (2)" }] }
+    },
+    start: "bridge",
+    scenes: {
+      bridge: { name: "The bridge of HMCS Larkspur", theme: "sea", mood: "tense", lighting: "normal", weather: "wind", cast: ["rhodes"],
+        onEnter: [{ once: "in", steps: [
+          { say: "The North Atlantic, in March 1942. Convoy ON-71: forty ships in nine columns, a thousand miles from anywhere, steaming westward under a low grey sky at nine knots, dark ships on a grey sea, all lights out and every wireless silent. On the bridge of the corvette Larkspur, the escort commander turns away from the binoculars and looks, very steadily, at you." },
+          { if: { arc: "choir" }, then: [{ say: "Ilse has sent a message by hand: 'The shelter sang. Make the convoy sing.'" }, { clue: "c_song" }] },
+          { if: { arc: "siren" }, then: [{ say: "Mrs. Dobbs has sent, in a package, her old whistle. 'If it is the same thing, blow it early.'" }, { clue: "c_loud" }] },
+          { if: { arc: "fought5" }, then: [{ say: "Matron Marlow has sent a note, folded into a Red Cross tin: 'It was not killed. It went into the earth. I think it went to sea.'" }] },
+          { talk: { npc: "rhodes", text: "Nine days of wireless silence. The Admiralty has ordered it. I have not been able to find the signal. And then last night the whole convoy went quiet at once, engines and screws and the very sea. I am a schoolmaster, not a sailor. I believe that I am being listened to." } }] }],
+        options: [
+          K.ask("rhodes", [
+            K.t("What happened last night?", ["At 3:07 everything stopped. The engines. The screws. The sound of the water on the plates. Eleven minutes. In the morning we found the Anneliese Holt out of line, her whole crew at their posts, smiling. She had been dead in the water for a day."], { free: true, clue: "c_drifter" }),
+            K.t("Who can we talk to?", "Delorme, the Asdic man, who heard it first. Commodore Haldane, who ordered the silence. Mrs. Reilly, the stewardess of the drifter, who is awake. And Dr. Brandt, who has hydrophones and a very odd history.", { free: true, set: "contacts_known" }),
+            K.t("Where did the silence start?", [{ say: "He taps the plot." }, "In the air gap. Eight hundred miles from any aircraft, on either side. For the first time in the war nobody can see us, or hear us, or find us. I thought it was a gift."], { cha: 7, clue: "c_gap" }),
+            K.t("What will you let us do?", "Anything that does not sink my convoy. I will not break formation. I will not break silence. Beyond that, I am a man very glad to see you.", { cha: 10, set: "rhodes_help" })
+          ], { label: "Talk to Lieutenant Commander Rhodes", name: "Commander Rhodes", bye: ["Mind the rail. It is a long way down."] }),
+          K.find("Read the night's log", "iq", "easy", "A log in a tidy schoolmaster's hand: 'Convoy in station, columns dressed. 03.06 all quiet. 03.07: silence. 03.18: engines resumed. Ten ships out of position.' Beneath, in his own hand, one line: 'I have never been so afraid of a flat calm.'", "A very tidy log.", { clue: "c_gap", hint: "Easy" }),
+          K.go("To the Asdic hut", "asdic", { if: "contacts_known" }),
+          K.go("To the commodore's ship, by boat", "commodore", { if: "contacts_known" }),
+          K.go("To the drifting Anneliese Holt", "drifter_deck", { if: "contacts_known" }),
+          K.go("To the hydrophone table", "table", { if: "contacts_known" })] },
+      asdic: { name: "The Asdic hut", theme: "interior", mood: "weird", lighting: "shadow", weather: "none", cast: ["delorme"],
+        onEnter: [{ once: "in", steps: [{ say: "A tiny steel hut on the bridge deck, an oscillating dial, a paper trace unrolling, a hot-valve smell, and a young man in headphones who hums a Breton lullaby without noticing, and looks round, with a start, when you come in." }] }],
+        options: [
+          K.ask("delorme", [
+            K.t("What do you hear?", ["The ping goes out. The ping should come back. It does not. Instead, there is a space in the sea, the shape of a ship. Then of a bigger ship. Then of the convoy. It is not empty. It is the shape of listening."], { free: true, clue: "c_ping", obj: "so1" }),
+            K.t("Does it frighten you?", "It should. It does not. It is so kind, in a way. It does not want the ships. It wants us to keep still, and be heard.", { free: true, clue: "c_gap" }),
+            K.t("Would you ping it, on our word?", [{ say: "He stops humming." }, "If I ping it, it will know I am here. It knows already. I would like to give it something to answer."], { cha: 8, set: "delorme_help" })
+          ], { label: "Talk to Able Seaman Delorme", name: "Delorme", bye: ["Do not listen too hard."] }),
+          K.find("Read the paper trace", "iq", "medium", "A reel of Asdic trace, every ping a clean black line, and every echo a gap: a clean white shape on the black, a ship, then ships, then the whole convoy. A drawn silhouette of a fleet in blank paper. And beneath, one line, as if written by someone drawing with a ruler: 'Hold still.'", "A reel of paper, ticking.", { clue: "c_ping", hint: "Intelligence, Medium", tags: ["sea"] }),
+          K.go("Back to the bridge", "bridge")] },
+      commodore: { name: "The Commodore's cabin, SS Empire Garland", theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["haldane"],
+        onEnter: [{ once: "in", steps: [{ say: "A wood-panelled cabin on the lead merchantman, a brass lamp, a chart table, a framed Trafalgar print, and a white-haired old gentleman in a greatcoat, who rises, very correctly, and offers you a chair and a ship's biscuit." }] }],
+        options: [
+          K.ask("haldane", [
+            K.t("Who ordered the wireless silence?", ["The Admiralty. By signal, nine nights ago. A very proper signal. Every group correct. I did not like it. I have never in my life received an order so politely worded."], { free: true, clue: "c_station", obj: "so2" }),
+            K.t("Why did you obey?", "Because it was the right thing to do. Because it came in the right cipher. Because a convoy that does not speak is a convoy the enemy cannot find. Because I am sixty-three, and I want to go home.", { free: true, clue: "c_gap" }),
+            K.t("Will you give us the order book?", [{ say: "He takes a small brass key from his watch-chain." }, "If you tell me how to get my ships home. I will give you everything. I would very much like to be disobeyed."], { cha: 8, set: "haldane_help" })
+          ], { label: "Talk to Commodore Haldane", name: "Commodore Haldane", bye: ["Keep station. Keep faith."] }),
+          K.find("Read the signal book", "iq", "medium", "The signal that ordered silence, in a flawless hand. No originator. No time of origin. Only a time of receipt: 03:07. And a small flaw in the cipher, deliberate, like a tiny, polite, affectionate signature: a cipher group that, spelt out, reads 'Thank you for keeping still.'", "A very long book of signals.", { clue: "c_station", obj: "so2", hint: "Intelligence, Medium", tags: ["order"] }),
+          K.go("Back to the bridge", "bridge")] },
+      drifter_deck: { name: "The deck of the SS Anneliese Holt", theme: "sea", mood: "dread", lighting: "normal", weather: "none", cast: ["reilly"],
+        onEnter: [{ once: "in", steps: [{ say: "A dead-calm sea, a rusty tramp steamer with every light burning, and a deck full of men standing at their posts: the helmsman at the wheel, the lookout at the rail, the stokers at the hatch. All of them smile. None of them look at you. In the galley doorway, a woman in a stewardess's apron pours tea into a row of cups." }] }],
+        options: [
+          K.ask("reilly", [
+            K.t("What happened to them?", ["They were told to keep still. Not by anyone I saw. It was in the air. Like the hush after a hymn. They did, the first night, and the second. They do not mind. They are very happy. I keep making tea, so they remember what it is for."], { free: true, clue: "c_drifter", obj: "so3" }),
+            K.t("Why not you?", "Because I was talking. Always. To the cook. To myself. To my sister in Cork, in my head, the whole way across. It could not get a word in. I think I am very annoying to it.", { free: true, clue: "c_loud" }),
+            K.t("Will you talk to them for us?", [{ say: "She picks up the teapot." }, "Every day for the rest of my life, if it brings them back. I would sooner shout than let them sit like that."], { cha: 7, set: "reilly_help" })
+          ], { label: "Talk to Mrs. Reilly", name: "Mrs. Reilly", bye: ["Mind the tea. It is the only warm thing on the ship."] }),
+          K.find("Search the chart room for the last log", "awareness", "easy", "The ship's log, in a mate's confident hand. Eleven days of clean entries, and then an entry that ends in the middle of a word. Underneath, in a different hand, very neatly: 'It was so beautiful that I forgot to write.'", "A very damp log.", { clue: "c_drifter", hint: "Easy" }),
+          K.go("Back to the bridge", "bridge")] },
+      table: { name: "The hydrophone table", theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["ilse"],
+        onEnter: [{ once: "in", steps: [{ say: "A cramped charthouse aft, a chart table, a bundle of cables lashed with spun-yarn, a hydrophone case wedged against the roll, and a woman in an oilskin, with a thermos and a wax cylinder in a lead case, who rises when you come in." }] }],
+        options: [
+          K.ask("ilse", [
+            K.t("What do you hear?", ["The same thing. At the largest scale I have ever heard. It is not in the water. It is in the order that the water is expected to keep. A thousand miles of sea, being asked, very kindly, to hold still."], { free: true, clue: "c_same" }),
+            K.t("How do we stop it?", "We give it an answer in a medium it does not expect. Light. Forty ships each flashing the same song with an Aldis lamp. It has an ear for sound and for wireless. I do not think it has an eye.", { free: true, clue: "c_song", set: "song_known" }),
+            K.t("What would you use the cylinder for?", [{ say: "She opens the lead case." }, "It is the Berlin silence, run backwards. I could play it through the Asdic projector, into the sea. It would say, to the thing below: I know your name."], { cha: 8, set: "ilse_help", clue: "c_ping" })
+          ], { label: "Talk to Dr. Brandt", name: "Dr. Brandt", bye: ["Light, not sound. Always, light."] }),
+          K.find("Calibrate the hydrophone", "awareness", "medium", "A low continuous murmur, exactly like the sea, and under it, the same slow count you have heard in a ward, and a cellar, and a transmitter hall, one pulse after another, forty thousand heartbeats and then forty. They have become one.", "Water, and a faint hum.", { clue: "c_ping", hint: "Awareness, Medium", tags: ["sea"] }),
+          K.go("Aboard the Anneliese Holt, at 3:07", "fight_deck", { if: { all: [{ clue: "c_ping" }, { clue: "c_gap" }, { clue: "c_song" }] } }),
+          K.go("Back to the bridge", "bridge")] },
+      fight_deck: { name: "The deck of the Anneliese Holt, 3:07", theme: "sea", mood: "boss", lighting: "dark", weather: "none",
+        onEnter: [{ once: "in", steps: [
+          { say: "3:07. The engines stop. The screws stop. The water stops slapping on the plates. All around, in the dark, forty ships hold perfectly still, a black fleet on a black sea, and in the middle of the foredeck of the Anneliese Holt, something huge and quiet stands with its head tilted, taking the whole ocean's attention." },
+          { objective: "po1" }] }],
+        options: [
+          { label: "Sing it down: forty ships, forty lamps, one song", hint: "Needs the song, Rhodes and Haldane", if: { all: ["song_known", "rhodes_help", "haldane_help"] }, steps: [{ check: { aspect: "agility", cr: "challenging", label: "Run the signal lamps down the line before the hush closes", who: "choose", tags: ["order", "talk"],
+            ok: [{ say: "Commodore Haldane gives the order, in the old way, by flag. Forty lamps wink, down the whole length of the convoy, flashing the same slow tune in Morse: 'Roses of Picardy'. The Hush, which has an ear for every sound and every signal on the sea, finds itself being answered in a language it has no ear for. For the first time in its life, it is being sung to." }, { set: "res_lamps" }, { objective: "po2" }, { arcSet: "lamps" }, { goto: "end" }],
+            fail: [{ say: "Two lamps flash, and fail. The silence waits." }, { damage: { pool: "sanity", amount: 3 } }] } }] },
+          { label: "Throw a depth-charge pattern, and ping the cylinder into the sea", hint: "Needs Delorme and Ilse", if: { all: ["delorme_help", "ilse_help"] }, steps: [{ check: { aspect: "iq", cr: "challenging", label: "Time the pattern and the ping to the same ten seconds", who: "choose", tags: ["sea"],
+            ok: [{ say: "Delorme pings the Berlin cylinder, backwards, into the dark. A depth-charge pattern follows it, throwing columns of white water into the black. The sea groans, and then roars. In the morning every ship in the convoy is intact, and for the first time in nine nights the sound of the water on the plates is the loudest thing in the world." }, { set: "res_ping" }, { objective: "po2" }, { arcSet: "pinged" }, { goto: "end" }],
+            fail: [{ say: "The pattern falls short, and the ping falls flat. The hush closes." }, { damage: { pool: "health", amount: 3 } }] } }] },
+          { label: "Face it on the foredeck", steps: [{ set: "res_fight" }, { combat: "drifter", win: [{ say: "The sea gives one enormous groan, and then, very close, an ordinary gull." }, { objective: "po2" }, { arcSet: "fought6" }, { goto: "end" }] }] }] },
+      end: { name: "The bridge of the Larkspur, dawn", theme: "sea", mood: "calm", lighting: "normal", weather: "wind",
+        onEnter: [{ once: "in", steps: [
+          { say: "Dawn on the Atlantic: a grey sea, a pink sky, forty ships in nine columns, all with their lights out, all steaming west at nine knots, and every one of them, for the first time in nine days, making a noise. Commander Rhodes stands at the rail with his mug of tea and listens to the hiss of the bow-wave." },
+          { if: { flag: "res_lamps" }, then: [{ say: "You sang it down with light. Forty lamps, one tune. The convoy reaches Halifax a day late, and the Admiralty records a signal discipline of unprecedented merriment." }] },
+          { if: { flag: "res_ping" }, then: [{ say: "You answered it with its own name, and a depth-charge pattern. It is a thing the Admiralty does not record. Ilse keeps the cylinder warm in her bunk." }] },
+          { if: { flag: "res_fight" }, then: [{ say: "You faced it on the foredeck. It was not killed. It slid over the side into the sea like a long, slow sigh, and it is somewhere in the Atlantic still." }] },
+          { if: { obj: "so1" }, then: [{ say: "Delorme hums in the Asdic hut, aloud, from now on, deliberately." }] },
+          { if: { obj: "so2" }, then: [{ say: "Commodore Haldane burns the forged signal in the galley stove, and writes in his order book, in his own hand, a real one." }] },
+          { if: { obj: "so3" }, then: [{ say: "Mrs. Reilly's tea is mentioned in dispatches. The crew of the Anneliese Holt wake, one by one, and ask whose watch it is." }] },
+          { end: "win" }] }], options: [] }
+    }
+  });
+
   window.PACKS.define({
     format: "beyond-pack", id: "quiet-front", name: "The Quiet Front", version: "1", author: "Gage Lee", builtIn: true,
     description: "A seven-part campaign through the World Wars era, 1916 to 1945. Something follows the great events of the age, because it feeds on the moment after the guns stop.",
