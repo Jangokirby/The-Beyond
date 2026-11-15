@@ -13,14 +13,6 @@ html.ed-pixel {
   --fs-0: .95rem; --fs-1: 1.1rem; --fs-2: 1.25rem; --fs-3: 1.4rem; --fs-4: 1.6rem; --fs-5: clamp(1.6rem, 5vw, 3.2rem);
   --r: 0px;
 }
-html.ed-pixel.mono {
-  --night: #080808; --night-2: #121212; --night-3: #2a2a2a;
-  --washi: #d4d4d4; --washi-2: #b0b0b0; --sumi: #0c0c0c; --sumi-2: #3a3a3a;
-  --hanko: #e8e8e8; --hanko-2: #bdbdbd; --siren: #dcdcdc; --sodium: #ffffff;
-  --fog: #9c9c9c; --bone: #ececec; --grid: #cfcfcf;
-  --health: #e8e8e8; --sanity: #bdbdbd; --stability: #9a9a9a; --ok: #d8d8d8;
-  filter: grayscale(1) contrast(1.08);
-}
 .ed-pixel body { background: var(--night); font-size: 1.2rem; line-height: 1.25; letter-spacing: .01em; }
 .ed-pixel * { border-radius: 0 !important; text-shadow: none; }
 .ed-pixel h1, .ed-pixel h2, .ed-pixel h3, .ed-pixel .title, .ed-pixel .yearbig { font-family: var(--display); font-weight: 400; line-height: 1.5; letter-spacing: 0; text-transform: uppercase; }
@@ -50,3 +42,43 @@ html.ed-pixel.mono {
 @media (prefers-reduced-motion: reduce) { .ed-pixel body::after { display: none; } }
 .ed-pixel .wpin .eyebrow, .ed-pixel .wpin h4, .ed-pixel .wpin small { color: #222; }
 .ed-pixel .title, .ed-pixel #camp-root h2 { overflow-wrap: anywhere; font-size: clamp(1rem, 3.2vw, 1.9rem); }
+
+/* ============================================================================
+   ERA INTERFACES: each period dresses the pixel edition differently (palette, pixel
+   font and frame). In black and white the palette drops out but the type and frames stay.
+   ========================================================================== */
+html.ed-pixel[data-era="medieval"] { --night: #120c07; --night-2: #1e140b; --night-3: #33220f; --washi: #e6d2a0; --washi-2: #cdb784; --sumi: #20150a; --bone: #f0dcae; --fog: #a8946a; --sodium: #e0a63a; --hanko: #b8402a; --siren: #d9b66a; --display: "Jacquard 12", "Press Start 2P", monospace; --fs-5: clamp(2.2rem, 7vw, 4.4rem); }
+html.ed-pixel[data-era="victorian"] { --night: #0b100d; --night-2: #121a15; --night-3: #1f2c24; --washi: #e2d9b8; --washi-2: #cbc19a; --sumi: #16201a; --bone: #e8dfc0; --fog: #8fa08f; --sodium: #c9a24a; --hanko: #9a3a2a; --siren: #6fb08a; --display: "Jacquard 24", "Pixelify Sans", monospace; --fs-5: clamp(2.2rem, 7vw, 4.4rem); }
+html.ed-pixel[data-era="wars"] { --night: #0e100a; --night-2: #171a10; --night-3: #272c1a; --washi: #d6cfa8; --washi-2: #bdb68c; --sumi: #1b1d12; --bone: #d9d3b0; --fog: #98987a; --sodium: #bfae5a; --hanko: #9a4a32; --siren: #8fa86a; --display: "Silkscreen", "Press Start 2P", monospace; }
+html.ed-pixel[data-era="atomic"] { --night: #0a1214; --night-2: #11202a; --night-3: #1c3340; --washi: #ece2c4; --washi-2: #d8cba6; --sumi: #14232b; --bone: #efe6cf; --fog: #8fa9ae; --sodium: #f08a3a; --hanko: #e0553a; --siren: #3fb8b0; --display: "Press Start 2P", monospace; }
+html.ed-pixel[data-era="modern"] { --night: #030603; --night-2: #08120a; --night-3: #123018; --washi: #0c1a10; --washi-2: #123018; --sumi: #a8f0b8; --bone: #b8f5c4; --fog: #6fb07f; --sodium: #7cf09a; --hanko: #e0553a; --siren: #7cf09a; --display: "VT323", monospace; --fs-5: clamp(2.2rem, 7vw, 4.4rem); }
+html.ed-pixel[data-era="now"] { --night: #06080c; --night-2: #0d121a; --night-3: #18212e; --washi: #e8f1ff; --washi-2: #cfdcf0; --sumi: #0d141f; --bone: #e8f1ff; --fog: #8aa0bd; --sodium: #5fd0ff; --hanko: #ff4f8a; --siren: #5fd0ff; --display: "Tiny5", "Pixelify Sans", monospace; --fs-5: clamp(2.2rem, 7vw, 4.4rem); }
+html.ed-pixel[data-era="future"] { --night: #07040d; --night-2: #120a1e; --night-3: #261540; --washi: #f0e6ff; --washi-2: #d8c8f5; --sumi: #160a28; --bone: #f0e6ff; --fog: #a090c8; --sodium: #ff4fd8; --hanko: #ff4fd8; --siren: #3ff3ff; --display: "Handjet", "Tiny5", monospace; --fs-5: clamp(2.4rem, 8vw, 5rem); }
+html.ed-pixel[data-era="future"] h1, html.ed-pixel[data-era="future"] h2, html.ed-pixel[data-era="now"] h2, html.ed-pixel[data-era="modern"] h2, html.ed-pixel[data-era="medieval"] h2, html.ed-pixel[data-era="victorian"] h2 { font-size: 1.9rem; text-transform: none; letter-spacing: .02em; }
+/* frames */
+html.ed-pixel[data-era="medieval"] :is(.cpanel, .modal, .mcard, .hqcard, .campaign-card, .panel) { border-style: double; border-width: 6px; box-shadow: 4px 4px 0 #000; }
+html.ed-pixel[data-era="victorian"] :is(.cpanel, .modal, .mcard, .hqcard, .campaign-card, .panel) { border-style: ridge; border-width: 6px; border-color: var(--sodium); box-shadow: 4px 4px 0 #000; }
+html.ed-pixel[data-era="wars"] :is(.cpanel, .modal, .mcard, .hqcard, .campaign-card, .panel) { border: 4px dashed var(--bone); outline: 3px solid #000; box-shadow: none; }
+html.ed-pixel[data-era="atomic"] :is(.cpanel, .modal, .mcard, .hqcard, .campaign-card, .panel) { border: 3px solid var(--bone); box-shadow: 6px 6px 0 var(--hanko); }
+html.ed-pixel[data-era="modern"] :is(.cpanel, .modal, .mcard, .hqcard, .campaign-card, .panel) { border: 1px solid var(--bone); box-shadow: 0 0 10px rgba(124, 240, 154, .55), inset 0 0 12px rgba(124, 240, 154, .12); }
+html.ed-pixel[data-era="modern"] body::after { background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px 3px); }
+html.ed-pixel[data-era="now"] :is(.cpanel, .modal, .mcard, .hqcard, .campaign-card, .panel) { border: 2px solid var(--sodium); box-shadow: 4px 4px 0 var(--hanko); }
+html.ed-pixel[data-era="future"] :is(.cpanel, .modal, .mcard, .hqcard, .campaign-card, .panel) { border: 2px solid var(--siren); box-shadow: 3px 3px 0 var(--sodium), 6px 6px 0 rgba(63, 243, 255, .55); }
+html.ed-pixel[data-era="future"] button:hover:not(:disabled) { background: var(--sodium); color: #000; }
+
+/* black and white drops the era palette (type and frames stay); era tint dyes the whole screen in the period's phosphor */
+html.ed-pixel.mono {
+  --night: #080808; --night-2: #121212; --night-3: #2a2a2a;
+  --washi: #d4d4d4; --washi-2: #b0b0b0; --sumi: #0c0c0c; --sumi-2: #3a3a3a;
+  --hanko: #e8e8e8; --hanko-2: #bdbdbd; --siren: #dcdcdc; --sodium: #ffffff;
+  --fog: #9c9c9c; --bone: #ececec; --grid: #cfcfcf;
+  --health: #e8e8e8; --sanity: #bdbdbd; --stability: #9a9a9a; --ok: #d8d8d8;
+  filter: grayscale(1) contrast(1.08);
+}
+html.ed-pixel.tint { filter: grayscale(1) sepia(1) saturate(2.2) contrast(1.05) hue-rotate(0deg); }
+html.ed-pixel.tint[data-era="victorian"] { filter: grayscale(1) sepia(1) saturate(2) contrast(1.05) hue-rotate(45deg); }
+html.ed-pixel.tint[data-era="wars"] { filter: grayscale(1) sepia(1) saturate(1.6) contrast(1.05) hue-rotate(22deg); }
+html.ed-pixel.tint[data-era="atomic"] { filter: grayscale(1) sepia(1) saturate(2.2) contrast(1.05) hue-rotate(140deg); }
+html.ed-pixel.tint[data-era="modern"] { filter: grayscale(1) sepia(1) saturate(2.6) contrast(1.1) hue-rotate(85deg); }
+html.ed-pixel.tint[data-era="now"] { filter: grayscale(1) sepia(1) saturate(2.4) contrast(1.05) hue-rotate(160deg); }
+html.ed-pixel.tint[data-era="future"] { filter: grayscale(1) sepia(1) saturate(2.6) contrast(1.05) hue-rotate(255deg); }

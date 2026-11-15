@@ -36,8 +36,8 @@
         chk("Colour-blind friendly bars", () => S.colour, (v) => (S.colour = v)),
         chk("Reduce motion (no shakes or flashes)", () => S.still, (v) => (S.still = v)),
         el("h4", { class: "set-head" }, "Pictures"),
-        window.PIXEL_EDITION ? el("div", {}, el("label", { class: "set" }, el("span", {}, "Palette"), el("select", { onchange: (e) => { try { localStorage.setItem("beyond.pixelMono", e.target.value); } catch (err) {} document.documentElement.classList.toggle("mono", e.target.value !== "0"); window.PIXEL_MONO = e.target.value !== "0"; } },
-          el("option", { value: "1", selected: window.PIXEL_MONO ? "selected" : null }, "Black and white"), el("option", { value: "0", selected: window.PIXEL_MONO ? null : "selected" }, "Colour"))),
+        window.PIXEL_EDITION ? el("div", {}, el("label", { class: "set" }, el("span", {}, "Palette"), el("select", { onchange: (e) => window.PIXEL_APPLY(e.target.value) },
+          ...[["bw", "Black and white"], ["tint", "One colour per era (like an old monitor)"], ["colour", "Full colour"]].map(([v, t]) => el("option", { value: v, selected: window.PIXEL_PALETTE === v ? "selected" : null }, t)))),
           el("p", { class: "small muted set-note" }, "This is the Pixel edition. Your saves are shared with the main game. "), el("a", { href: "/", class: "small" }, "Play the painted edition")) :
         window.ART_STYLE_FIXED ? el("p", { class: "small muted set-note" }, `This page shows the ${window.ART_STYLE || "painted"} style only. The full game switches between Painted, Photo and Drawn here.`) :
         el("label", { class: "set" }, el("span", {}, "Art style"), el("select", { onchange: async (e) => {

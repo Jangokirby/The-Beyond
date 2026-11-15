@@ -82,7 +82,7 @@
   s = window.ART_STYLE_FORCE || q || s || window.ART_STYLE_DEFAULT || "painted";
   if (!/^(painted|photo|drawn|pixel)$/.test(s)) s = "painted";
   window.ART_STYLE = s;
-  if (s === "pixel") document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"><link rel="stylesheet" href="css/pixel.css">');
+  if (s === "pixel") document.write('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Jacquard+12&family=Jacquard+24&family=Pixelify+Sans&family=Silkscreen&family=Tiny5&family=Handjet&display=swap"><link rel="stylesheet" href="css/pixel.css">');
   if (s !== "drawn") document.write('<script src="js/art/' + s + '/lib.js"><\/script><script src="js/art/' + s + '/picks.js"><\/script><script src="js/dossier.js"><\/script>');
 })();
 </script>
