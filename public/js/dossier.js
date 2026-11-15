@@ -21,7 +21,7 @@
 (function () {
   const LIB = window.DOSSIER_LIB || { portraits: [], monsters: [], scenes: [] };
   const ART = window.ART, A0 = { portrait: ART.portrait, scene: ART.scene, sprite: ART.sprite };
-  const STYLE = window.ART_STYLE || "painted", PAINTED = STYLE === "painted";
+  const STYLE = window.ART_STYLE || "painted", PAINTED = STYLE === "painted" || STYLE === "pixel", DIR = STYLE === "pixel" ? "pixel" : "painted", EXT = STYLE === "pixel" ? "png" : "jpg";
   const D = (window.DOSSIER = { LIB, style: STYLE });
   const hash = (s) => { let h = 2166136261; for (const ch of String(s)) { h ^= ch.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; };
   const byId = {}; for (const g of ["portraits", "monsters", "scenes"]) for (const x of LIB[g]) byId[x.id] = x;
@@ -190,14 +190,14 @@
   const ROOMS = ["medieval", "victorian", "wars", "atomic", "modern", "now", "future"];
   const SEALS = { OID: "oid", WCA: "wca", NSBD: "nsbd", EHG: "ehg", BFV: "bfv" };
   if (PAINTED) document.addEventListener("DOMContentLoaded", () => {
-    const H = window.HIDE; if (H && H.room) { const room0 = H.room; H.room = (id) => { const e = id || (window.CAMP && CAMP.camp ? (CAMP.camp.year > 2100 ? "future" : D.eraOf(CAMP.camp.year)) : "modern"); return ROOMS.includes(e) ? `assets/painted/h/${e}.jpg` : room0(id); }; }
+    const H = window.HIDE; if (H && H.room) { const room0 = H.room; H.room = (id) => { const e = id || (window.CAMP && CAMP.camp ? (CAMP.camp.year > 2100 ? "future" : D.eraOf(CAMP.camp.year)) : "modern"); return ROOMS.includes(e) ? `assets/${DIR}/h/${e}.${EXT}` : room0(id); }; }
     /* the painted rooms all share one layout: notice board, weapon rack, door, phone, shelves, cabinet, archway, two benches and a chest */
     const BOX = { board: [0, 26, 11, 28], armory: [14, 24, 12, 38], door: [30, 8, 10, 58], phone: [45, 26, 8, 20], archive: [58, 4, 14, 62],
       vault: [75, 38, 10, 30], garage: [89, 10, 11, 58], table: [2, 78, 30, 18], log: [42, 80, 18, 16], cot: [70, 80, 30, 16] };
     if (H) H.relayout = (ps) => ps.map((p) => (BOX[p.id] ? { ...p, x: BOX[p.id][0], y: BOX[p.id][1], w: BOX[p.id][2], h: BOX[p.id][3] } : p));
     const seal = (root) => root.querySelectorAll && root.querySelectorAll(".crest:not(.sealed)").forEach((c) => {
       const k = SEALS[c.textContent.trim()]; if (!k) return;
-      c.classList.add("sealed"); c.title = c.textContent; c.style.backgroundImage = `url(assets/painted/u/agency-${k}.jpg)`; c.textContent = "";
+      c.classList.add("sealed"); c.title = c.textContent; c.style.backgroundImage = `url(assets/${DIR}/u/agency-${k}.${EXT})`; c.textContent = "";
     });
     new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) if (n.nodeType === 1) { if (n.classList.contains("crest")) seal(n.parentNode); else seal(n); } }).observe(document.body, { childList: true, subtree: true });
     seal(document);
@@ -215,5 +215,5 @@
     return want && byId[want] ? reg("scenes", "ph:", byId[want]) : null;
   };
   D.src = (id) => (byId[id] ? byId[id].f : "");
-  document.documentElement.classList.add("ed-dossier", PAINTED ? "ed-painted" : "ed-photo");
+  document.documentElement.classList.add("ed-dossier", PAINTED ? "ed-painted" : "ed-photo"); if (STYLE === "pixel") document.documentElement.classList.add("ed-pixel");
 })();

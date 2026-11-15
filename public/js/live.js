@@ -486,7 +486,7 @@
     const m = d.getElementById("mirror"); if (!m) return;
     const keep = {}; for (const id of ["story", "panel", "scene"]) { const n = d.getElementById(id); if (n) keep[id] = { top: n.scrollTop, bottom: n.scrollHeight - n.scrollTop - n.clientHeight < 60 }; }
     d.documentElement.classList.toggle("jp-flavor", !!v.jp);
-    if (window.DOSSIER) d.documentElement.classList.add("ed-dossier", window.ART_STYLE === "painted" ? "ed-painted" : "ed-photo");
+    if (window.DOSSIER) d.documentElement.classList.add("ed-dossier", window.ART_STYLE === "painted" || window.ART_STYLE === "pixel" ? "ed-painted" : "ed-photo"); if (window.ART_STYLE === "pixel") d.documentElement.classList.add("ed-pixel");
     m.innerHTML = expand(v.html);
     for (const id of Object.keys(keep)) { const n = d.getElementById(id); if (n) n.scrollTop = keep[id].bottom ? n.scrollHeight : keep[id].top; }
   };

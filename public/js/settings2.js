@@ -45,7 +45,7 @@
           if (/[?&]art=/.test(location.search)) { const u = new URL(location.href); u.searchParams.delete("art"); history.replaceState(null, "", u); }
           window.UI.toast("Changing the pictures. The game reloads; your campaign is saved.");
           setTimeout(() => location.reload(), 700);
-        } }, ...[["painted", "Painted (oil paintings)"], ["photo", "Photo (old photos and engravings)"], ["drawn", "Drawn (vector drawings)"]].map(([v, t]) => el("option", { value: v, selected: (window.ART_STYLE || "painted") === v ? "selected" : null }, t)))),
+        } }, ...[["painted", "Painted (oil paintings)"], ["pixel", "Pixel (retro pixel art)"], ["photo", "Photo (old photos and engravings)"], ["drawn", "Drawn (vector drawings)"]].map(([v, t]) => el("option", { value: v, selected: (window.ART_STYLE || "painted") === v ? "selected" : null }, t)))),
         el("p", { class: "small muted set-note" }, "The same game in three looks. The rulebook's own art for the patrons and the title stays in every style."),
         el("h4", { class: "set-head" }, "Atmosphere"),
         chk("Era styles for the screen", () => (window.ERASKIN ? ERASKIN.on() : true), (v) => window.ERASKIN && ERASKIN.set(v)),
