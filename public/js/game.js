@@ -515,6 +515,51 @@
     const wrap = el("div", { class: "idle-grid" });
     for (const o of opts) wrap.append(el("button", { class: "btn choice idle" + (o.exit ? " exit" : ""), onclick: o.fn }, el("span", { class: "lbl" }, o.label)));
     box.append(wrap);
+    const free = el("button", { class: "btn choice idle improv", onclick: () => G.improvise() }, el("span", { class: "lbl" }, "Try something else…"), el("small", {}, "Say what you do and how"));
+    wrap.append(free);
+  };
+
+  /* ================================================================== improvise
+     The player says what the agent does, in their own words, and how (which Aspect). If the idea fits one of
+     the things the place offers, that is the thing that happens, rolled with the chosen Aspect: the same Aspect
+     is a little easier, an unusual one a little harder. If it fits nothing, it is a hunch: a roll for a nudge. */
+  const STOP = new Set(["the", "and", "with", "from", "that", "this", "into", "your", "them", "then", "for", "you", "are", "have", "about", "what", "look", "try", "use"]);
+  const stems = (t) => new Set(String(t || "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/).filter((w) => w.length > 3 && !STOP.has(w)).map((w) => w.slice(0, 5)));
+  const steptext = (o, out = []) => { if (Array.isArray(o)) o.forEach((x) => steptext(x, out)); else if (o && typeof o === "object") for (const [k, v] of Object.entries(o)) { if (typeof v === "string" && ["say", "label", "hint", "text"].includes(k)) out.push(v); else if (v && typeof v === "object") steptext(v, out); } return out; };
+  const GUESS = [[/search|look|watch|spot|notice|listen|examine|inspect|peer|scan|check the/, "awareness"], [/read|study|work out|deduce|decode|figure|analy[sz]e|compare|calculate|hack|cross-reference/, "iq"], [/persuade|ask|convince|talk|charm|bluff|lie|negotiate|reassure|bribe|plead/, "charisma"], [/climb|sneak|creep|dodge|jump|slip|pick|balance|swing/, "agility"], [/force|break|lift|smash|push|pull|kick|haul|shove|pry/, "strength"], [/pray|bless|ward|consecrate|rite|banish/, "faith"], [/resist|endure|steady|hold|brace|calm|ignore/, "willpower"], [/sense|channel|feel for|divine|commune|call out to/, "occult"]];
+  G.improvise = async () => {
+    const list = ["strength", "agility", "charisma", "iq", "awareness", "willpower", "faith", "occult", "morality"];
+    const text = el("input", { type: "text", maxlength: "140", placeholder: "e.g. Comb the files for anything about the night shift", style: "width:100%" });
+    const sel = el("select", {}, ...list.map((k) => el("option", { value: k, selected: k === "awareness" ? "selected" : null }, R.ASPECT_LABEL[k] || k)));
+    text.addEventListener("input", () => { const t = text.value.toLowerCase(); const g = GUESS.find(([re]) => re.test(t)); if (g) sel.value = g[1]; });
+    const body = el("div", {}, el("p", { class: "small" }, "Say what your agent does, in your own words. Then choose how: the Aspect decides the roll."), text,
+      el("label", { class: "small", style: "display:block;margin-top:8px" }, "How? ", sel), el("p", { class: "small muted" }, "If it fits something here, that is what happens. A different approach is harder. If it fits nothing, it is a hunch."));
+    const r = await U.modal({ title: "Try something else", body, buttons: [{ id: "no", label: "Never mind" }, { id: "go", label: "Do it", cls: "primary" }] });
+    const said = text.value.trim(); if (r !== "go" || !said) return;
+    const asp = sel.value, words = stems(said);
+    const live = G.visibleHotspots().filter((h) => h.src && !h.go && JSON.stringify(h.src.steps || []).includes('"check"'));
+    let best = null, bs = 0;
+    for (const h of live) { const have = stems(steptext([h.label, h.src.hint, h.src.steps]).join(" ")); let n = 0; for (const w of words) if (have.has(w)) n++; if (n > bs) { bs = n; best = h; } }
+    if (best && bs >= 1) {
+      const chk = JSON.stringify(best.src.steps).match(/"aspect":"(\w+)"/), same = chk && chk[1] === asp;
+      ADV.improv = { aspect: asp, shift: same ? -1 : 2, note: same ? "Your own way into it is the right way: it goes a little easier." : "It is an unusual way in, and a harder one." };
+      U.print(`<i>${said.replace(/[<>&]/g, "")}</i>`, "narr");
+      G.useHotspot(best);
+      setTimeout(() => { if (!G.busy) ADV.improv = null; }, 600);
+      return;
+    }
+    await G.run(async () => {
+      await api.narrate(`<i>${said.replace(/[<>&]/g, "")}</i>`);
+      const r2 = await G.check({ aspect: asp, cr: R.cr("medium"), label: "A hunch", who: "choose", tags: ["hunch"] });
+      if (r2.ok) {
+        const all = G.visibleHotspots().filter((h) => !h.go && h.src);
+        const pick = all[Math.floor(Math.random() * all.length)];
+        await api.narrate(pick ? `It does not lead anywhere on its own, but it turns your mind to something else here: <b>${pick.label}</b>.` : "It does not lead anywhere here. But you are sure of that, now.");
+      } else {
+        await api.narrate("You are sure there is something in it, and wrong about what. It takes time, and nothing comes of it.");
+        if (window.FOCUS && FOCUS.on() && r2.agent) { const f = FOCUS.get(r2.agent); if (f.cur > 0) { f.cur -= 1; G.refreshParty(); } }
+      }
+    });
   };
 
   /* ================================================================== interviews */

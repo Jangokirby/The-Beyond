@@ -117,7 +117,9 @@
       else if (st.shake) g.shake();
       else if (st.check) {
         const c = st.check;
-        const r = await G.check({ aspect: c.aspect, cr: R.cr(c.cr), label: c.label || "Check", who: c.who || "choose", tags: c.tags || [], investigate: !!c.investigate, tryKey: c.tryKey });
+        let asp = c.aspect, crv = R.cr(c.cr), im = ADV.improv;
+        if (im) { ADV.improv = null; asp = im.aspect; crv += im.shift; if (im.note) await g.narrate(im.note); }   // a player's own approach to this roll
+        const r = await G.check({ aspect: asp, cr: crv, label: c.label || "Check", who: c.who || "choose", tags: c.tags || [], investigate: !!c.investigate, tryKey: c.tryKey });
         if (await ADV.exec(r.ok ? c.ok : c.fail, g, M)) return true;
       } else if (st.group) {
         const c = st.group;
@@ -266,7 +268,7 @@
         enter: async (g) => { if (sc.onEnter) await ADV.exec(sc.onEnter.map((x) => (x && x.once ? { ...x, once: id + ":" + x.once } : x)), g, M); },
         hotspots: [],
         actions: (sc.options || []).map((o, i) => ({
-          label: o.label,
+          label: o.label, src: o,
           if: (g) => ADV.cond(o.if, g) && !(o.once && g.flag(`opt:${id}:${i}`)),
           run: async (g) => { if (o.once) g.set(`opt:${id}:${i}`); await ADV.exec(o.steps, g, M); }
         }))

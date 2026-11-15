@@ -83,7 +83,7 @@
       const loc = M.locations[id]; if (!loc) continue;
       const spots = (loc.actions || []).map((act, i) => ({ act, info: FOCUS.describe((sc.options || [])[i] || {}), i }));
       place(id, spots);
-      loc.hotspots = spots.map((s) => ({ id: "o" + s.i, label: s.act.label, if: s.act.if, run: s.act.run, pos: s.pos, info: s.info }));
+      loc.hotspots = spots.map((s) => ({ id: "o" + s.i, label: s.act.label, if: s.act.if, run: s.act.run, pos: s.pos, info: s.info, src: (sc.options || [])[s.i] }));
       loc.actions = [];
     }
     return M;
@@ -190,6 +190,8 @@
     for (const a of loc.actions || []) if (!a.if || a.if(G.api)) wrap.append(el("button", { class: "btn choice idle", onclick: () => { U.click(); G.run(() => a.run(G.api)); } }, el("span", { class: "lbl" }, a.label)));
     if (FOCUS.on() && G.active().some((a) => FOCUS.get(a).cur < FOCUS.get(a).max))
       wrap.append(el("button", { class: "btn choice idle ghost", onclick: () => { U.click(); G.run(async () => { await FOCUS.regroupAsk(); }); } }, el("span", { class: "lbl" }, "Regroup"), el("small", { class: "spotinfo" }, "Refill Focus · 2 Stability each")));
+    if (G.improvise && G.visibleHotspots().some((x) => x.src))
+      wrap.append(el("button", { class: "btn choice idle improv", onclick: () => { U.click(); G.improvise(); } }, el("span", { class: "lbl" }, "Try something else…"), el("small", { class: "spotinfo" }, "Say what you do, and how")));
     /* safety net: a scene with nothing left to do never leaves the table stuck */
     if (!wrap.children.length || (![...wrap.children].some((b) => !b.classList.contains("ghost")) && !(G.visibleHotspots().length))) {
       box.append(el("p", { class: "cnote" }, "There's nothing left to try here."));
