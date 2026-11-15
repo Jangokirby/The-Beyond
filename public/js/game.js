@@ -55,7 +55,7 @@
   G.agentById = (id) => G.state.agents.find((a) => a.id === id);
   G.partyGlow = () => G.active().some((a) => a.traits && a.traits.torchBearer);
   /* a carried light (a flashlight or lantern in the kit), a torch-bearer, or a Brightness spell cast in this place */
-  G.partyLight = () => G.active().some((a) => (a.traits && a.traits.torchBearer) || (a.items || []).some((it) => { const d = it.def || (M.items || {})[it.id]; return d && d.light && it.uses > 0; })) || !!(G.state && G.state.spellLight && G.state.spellLight === G.state.loc);
+  G.partyLight = () => G.active().some((a) => (a.traits && a.traits.torchBearer) || (a.items || []).some((it) => { const d = it.def || (M.items || {})[it.id]; return d && d.light && it.uses > 0 && (!window.RPGX.on("fuel") || it.fuel === undefined || it.fuel > 0); })) || !!(G.state && G.state.spellLight && G.state.spellLight === G.state.loc);
   const DARKS = ["shadow", "dark", "pitch"];
   /* darkness hurts what you do with your eyes and hands, never what you say or believe */
   const UNSEEN_OK = ["charisma", "willpower", "mindfulness", "faith", "morality", "occult", "ancient", "potency"];
@@ -74,20 +74,31 @@
     const val = R.aspect(agent, opts.aspect);
     mods.push({ label: R.ASPECT_LABEL[opts.aspect] || opts.aspect, value: val, base: true });
     if (opts.aspect === "iq" && agent.traits && agent.traits.autoIQ) mods.push({ label: "The Never Speak's Collection", value: 50 });
-    const lighting = ctx.lighting || (G.loc() && G.loc().lighting) || "normal";
+    const lighting = ctx.lighting || (window.RPGX.on("clock") && G.lightOf ? G.lightOf() : (G.loc() && G.loc().lighting)) || "normal";
     const lit = ctx.glow !== undefined ? ctx.glow : G.partyLight();
-    const sees = UNSEEN_OK.includes(opts.aspect) || (opts.tags || []).includes("talk");   // talking and believing need no light
-    const sun = agent.traits && agent.traits.sunSight;
-    if (DARKS.includes(lighting) && agent.vision !== "dark" && !sees) {
-      if (lit) mods.push({ label: "Dark, but you carry a light", value: 0, note: true });
-      else if (lighting === "shadow") mods.push({ label: "Shadow: no light", value: -R.SHADOW_PENALTY });
-      else mods.push({ label: lighting === "pitch" ? "Pitch black: no light" : "Too dark: no light", value: -R.BLIND_PENALTY });
+    if (!window.RPGX.on("light")) {   // the classic rules, as they were
+      const glow0 = ctx.glow !== undefined ? ctx.glow : G.partyGlow();
+      if (lighting === "shadow" && agent.vision !== "dark") { if (glow0) mods.push({ label: "Shadow, lit by a lantern", value: 0, note: true }); else mods.push({ label: "Shadow", value: -R.SHADOW_PENALTY }); }
+      if ((agent.injuries || []).some((i) => i.blind)) mods.push({ label: "Blind (Maimed)", value: -R.BLIND_PENALTY });
+      if (R.fx(agent, "dependent") && G.active().length < 2) mods.push({ label: "Alone (Dependent)", value: -2 });
+      if (R.has(agent, "blind")) mods.push({ label: "Blind", value: -R.BLIND_PENALTY });
+      if ((lighting === "bright" && !(agent.traits && agent.traits.sunSight)) || (lighting === "dark" && agent.vision !== "dark")) mods.push({ label: lighting === "bright" ? "Too bright: Blind" : "Too dark: Blind", value: -R.BLIND_PENALTY });
+      if ((lighting === "blinding" && !(agent.traits && agent.traits.sunSight)) || (lighting === "pitch" && agent.vision !== "dark")) mods.push({ label: lighting === "blinding" ? "Blinding light" : "Pitch black", value: -R.BLIND_PENALTY });
+    } else {
+      const sees = UNSEEN_OK.includes(opts.aspect) || (opts.tags || []).includes("talk");   // talking and believing need no light
+      const sun = agent.traits && agent.traits.sunSight;
+      if (DARKS.includes(lighting) && agent.vision !== "dark" && !sees) {
+        if (lit) mods.push({ label: "Dark, but you carry a light", value: 0, note: true });
+        else if (lighting === "shadow") mods.push({ label: "Shadow: no light", value: -R.SHADOW_PENALTY });
+        else mods.push({ label: lighting === "pitch" ? "Pitch black: no light" : "Too dark: no light", value: -R.BLIND_PENALTY });
+      }
+      if ((agent.injuries || []).some((i) => i.blind)) mods.push({ label: "Blind (Maimed)", value: -R.BLIND_PENALTY });
+      if (R.fx(agent, "dependent") && G.active().length < 2) mods.push({ label: "Alone (Dependent)", value: -2 });
+      if (R.has(agent, "blind")) mods.push({ label: "Blind", value: -R.BLIND_PENALTY });
+      if (lighting === "bright" && !sun && !sees) mods.push({ label: "Too bright: Blind", value: -R.BLIND_PENALTY });
+      if (lighting === "blinding" && !sun && !sees) mods.push({ label: "Blinding light", value: -R.BLIND_PENALTY });
     }
-    if ((agent.injuries || []).some((i) => i.blind)) mods.push({ label: "Blind (Maimed)", value: -R.BLIND_PENALTY });
-    if (R.fx(agent, "dependent") && G.active().length < 2) mods.push({ label: "Alone (Dependent)", value: -2 });
-    if (R.has(agent, "blind")) mods.push({ label: "Blind", value: -R.BLIND_PENALTY });
-    if (lighting === "bright" && !sun && !sees) mods.push({ label: "Too bright: Blind", value: -R.BLIND_PENALTY });
-    if (lighting === "blinding" && !sun && !sees) mods.push({ label: "Blinding light", value: -R.BLIND_PENALTY });
+    if (window.PRESS && PRESS.stage() >= 3) mods.push({ label: "Late and tired", value: -1 });
     if (opts.aspect === "charisma" && agent.prop && agent.prop.decorated && ((G.loc() && G.loc().theme) || "") === "interior") mods.push({ label: "Well Decorated", value: 2 });
     const sev = ctx.severity !== undefined ? ctx.severity : ((G.loc() && G.loc().severity) || 0);
     if (R.weatherMod(sev)) mods.push({ label: `Weather ${sev}`, value: R.weatherMod(sev) });
@@ -408,10 +419,10 @@
   /* the light in the place, shown on the picture and in the badge: a dim sheet that lifts around a light you carry */
   G.paintLight = () => {
     const loc = G.loc(); if (!loc) return;
-    const L = loc.lighting || "normal", dark = DARKS.includes(L), lit = G.partyLight(), sc = U.$("#scene");
+    const L = G.lightOf ? G.lightOf(loc) : (loc.lighting || "normal"), dark = window.RPGX.on("light") && DARKS.includes(L), lit = G.partyLight(), sc = U.$("#scene");
     const badge = U.$("#loc-light");
     badge.dataset.l = L;
-    badge.textContent = !dark ? "Lit" : lit ? `${L === "shadow" ? "Shadow" : L === "pitch" ? "Pitch black" : "Dark"} · your light holds it back` : `${L === "shadow" ? "Shadow −2" : L === "pitch" ? "Pitch black −4" : "Dark −4"} · no light (sight rolls only)`;
+    badge.textContent = !window.RPGX.on("light") ? (L === "shadow" ? (G.partyGlow() ? "Shadow · lantern: Glow" : "Shadow −2") : "Lit") : !dark ? "Lit" : lit ? `${L === "shadow" ? "Shadow" : L === "pitch" ? "Pitch black" : "Dark"} · your light holds it back` : `${L === "shadow" ? "Shadow −2" : L === "pitch" ? "Pitch black −4" : "Dark −4"} · no light (sight rolls only)`;
     let dim = U.$("#scene-dim");
     if (!dim) { dim = el("div", { id: "scene-dim", "aria-hidden": "true" }); sc.append(dim);
       const move = (e) => { const r = sc.getBoundingClientRect(), p = e.touches ? e.touches[0] : e; dim.style.setProperty("--lx", `${p.clientX - r.left}px`); dim.style.setProperty("--ly", `${p.clientY - r.top}px`); };

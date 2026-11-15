@@ -1,0 +1,16 @@
+/* ============================================================================
+   RPGX: switches for the roleplaying additions, so each can be tried and turned off.
+   Settings > "Roleplaying features". The classic game is what you get with them all off
+   (and the git tag classic-v1 holds the code as it was before they were added).
+   ========================================================================== */
+(function () {
+  const KEY = "beyond.rpgx", D = { light: true, improv: true, fieldwork: true, events: true, typed: true, magic: true, clock: true, fuel: true, puzzles: true };
+  const read = () => { try { return Object.assign({}, D, JSON.parse(localStorage.getItem(KEY) || "{}")); } catch (e) { return Object.assign({}, D); } };
+  let S = read();
+  window.RPGX = {
+    list: [["light", "Light and dark you can see, and a light to carry"], ["clock", "Time presses: the night deepens as you act"], ["fuel", "Lights burn down (carry spares)"], ["puzzles", "Puzzles to solve, alongside the dice"], ["improv", "Try something else: type what you do"], ["fieldwork", "Field work: items, skills, ask around"], ["events", "Events that interrupt the day"], ["typed", "Type your own questions to people"], ["magic", "Cast magic words in scenes"]],
+    on: (k) => S[k] !== false,
+    set: (k, v) => { S[k] = !!v; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} },
+    all: (v) => { for (const k of Object.keys(D)) S[k] = !!v; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  };
+})();

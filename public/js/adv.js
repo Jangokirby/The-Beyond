@@ -228,7 +228,7 @@
           if (cv.limit && cap < 99 && used >= cap && left.every(({ t }) => !t.free)) { for (const l of cv.cutoff || ["That's all I have to say. I have things to do."]) await speak(l); break; }
           const npc = M.npcs[npcId] || {};
           const more = cv.limit && cap < 99 ? ` (${Math.max(0, cap - used)} question${cap - used === 1 ? "" : "s"} left)` : "";
-          let id = await g.choose((cv.prompt || `What do you ask ${npc.name || "them"}?`) + more, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask, hint: t.cha ? "Your Charisma draws this out" : t.free ? "" : undefined })), { id: "_type", label: "Ask about something else…", hint: "Type your own question" }, { id: "bye", label: cv.leave || "That's all for now" }]);
+          let id = await g.choose((cv.prompt || `What do you ask ${npc.name || "them"}?`) + more, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask, hint: t.cha ? "Your Charisma draws this out" : t.free ? "" : undefined })), ...(window.RPGX.on("typed") ? [{ id: "_type", label: "Ask about something else…", hint: "Type your own question" }] : []), { id: "bye", label: cv.leave || "That's all for now" }]);
           if (id === "_type") {
             const q = await ADV.askText(`Ask ${npc.name || "them"}`, "e.g. Who was here the night it happened?");
             if (!q) continue;

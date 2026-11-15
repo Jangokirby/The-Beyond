@@ -149,7 +149,7 @@
   G.run = async function (fn) {
     const wasBusy = G.busy; const r = await run0.call(this, fn);
     try {
-      if (wasBusy || !G.state || G.state.phase !== "explore" || !G.loc() || /boss|combat/.test(G.loc().music || "")) return r;
+      if (wasBusy || !window.RPGX.on("events") || !G.state || G.state.phase !== "explore" || !G.loc() || /boss|combat/.test(G.loc().music || "")) return r;
       G.state._beat = (G.state._beat || 0) + 1; const k = "ev:" + here();
       if (G.state._beat % 4 === 0 && (used()[k] || 0) < 2) {
         used()[k] = (used()[k] || 0) + 1;
@@ -164,6 +164,6 @@
   G.showIdle = function () {
     idle0.apply(this, arguments);
     const g = U.choicesBox().querySelector(".idle-grid");
-    if (g && G.state && G.state.phase === "explore") g.append(el("button", { class: "btn choice idle fieldwork", onclick: () => { U.click(); FW.menu(); } }, el("span", { class: "lbl" }, "Field work…"), el("small", { class: "spotinfo" }, "Use an item · your skills · ask around")));
+    if (g && window.RPGX.on("fieldwork") && G.state && G.state.phase === "explore") g.append(el("button", { class: "btn choice idle fieldwork", onclick: () => { U.click(); FW.menu(); } }, el("span", { class: "lbl" }, "Field work…"), el("small", { class: "spotinfo" }, "Use an item · your skills · ask around")));
   };
 })();
