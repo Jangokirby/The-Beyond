@@ -1,0 +1,350 @@
+{
+ "name": "Ward 9, \u00c9taples, 1918",
+ "w": 20,
+ "h": 12,
+ "style": {
+  "floor": "wood",
+  "wall": "plaster",
+  "mood": "dim"
+ },
+ "walls": [
+  {
+   "a": [
+    0,
+    0
+   ],
+   "b": [
+    20,
+    0
+   ]
+  },
+  {
+   "a": [
+    20,
+    0
+   ],
+   "b": [
+    20,
+    12
+   ]
+  },
+  {
+   "a": [
+    0,
+    12
+   ],
+   "b": [
+    20,
+    12
+   ]
+  },
+  {
+   "a": [
+    0,
+    0
+   ],
+   "b": [
+    0,
+    12
+   ]
+  }
+ ],
+ "doors": [
+  {
+   "x": 10,
+   "z": 12,
+   "w": 1.6,
+   "axis": "h"
+  },
+  {
+   "x": 20,
+   "z": 6,
+   "w": 1.4,
+   "axis": "v"
+  }
+ ],
+ "windows": [
+  {
+   "x": 4,
+   "z": 0,
+   "w": 1.3,
+   "axis": "h"
+  },
+  {
+   "x": 9,
+   "z": 0,
+   "w": 1.3,
+   "axis": "h"
+  },
+  {
+   "x": 14,
+   "z": 0,
+   "w": 1.3,
+   "axis": "h"
+  }
+ ],
+ "props": [
+  {
+   "t": "bed_iron",
+   "x": 2.2,
+   "z": 2.2,
+   "rot": 0
+  },
+  {
+   "t": "bed_iron",
+   "x": 5.2,
+   "z": 2.2,
+   "rot": 0
+  },
+  {
+   "t": "bed_iron",
+   "x": 8.2,
+   "z": 2.2,
+   "rot": 0
+  },
+  {
+   "t": "bed_iron",
+   "x": 11.2,
+   "z": 2.2,
+   "rot": 0
+  },
+  {
+   "t": "bed_iron",
+   "x": 14.2,
+   "z": 2.2,
+   "rot": 0
+  },
+  {
+   "t": "bed_iron",
+   "x": 2.2,
+   "z": 9.8,
+   "rot": 180
+  },
+  {
+   "t": "bed_iron",
+   "x": 5.2,
+   "z": 9.8,
+   "rot": 180
+  },
+  {
+   "t": "bed_iron",
+   "x": 8.2,
+   "z": 9.8,
+   "rot": 180
+  },
+  {
+   "t": "bed_iron",
+   "x": 11.2,
+   "z": 9.8,
+   "rot": 180
+  },
+  {
+   "t": "bed_iron",
+   "x": 14.2,
+   "z": 9.8,
+   "rot": 180
+  },
+  {
+   "t": "lamp_table",
+   "x": 3.7,
+   "z": 3.4,
+   "rot": 0
+  },
+  {
+   "t": "lamp_table",
+   "x": 9.7,
+   "z": 3.4,
+   "rot": 0
+  },
+  {
+   "t": "lamp_table",
+   "x": 6.7,
+   "z": 8.6,
+   "rot": 0
+  },
+  {
+   "t": "lamp_table",
+   "x": 12.7,
+   "z": 8.6,
+   "rot": 0
+  },
+  {
+   "t": "desk",
+   "x": 17.6,
+   "z": 3.2,
+   "rot": 0
+  },
+  {
+   "t": "stove",
+   "x": 18.4,
+   "z": 9.6,
+   "rot": 0
+  },
+  {
+   "t": "crate",
+   "x": 17.4,
+   "z": 1.2,
+   "rot": 0
+  },
+  {
+   "t": "crate",
+   "x": 18.4,
+   "z": 1.2,
+   "rot": 0
+  },
+  {
+   "t": "gramophone",
+   "x": 17.6,
+   "z": 5.2,
+   "rot": 0
+  },
+  {
+   "t": "stretcher",
+   "x": 10,
+   "z": 6,
+   "rot": 0
+  }
+ ],
+ "things": [
+  {
+   "x": 2.2,
+   "z": 2.2,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 5.2,
+   "z": 2.2,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 8.2,
+   "z": 2.2,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 11.2,
+   "z": 2.2,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 14.2,
+   "z": 2.2,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 2.2,
+   "z": 9.8,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 5.2,
+   "z": 9.8,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 8.2,
+   "z": 9.8,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 11.2,
+   "z": 9.8,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 14.2,
+   "z": 9.8,
+   "label": "An iron bed",
+   "text": "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.",
+   "act": "Look under the pillow",
+   "res": "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"
+  },
+  {
+   "x": 3.7,
+   "z": 3.4,
+   "label": "A hurricane lamp",
+   "text": "Trimmed low. Beside it a cup of tea gone cold, and a chair nobody has sat in since midnight."
+  },
+  {
+   "x": 9.7,
+   "z": 3.4,
+   "label": "A hurricane lamp",
+   "text": "Trimmed low. Beside it a cup of tea gone cold, and a chair nobody has sat in since midnight."
+  },
+  {
+   "x": 6.7,
+   "z": 8.6,
+   "label": "A hurricane lamp",
+   "text": "Trimmed low. Beside it a cup of tea gone cold, and a chair nobody has sat in since midnight."
+  },
+  {
+   "x": 12.7,
+   "z": 8.6,
+   "label": "A hurricane lamp",
+   "text": "Trimmed low. Beside it a cup of tea gone cold, and a chair nobody has sat in since midnight."
+  },
+  {
+   "x": 17.6,
+   "z": 3.2,
+   "label": "The sister's desk",
+   "text": "A ward register, a pen, a watch pinned to a blotter. The last entry is half a line long.",
+   "act": "Read the register",
+   "res": "Forty-one names in three weeks. Each with a note: 'Quiet from' and a time an hour earlier."
+  },
+  {
+   "x": 18.4,
+   "z": 9.6,
+   "label": "The stove",
+   "text": "Banked down. Something has been burned in it lately: paper, and a little cloth.",
+   "act": "Look in the ashes",
+   "res": "A scrap of paper, scorched: '...please. Somebody. Hear me say it.'"
+  },
+  {
+   "x": 17.6,
+   "z": 5.2,
+   "label": "A gramophone",
+   "text": "A trophy of Ward 6. A record is on it: a music-hall song, very loud.",
+   "act": "Wind it up",
+   "res": "It plays, dreadfully, at full volume. Along the ward, forty heads turn. For a moment it is not quiet at all."
+  }
+ ],
+ "npcs": [
+  {
+   "x": 16.2,
+   "z": 6.3,
+   "label": "Sister Marlow",
+   "portrait": "../assets/painted/a/wars-f-05.jpg"
+  }
+ ],
+ "start": [
+  10,
+  9.5
+ ]
+}

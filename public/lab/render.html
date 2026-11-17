@@ -1,0 +1,10 @@
+<!doctype html><meta charset="utf-8"><body style="margin:0;background:#000"><canvas id="c"></canvas>
+<script type="module">
+import { render } from "./kit.js"; import { furnish, blank } from "./gen.js";
+const h = location.hash.slice(1); let L;
+if (h.startsWith("preset:")) { const [, k, w, hh] = h.split(":"); L = furnish(blank(+w, +hh, k), k, 5); }
+else L = await (await fetch(h || "layouts/ward.json")).json();
+const r = render(L, document.getElementById("c"));
+window.PACK = { format: "beyond-map-1", layout: L, view: r.view, collide: r.collide, foot: r.foot, lights: r.lights, exits: r.exits, image: document.getElementById("c").toDataURL("image/jpeg", .86) };
+window.DONE = true;
+</script>

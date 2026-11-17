@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Beyond: Map Builder</title>
+<style>
+ :root{color-scheme:dark} *{box-sizing:border-box} body{margin:0;background:#0b0d10;color:#e8e4d6;font:14px/1.35 system-ui,sans-serif;display:grid;grid-template-columns:260px 1fr 340px;grid-template-rows:auto 1fr;height:100vh}
+ header{grid-column:1/4;display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12161c;border-bottom:1px solid #2a313b}
+ button,select,input,textarea,label.btn{background:#1d242d;color:#e8e4d6;border:1px solid #3b4654;padding:5px 9px;border-radius:6px;font:inherit} button{cursor:pointer} button:hover{background:#2a3440} button.on{background:#f2c14e;color:#111;border-color:#f2c14e}
+ aside{overflow:auto;padding:10px;border-right:1px solid #2a313b} #right{border-left:1px solid #2a313b;border-right:0} h4{margin:12px 0 4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:#9ab}
+ #cat button{display:block;width:100%;text-align:left;margin:2px 0} #cat button small{opacity:.6;display:block;font-size:.72rem} canvas{width:100%;height:100%;display:block;cursor:crosshair}
+ #prev{width:100%;border:1px solid #2a313b;background:#050607;min-height:120px} .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:4px 0} input[type=number]{width:64px} textarea{width:100%;min-height:60px}
+</style></head><body>
+<header><b>Map Builder</b>
+ <button data-tool="select" class="on">Select</button><button data-tool="wall">Wall</button><button data-tool="door">Door</button><button data-tool="window">Window</button><button data-tool="thing">Examine spot</button><button data-tool="npc">Person</button><button data-tool="start">Start</button><button data-tool="erase">Erase</button>
+ <span style="opacity:.6">R rotates the selected piece · Delete removes it</span>
+ <span style="flex:1"></span><a href="./" style="color:#9ab">Map Lab →</a></header>
+<aside><h4>Room</h4>
+ <div class="row">Size <input id="W" type="number" value="20" min="4" max="60"> × <input id="H" type="number" value="12" min="4" max="60"> m <button id="new">New</button></div>
+ <div class="row">Floor <select id="floor"><option>wood</option><option>stone</option><option>tile</option><option>dirt</option></select> Walls <select id="wall"><option>plaster</option><option>brick</option><option>wood</option><option>concrete</option></select> Light <select id="mood"><option>day</option><option selected>dim</option><option>night</option></select></div>
+ <h4>Furnish a room</h4><div class="row"><select id="preset"></select><button id="fill">Fill</button></div>
+ <h4>Pieces <input id="q" placeholder="filter: medical, tavern…" style="width:140px"></h4><div id="cat"></div></aside>
+<main style="position:relative"><canvas id="c"></canvas></main>
+<aside id="right"><h4>Selected</h4><div id="sel" style="min-height:60px">Nothing selected.</div>
+ <h4>Preview <button id="render">Render 3D</button></h4><img id="prev" alt="">
+ <h4>Save</h4><div class="row"><button id="save">Save layout (.json)</button><label class="btn">Load layout <input id="load" type="file" accept=".json" hidden></label></div>
+ <div class="row"><button id="pack">Download map pack</button><button id="test">Test in the lab</button></div>
+ <p style="opacity:.65;font-size:.8rem">A map pack is one file: picture, walls, light sources and examine spots. The lab opens it with “Open a map pack”.</p></aside>
+<script type="module">
+import { CATALOG, render, project } from "./kit.js"; import { PRESETS, furnish, blank } from "./gen.js";
+const $ = (s) => document.querySelector(s), cv = $("#c"), g = cv.getContext("2d");
+let L = blank(20, 12, "New room"), tool = "select", piece = null, sel = null, S = 40, ox = 30, oz = 30, drag = null, wallStart = null, pack = null;
+const snap = (v, q = .25) => Math.round(v / q) * q, toW = (e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left - ox) / S, (e.clientY - r.top - oz) / S]; };
+for (const [k, p] of Object.entries(PRESETS)) $("#preset").append(new Option(p.name, k));
+function cat() { const f = $("#q").value.toLowerCase(), c = $("#cat"); c.innerHTML = ""; for (const [id, d] of Object.entries(CATALOG)) { if (f && !(id + d.name + d.tags.join(" ")).toLowerCase().includes(f)) continue; const b = document.createElement("button"); b.innerHTML = `${d.name}<small>${d.size.join(" × ")} m · ${d.tags.join(", ")}</small>`; b.className = piece === id ? "on" : ""; b.onclick = () => { piece = id; tool = "place"; document.querySelectorAll("header [data-tool]").forEach((x) => x.classList.remove("on")); cat(); }; c.append(b); } }
+cat(); $("#q").oninput = cat;
+document.querySelectorAll("header [data-tool]").forEach((b) => b.onclick = () => { tool = b.dataset.tool; piece = null; wallStart = null; document.querySelectorAll("header [data-tool]").forEach((x) => x.classList.toggle("on", x === b)); cat(); });
+function fit() { const w = cv.clientWidth, h = cv.clientHeight; cv.width = w * devicePixelRatio; cv.height = h * devicePixelRatio; g.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0); S = Math.min((w - 60) / L.w, (h - 60) / L.h); ox = (w - L.w * S) / 2; oz = (h - L.h * S) / 2; }
+function size(p) { const d = CATALOG[p.t].size, sw = (p.rot || 0) % 180 ? d[1] : d[0], sd = (p.rot || 0) % 180 ? d[0] : d[1]; return [sw, sd]; }
+function draw() {
+  requestAnimationFrame(draw); if (cv.width !== Math.round(cv.clientWidth * devicePixelRatio)) fit(); g.clearRect(0, 0, cv.clientWidth, cv.clientHeight);
+  g.fillStyle = "#14181e"; g.fillRect(ox, oz, L.w * S, L.h * S); g.strokeStyle = "#232a33"; g.lineWidth = 1; for (let x = 0; x <= L.w; x++) { g.beginPath(); g.moveTo(ox + x * S, oz); g.lineTo(ox + x * S, oz + L.h * S); g.stroke(); } for (let z = 0; z <= L.h; z++) { g.beginPath(); g.moveTo(ox, oz + z * S); g.lineTo(ox + L.w * S, oz + z * S); g.stroke(); }
+  for (const p of L.props) { const [w, d] = size(p), sx = ox + (p.x - w / 2) * S, sz = oz + (p.z - d / 2) * S; g.fillStyle = CATALOG[p.t].light ? "#6b5a2e" : CATALOG[p.t].block ? "#3d5266" : "#2f3b46"; g.fillRect(sx, sz, w * S, d * S); g.strokeStyle = p === sel ? "#f2c14e" : "#7d93aa"; g.lineWidth = p === sel ? 3 : 1; g.strokeRect(sx, sz, w * S, d * S); g.fillStyle = "#cfd8e2"; g.font = "10px system-ui"; g.textAlign = "center"; g.fillText(CATALOG[p.t].name, sx + w * S / 2, sz + d * S / 2 + 3); const a = ((p.rot || 0) * Math.PI) / 180; g.strokeStyle = "#f2c14e"; g.beginPath(); g.moveTo(sx + w * S / 2, sz + d * S / 2); g.lineTo(sx + w * S / 2 + Math.sin(a) * 10, sz + d * S / 2 - Math.cos(a) * 10); g.stroke(); }
+  g.lineWidth = 6; g.strokeStyle = "#cfc8b4"; for (const w of L.walls) { g.beginPath(); g.moveTo(ox + w.a[0] * S, oz + w.a[1] * S); g.lineTo(ox + w.b[0] * S, oz + w.b[1] * S); g.stroke(); }
+  for (const [list, col] of [[L.doors, "#f2c14e"], [L.windows, "#6fb0ff"]]) for (const o of list) { g.strokeStyle = col; g.lineWidth = 8; const h = o.axis === "h"; g.beginPath(); g.moveTo(ox + (o.x - (h ? o.w / 2 : 0)) * S, oz + (o.z - (h ? 0 : o.w / 2)) * S); g.lineTo(ox + (o.x + (h ? o.w / 2 : 0)) * S, oz + (o.z + (h ? 0 : o.w / 2)) * S); g.stroke(); }
+  const dot = (x, z, c, ch) => { g.fillStyle = c; g.beginPath(); g.arc(ox + x * S, oz + z * S, 9, 0, 7); g.fill(); g.fillStyle = "#111"; g.font = "bold 11px system-ui"; g.textAlign = "center"; g.fillText(ch, ox + x * S, oz + z * S + 4); };
+  for (const t of L.things) dot(t.x, t.z, t === sel ? "#fff" : "#7be0a0", "?"); for (const n of L.npcs) dot(n.x, n.z, n === sel ? "#fff" : "#c9b27a", "P"); if (L.start) dot(L.start[0], L.start[1], "#f2c14e", "A");
+  if (wallStart) { g.strokeStyle = "#f2c14e"; g.setLineDash([4, 4]); g.lineWidth = 2; g.strokeRect(ox + wallStart[0] * S - 2, oz + wallStart[1] * S - 2, 4, 4); g.setLineDash([]); }
+}
+function panel() { const s = $("#sel"); if (!sel) { s.textContent = "Nothing selected."; return; } s.innerHTML = ""; const add = (h) => s.insertAdjacentHTML("beforeend", h);
+  if (sel.t) { add(`<b>${CATALOG[sel.t].name}</b> at ${sel.x.toFixed(2)}, ${sel.z.toFixed(2)} · rotation ${sel.rot || 0}°<div class="row"><button id="rot">Rotate (R)</button><button id="del">Delete</button></div>`); $("#rot").onclick = () => rot(); $("#del").onclick = () => del(); }
+  else if ("label" in sel) { add(`<b>${sel.portrait !== undefined ? "Person" : "Examine spot"}</b><div class="row">Name <input id="f_l" value="${sel.label || ""}" style="width:200px"></div>${sel.portrait !== undefined ? `<div class="row">Portrait path <input id="f_p" value="${sel.portrait || ""}" style="width:200px"></div>` : `<div>What you see</div><textarea id="f_t">${sel.text || ""}</textarea><div class="row">Search action <input id="f_a" value="${sel.act || ""}" style="width:200px"></div><div>What the search finds</div><textarea id="f_r">${sel.res || ""}</textarea>`}<div class="row"><button id="del">Delete</button></div>`);
+    $("#f_l").oninput = (e) => sel.label = e.target.value; if ($("#f_p")) $("#f_p").oninput = (e) => sel.portrait = e.target.value; if ($("#f_t")) { $("#f_t").oninput = (e) => sel.text = e.target.value; $("#f_a").oninput = (e) => sel.act = e.target.value; $("#f_r").oninput = (e) => sel.res = e.target.value; } $("#del").onclick = () => del(); } }
+const rot = () => { if (sel && sel.t) { sel.rot = ((sel.rot || 0) + 90) % 360; panel(); } };
+const del = () => { for (const k of ["props", "things", "npcs", "doors", "windows"]) L[k] = L[k].filter((x) => x !== sel); sel = null; panel(); };
+addEventListener("keydown", (e) => { if (e.target.closest("input,textarea,select")) return; if (e.key.toLowerCase() === "r") rot(); if (e.key === "Delete" || e.key === "Backspace") del(); });
+const hit = (x, z) => { for (const t of [...L.things, ...L.npcs]) if (Math.hypot(t.x - x, t.z - z) < .5) return t; for (const p of [...L.props].reverse()) { const [w, d] = size(p); if (Math.abs(x - p.x) < w / 2 && Math.abs(z - p.z) < d / 2) return p; } return null; };
+const wallAt = (x, z) => { let best = null, bd = 1; for (const w of L.walls) { const h = Math.abs(w.a[1] - w.b[1]) < .01, c0 = h ? Math.min(w.a[0], w.b[0]) : Math.min(w.a[1], w.b[1]), c1 = h ? Math.max(w.a[0], w.b[0]) : Math.max(w.a[1], w.b[1]), fix = h ? w.a[1] : w.a[0], pos = h ? x : z, off = h ? z : x; if (pos >= c0 && pos <= c1 && Math.abs(off - fix) < bd) { bd = Math.abs(off - fix); best = { h, fix, pos }; } } return best; };
+cv.onmousedown = (e) => { const [x, z] = toW(e), sx = snap(x), sz = snap(z);
+  if (tool === "place" && piece) { const p = { t: piece, x: sx, z: sz, rot: 0 }; L.props.push(p); sel = p; panel(); return; }
+  if (tool === "select") { sel = hit(x, z); drag = sel ? { dx: sel.x - x, dz: sel.z - z } : null; panel(); return; }
+  if (tool === "erase") { sel = hit(x, z); if (sel) del(); return; }
+  if (tool === "wall") { const ax = snap(x, .5), az = snap(z, .5); if (!wallStart) wallStart = [ax, az]; else { let b = [ax, az]; if (Math.abs(b[0] - wallStart[0]) > Math.abs(b[1] - wallStart[1])) b[1] = wallStart[1]; else b[0] = wallStart[0]; if (b[0] !== wallStart[0] || b[1] !== wallStart[1]) L.walls.push({ a: wallStart, b }); wallStart = null; } return; }
+  if (tool === "door" || tool === "window") { const w = wallAt(x, z); if (!w) return; const o = { x: w.h ? snap(w.pos, .5) : w.fix, z: w.h ? w.fix : snap(w.pos, .5), w: tool === "door" ? 1.6 : 1.3, axis: w.h ? "h" : "v" }; (tool === "door" ? L.doors : L.windows).push(o); sel = o; return; }
+  if (tool === "thing") { const t = { x: sx, z: sz, label: "Something", text: "Describe what you see." }; L.things.push(t); sel = t; panel(); return; }
+  if (tool === "npc") { const n = { x: sx, z: sz, label: "Someone", portrait: "../assets/painted/a/wars-f-05.jpg" }; L.npcs = [n]; sel = n; panel(); return; }
+  if (tool === "start") { L.start = [sx, sz]; } };
+cv.onmousemove = (e) => { if (!drag || !sel) return; const [x, z] = toW(e); sel.x = snap(x + drag.dx); sel.z = snap(z + drag.dz); }; addEventListener("mouseup", () => { drag = null; });
+function sync() { L.style = { floor: $("#floor").value, wall: $("#wall").value, mood: $("#mood").value }; } for (const id of ["floor", "wall", "mood"]) $("#" + id).onchange = sync;
+$("#new").onclick = () => { L = blank(+$("#W").value, +$("#H").value); sync(); sel = null; fit(); panel(); };
+$("#fill").onclick = () => { sync(); furnish(L, $("#preset").value, Date.now() % 997); $("#floor").value = L.style.floor; $("#wall").value = L.style.wall; $("#mood").value = L.style.mood; };
+$("#render").onclick = async () => { sync(); $("#render").textContent = "Rendering…"; await new Promise((r) => setTimeout(r, 30)); const c = document.createElement("canvas"); pack = render(L, c); pack.image = c.toDataURL("image/jpeg", .86); $("#prev").src = pack.image; $("#render").textContent = "Render 3D"; };
+const dl = (name, data, type = "application/json") => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name; a.click(); };
+const nm = () => (L.name || "room").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+$("#save").onclick = () => { sync(); dl(nm() + ".layout.json", JSON.stringify(L, null, 1)); };
+$("#load").onchange = async (e) => { const f = e.target.files[0]; if (f) { L = JSON.parse(await f.text()); L.things = L.things || []; L.npcs = L.npcs || []; L.doors = L.doors || []; L.windows = L.windows || []; L.walls = L.walls || blank(L.w, L.h).walls; $("#W").value = L.w; $("#H").value = L.h; for (const k of ["floor", "wall", "mood"]) $("#" + k).value = (L.style || {})[k] || $("#" + k).value; sel = null; fit(); panel(); } };
+const mkPack = async () => { if (!pack) await $("#render").onclick(); return JSON.stringify({ format: "beyond-map-1", layout: L, view: pack.view, collide: pack.collide, foot: pack.foot, lights: pack.lights, exits: pack.exits, image: pack.image }); };
+$("#pack").onclick = async () => dl(nm() + ".beyondmap", await mkPack());
+$("#test").onclick = async () => { try { localStorage.setItem("beyond.lab.pack", await mkPack()); window.open("./#local", "_blank"); } catch (e) { alert("That map is too big to hand to the lab directly. Use Download map pack, then Open a map pack in the lab."); } };
+panel(); draw();
+</script></body></html>

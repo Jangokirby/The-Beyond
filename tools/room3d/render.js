@@ -1,6 +1,15 @@
-const { chromium } = require("playwright");
-const http = require("http"), fs = require("fs"), path = require("path");
-const root = __dirname, srv = http.createServer((q, r) => { const f = path.join(root, decodeURIComponent(q.url.split("?")[0].split("#")[0])); fs.readFile(f, (e, b) => { if (e) { r.writeHead(404); r.end(); } else { r.writeHead(200, { "Content-Type": f.endsWith(".js") || f.endsWith(".mjs") ? "text/javascript" : f.endsWith(".json") ? "application/json" : "text/html" }); r.end(b); } }); }).listen(8765);
-(async () => { const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] }); const p = await b.newPage({ viewport: { width: 1600, height: 1100 } }); const err = []; p.on("pageerror", (e) => err.push(e.message)); p.on("console", (m) => m.type() === "error" && err.push(m.text()));
- await p.goto("http://localhost:8765/room.html#" + (process.argv[2] || "ward.json")); await p.waitForFunction(() => window.DONE, null, { timeout: 60000 }).catch(() => {});
- await p.locator("#c").screenshot({ path: process.argv[3] || "ward.png" }); console.log(err.slice(0, 5), await p.evaluate(() => JSON.stringify(window.VIEW))); await b.close(); srv.close(); })();
+/* Renders a layout to a picture with the same kit the editor uses.
+   usage: node render.js <layout.json | preset:tavern:16:11> <outname>   writes <outname>.beyondmap (picture + walls + lights), .layout.json and .jpg
+   (starts the game's own server; needs playwright) */
+const { chromium } = require("playwright"); const { spawn } = require("child_process"); const fs = require("fs"), path = require("path");
+(async () => {
+  const root = path.join(__dirname, "..", ".."), arg = process.argv[2] || "public/lab/layouts/ward.json", out = process.argv[3] || "render";
+  const rel = arg.startsWith("preset:") ? "/" + arg : "/" + path.relative(path.join(root, "public/lab"), path.resolve(arg)).split(path.sep).join("/");
+  const srv = spawn("node", ["server.js"], { cwd: root, env: { ...process.env, PORT: "8766" } }); await new Promise((r) => setTimeout(r, 1500));
+  const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] }), p = await b.newPage({ viewport: { width: 1700, height: 1300 } });
+  await p.goto("http://localhost:8766/lab/render.html#" + rel.replace(/^\//, "")); await p.waitForFunction(() => window.DONE, null, { timeout: 90000 });
+  const pack = await p.evaluate(() => window.PACK);
+  fs.writeFileSync(out + ".beyondmap", JSON.stringify(pack)); fs.writeFileSync(out + ".layout.json", JSON.stringify(pack.layout, null, 1)); fs.writeFileSync(out + ".jpg", Buffer.from(pack.image.split(",")[1], "base64"));
+  console.log("wrote", out + ".beyondmap", pack.view.W + "x" + pack.view.H);
+  await b.close(); srv.kill();
+})();
