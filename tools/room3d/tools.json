@@ -390,6 +390,131 @@
      ]
     }
    }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "inspect_character_model",
+    "description": "Check a character .glb (a base body or a part) against the rules in CHARACTER-IMPORT.md: size in metres, anchor_* nodes, material names, morph targets, skeleton. Returns problems to fix in the 3D app.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "file": {
+       "type": "string",
+       "description": "path to the .glb"
+      }
+     },
+     "required": [
+      "file"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "import_character",
+    "description": "Register a character model in the kit. kind base: a body with anchor_head, anchor_face and anchor_torso nodes (give height in metres). kind part: a hair, hat, glasses, brows, eyes, nose, mouth, moustache, beard, outfit or accessory piece (give slot, origin at its attach point; outfit may list base mesh names to hide). Returns warnings.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "file": {
+       "type": "string"
+      },
+      "kind": {
+       "type": "string",
+       "description": "base or part"
+      },
+      "id": {
+       "type": "string"
+      },
+      "name": {
+       "type": "string"
+      },
+      "slot": {
+       "type": "string"
+      },
+      "height": {
+       "type": "number",
+       "description": "base: real height in metres"
+      },
+      "scale": {
+       "type": "number"
+      },
+      "offset": {
+       "type": "array",
+       "items": {
+        "type": "number"
+       }
+      },
+      "rot": {
+       "type": "array",
+       "items": {
+        "type": "number"
+       }
+      },
+      "hides": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "tags": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       },
+       "description": "e.g. 1890s, male, nurse, medieval"
+      }
+     },
+     "required": [
+      "file",
+      "id"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "list_character_kit",
+    "description": "List the registered character bases and parts (ids, slots, tags).",
+    "parameters": {
+     "type": "object",
+     "properties": {}
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "render_character",
+    "description": "Assemble a character from the kit and draw a portrait (or full body) PNG. spec: { base, parts:{slot:partId}, colors:{skin,hair,cloth,cloth2,trim}, morphs:{name:0..1}, yaw }. view: portrait or full.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "spec": {
+       "type": "object"
+      },
+      "name": {
+       "type": "string"
+      },
+      "view": {
+       "type": "string"
+      },
+      "w": {
+       "type": "number"
+      },
+      "h": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "spec",
+      "name"
+     ]
+    }
+   }
   }
  ],
  "anthropic": [
@@ -722,6 +847,119 @@
      "name": {
       "type": "string",
       "description": "file name without extension"
+     },
+     "w": {
+      "type": "number"
+     },
+     "h": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "spec",
+     "name"
+    ]
+   }
+  },
+  {
+   "name": "inspect_character_model",
+   "description": "Check a character .glb (a base body or a part) against the rules in CHARACTER-IMPORT.md: size in metres, anchor_* nodes, material names, morph targets, skeleton. Returns problems to fix in the 3D app.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "file": {
+      "type": "string",
+      "description": "path to the .glb"
+     }
+    },
+    "required": [
+     "file"
+    ]
+   }
+  },
+  {
+   "name": "import_character",
+   "description": "Register a character model in the kit. kind base: a body with anchor_head, anchor_face and anchor_torso nodes (give height in metres). kind part: a hair, hat, glasses, brows, eyes, nose, mouth, moustache, beard, outfit or accessory piece (give slot, origin at its attach point; outfit may list base mesh names to hide). Returns warnings.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "file": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string",
+      "description": "base or part"
+     },
+     "id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slot": {
+      "type": "string"
+     },
+     "height": {
+      "type": "number",
+      "description": "base: real height in metres"
+     },
+     "scale": {
+      "type": "number"
+     },
+     "offset": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      }
+     },
+     "rot": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      }
+     },
+     "hides": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "tags": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      },
+      "description": "e.g. 1890s, male, nurse, medieval"
+     }
+    },
+    "required": [
+     "file",
+     "id"
+    ]
+   }
+  },
+  {
+   "name": "list_character_kit",
+   "description": "List the registered character bases and parts (ids, slots, tags).",
+   "input_schema": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "name": "render_character",
+   "description": "Assemble a character from the kit and draw a portrait (or full body) PNG. spec: { base, parts:{slot:partId}, colors:{skin,hair,cloth,cloth2,trim}, morphs:{name:0..1}, yaw }. view: portrait or full.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "spec": {
+      "type": "object"
+     },
+     "name": {
+      "type": "string"
+     },
+     "view": {
+      "type": "string"
      },
      "w": {
       "type": "number"

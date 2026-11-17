@@ -62,6 +62,6 @@ indoor or outdoor from the scene's theme and name. Outdoor pieces are data files
 ## What this is for
 Each place in each case gets a layout. Places repeat as types (a ward, a cellar, a street), so a preset gets most of the way and the examine spots and people come from the case text.
 
-## Characters (portrait busts)
-`/lab/characters.html` is the Character Builder: one smooth mannequin bust with swappable brows, mouth, nose, eyes, moustache, beard, hair, hat, glasses, outfit and colours. Fill it in by hand or press **Suggest a person** (name, gender, age, year, job, origin: period-right clothes, hats, facial hair, skin; same name gives the same face). Save as a picture or as a small JSON spec.
-Agents use `list_bust_parts` (what exists), `suggest_bust` (a spec from facts about a person), then `render_portrait` (spec to PNG in `public/lab/portraits/`). Rules live in `public/lab/bust-rules.js`; parts are one-line entries in `public/lab/figure-bust.js`. Not wired into the game's portraits yet.
+## Characters
+**Real characters come from 3D models** made by another tool (Overlord, Blender, a 3D generator): see `CHARACTER-IMPORT.md` for the exact model rules. Tools: `inspect_character_model`, `import_character`, `list_character_kit`, `render_character` (base body + swappable parts, tinted by material name, rendered as portraits or full body). Kit file: `public/lab/characters/kit.json`.
+**Prototype busts** (smooth mannequin heads built from code) are kept as a stand-in until real models exist: `/lab/characters.html`, `list_bust_parts`, `suggest_bust`, `render_portrait`. Rules in `public/lab/bust-rules.js` (period-right clothes and facial hair from era, job, age, origin).
