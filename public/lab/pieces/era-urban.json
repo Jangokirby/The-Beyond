@@ -1,0 +1,1135 @@
+[
+ {
+  "id": "tenement",
+  "name": "Tenement front",
+  "tags": [
+   "victorian",
+   "outdoor",
+   "street"
+  ],
+  "size": [
+   4.4,
+   1.4
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     4.4,
+     4.8,
+     1.2
+    ],
+    "pos": [
+     0,
+     2.4,
+     0
+    ],
+    "mat": "brick"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     -1.4,
+     1.2,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     -1.4,
+     2.6,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     -1.4,
+     4,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     0,
+     1.2,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     0,
+     2.6,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     0,
+     4,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     1.4,
+     1.2,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     1.4,
+     2.6,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.9,
+     0.05
+    ],
+    "pos": [
+     1.4,
+     4,
+     0.62
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     1.7,
+     0.06
+    ],
+    "pos": [
+     1.6,
+     0.85,
+     0.62
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     4.6,
+     0.25,
+     1.4
+    ],
+    "pos": [
+     0,
+     4.9,
+     0
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "carriage",
+  "name": "Horse carriage",
+  "tags": [
+   "victorian",
+   "outdoor",
+   "street"
+  ],
+  "size": [
+   3.4,
+   1.4
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     2,
+     1.1,
+     1.2
+    ],
+    "pos": [
+     -0.3,
+     1,
+     0
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2.2,
+     0.12,
+     1.3
+    ],
+    "pos": [
+     -0.3,
+     1.62,
+     0
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.45,
+    "h": 0.1,
+    "pos": [
+     -1,
+     0.45,
+     0.7
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.45,
+    "h": 0.1,
+    "pos": [
+     -1,
+     0.45,
+     -0.7
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.45,
+    "h": 0.1,
+    "pos": [
+     0.4,
+     0.45,
+     0.7
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.45,
+    "h": 0.1,
+    "pos": [
+     0.4,
+     0.45,
+     -0.7
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.2,
+     0.6,
+     0.5
+    ],
+    "pos": [
+     1.3,
+     0.75,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.25,
+    "pos": [
+     1.9,
+     1,
+     0
+    ],
+    "mat": "#4a3020"
+   }
+  ]
+ },
+ {
+  "id": "chimney_stack",
+  "name": "Factory chimney",
+  "tags": [
+   "victorian",
+   "industrial",
+   "outdoor"
+  ],
+  "size": [
+   1.6,
+   1.6
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.7,
+    "h": 1,
+    "pos": [
+     0,
+     0.5,
+     0
+    ],
+    "mat": "brick"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.5,
+    "h": 5.2,
+    "pos": [
+     0,
+     3.4,
+     0
+    ],
+    "mat": "brick"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.58,
+    "h": 0.3,
+    "pos": [
+     0,
+     6.1,
+     0
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "boiler",
+  "name": "Boiler",
+  "tags": [
+   "victorian",
+   "industrial",
+   "cellar",
+   "ship"
+  ],
+  "size": [
+   2.2,
+   1.2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.55,
+    "h": 2,
+    "pos": [
+     0,
+     0.85,
+     0
+    ],
+    "mat": "iron",
+    "rot": [
+     0,
+     0,
+     90
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     2,
+     0.3,
+     1
+    ],
+    "pos": [
+     0,
+     0.15,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.12,
+    "h": 0.9,
+    "pos": [
+     0.7,
+     1.7,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.2,
+    "pos": [
+     -0.5,
+     1.3,
+     0.5
+    ],
+    "mat": "brass"
+   }
+  ]
+ },
+ {
+  "id": "loom",
+  "name": "Mill loom",
+  "tags": [
+   "victorian",
+   "industrial",
+   "factory"
+  ],
+  "size": [
+   2,
+   1.2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     2,
+     1.4,
+     0.1
+    ],
+    "pos": [
+     0,
+     0.9,
+     -0.5
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2,
+     0.1,
+     1
+    ],
+    "pos": [
+     0,
+     1.2,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2,
+     0.1,
+     0.1
+    ],
+    "pos": [
+     0,
+     0.3,
+     0.5
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.8,
+     0.05,
+     0.8
+    ],
+    "pos": [
+     0,
+     1.28,
+     0
+    ],
+    "mat": "sheet"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.02,
+     1,
+     0.02
+    ],
+    "pos": [
+     -0.8,
+     0.8,
+     -0.4
+    ],
+    "mat": "red"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.02,
+     1,
+     0.02
+    ],
+    "pos": [
+     -0.4,
+     0.8,
+     -0.4
+    ],
+    "mat": "red"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.02,
+     1,
+     0.02
+    ],
+    "pos": [
+     0,
+     0.8,
+     -0.4
+    ],
+    "mat": "red"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.02,
+     1,
+     0.02
+    ],
+    "pos": [
+     0.4,
+     0.8,
+     -0.4
+    ],
+    "mat": "red"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.02,
+     1,
+     0.02
+    ],
+    "pos": [
+     0.8,
+     0.8,
+     -0.4
+    ],
+    "mat": "red"
+   }
+  ]
+ },
+ {
+  "id": "piano",
+  "name": "Piano",
+  "tags": [
+   "victorian",
+   "theatre",
+   "tavern",
+   "domestic"
+  ],
+  "size": [
+   1.5,
+   0.7
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.5,
+     0.9,
+     0.7
+    ],
+    "pos": [
+     0,
+     0.6,
+     -0.1
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.3,
+     0.06,
+     0.3
+    ],
+    "pos": [
+     0,
+     0.78,
+     0.35
+    ],
+    "mat": "white"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     0.7,
+     0.04
+    ],
+    "pos": [
+     -0.6,
+     0.35,
+     0.3
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     0.7,
+     0.04
+    ],
+    "pos": [
+     0.6,
+     0.35,
+     0.3
+    ],
+    "mat": "black"
+   }
+  ]
+ },
+ {
+  "id": "stage_curtain",
+  "name": "Stage and curtain",
+  "tags": [
+   "theatre",
+   "show",
+   "victorian"
+  ],
+  "size": [
+   5,
+   2
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     5,
+     0.5,
+     2
+    ],
+    "pos": [
+     0,
+     0.25,
+     0
+    ],
+    "mat": "wood"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     3.2,
+     0.15
+    ],
+    "pos": [
+     -2.1,
+     1.9,
+     -0.9
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     3.2,
+     0.15
+    ],
+    "pos": [
+     2.1,
+     1.9,
+     -0.9
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     5,
+     0.4,
+     0.15
+    ],
+    "pos": [
+     0,
+     3.4,
+     -0.9
+    ],
+    "mat": "cloth"
+   }
+  ]
+ },
+ {
+  "id": "seat_row",
+  "name": "Theatre seats (row)",
+  "tags": [
+   "theatre",
+   "cinema",
+   "show",
+   "victorian"
+  ],
+  "size": [
+   2.4,
+   0.8
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.1,
+     0.5
+    ],
+    "pos": [
+     -0.9,
+     0.45,
+     0
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.6,
+     0.08
+    ],
+    "pos": [
+     -0.9,
+     0.75,
+     0.28
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     0.45,
+     0.5
+    ],
+    "pos": [
+     -1.17,
+     0.22,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.1,
+     0.5
+    ],
+    "pos": [
+     -0.3,
+     0.45,
+     0
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.6,
+     0.08
+    ],
+    "pos": [
+     -0.3,
+     0.75,
+     0.28
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     0.45,
+     0.5
+    ],
+    "pos": [
+     -0.5700000000000001,
+     0.22,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.1,
+     0.5
+    ],
+    "pos": [
+     0.3,
+     0.45,
+     0
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.6,
+     0.08
+    ],
+    "pos": [
+     0.3,
+     0.75,
+     0.28
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     0.45,
+     0.5
+    ],
+    "pos": [
+     0.02999999999999997,
+     0.22,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.1,
+     0.5
+    ],
+    "pos": [
+     0.9,
+     0.45,
+     0
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.6,
+     0.08
+    ],
+    "pos": [
+     0.9,
+     0.75,
+     0.28
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     0.45,
+     0.5
+    ],
+    "pos": [
+     0.63,
+     0.22,
+     0
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "cinema_screen",
+  "name": "Cinema screen",
+  "tags": [
+   "cinema",
+   "drive",
+   "show",
+   "1950+"
+  ],
+  "size": [
+   4,
+   0.4
+  ],
+  "block": true,
+  "light": {
+   "c": 15266047,
+   "i": 8,
+   "r": 6,
+   "y": 1.6,
+   "dz": 0.8
+  },
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     4,
+     2.2,
+     0.1
+    ],
+    "pos": [
+     0,
+     1.6,
+     0
+    ],
+    "mat": "#e8e6da"
+   },
+   {
+    "shape": "box",
+    "size": [
+     4.2,
+     2.4,
+     0.08
+    ],
+    "pos": [
+     0,
+     1.6,
+     -0.05
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     0.6,
+     0.2
+    ],
+    "pos": [
+     -1.4,
+     0.3,
+     -0.1
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     0.6,
+     0.2
+    ],
+    "pos": [
+     1.4,
+     0.3,
+     -0.1
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "projector",
+  "name": "Film projector",
+  "tags": [
+   "cinema",
+   "show",
+   "study"
+  ],
+  "size": [
+   0.9,
+   0.5
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.12,
+     0.4
+    ],
+    "pos": [
+     0,
+     0.9,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.4,
+     0.4,
+     0.3
+    ],
+    "pos": [
+     -0.1,
+     1.15,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.12,
+    "h": 0.06,
+    "pos": [
+     -0.2,
+     1.45,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.12,
+    "h": 0.06,
+    "pos": [
+     0.15,
+     1.45,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     0.9,
+     0.1
+    ],
+    "pos": [
+     0,
+     0.45,
+     0
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "newsstand",
+  "name": "Kiosk / newsstand",
+  "tags": [
+   "street",
+   "shop",
+   "victorian",
+   "modern",
+   "outdoor"
+  ],
+  "size": [
+   1.8,
+   1.2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.8,
+     1,
+     1.2
+    ],
+    "pos": [
+     0,
+     0.5,
+     0
+    ],
+    "mat": "#2f5a4a"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.9,
+     0.2,
+     1.3
+    ],
+    "pos": [
+     0,
+     2.2,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.8,
+     1,
+     0.06
+    ],
+    "pos": [
+     0,
+     1.6,
+     0.6
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     2.2,
+     0.06
+    ],
+    "pos": [
+     -0.9,
+     1.1,
+     0.6
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     2.2,
+     0.06
+    ],
+    "pos": [
+     0.9,
+     1.1,
+     0.6
+    ],
+    "mat": "dark"
+   }
+  ]
+ }
+]

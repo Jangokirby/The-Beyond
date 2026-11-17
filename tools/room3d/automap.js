@@ -9,9 +9,15 @@ const want = all ? Object.keys(lib).filter((k) => !fs.existsSync(path.join(root,
 const spec = (a, id) => { const sc = a.scenes[id], opts = (sc.options || []).map((o) => { const js = JSON.stringify(o.steps || []); const conv = js.match(/"converse":\{"npc":"(\w+)"/), go = Array.isArray(o.steps) && o.steps.length === 1 && o.steps[0].goto ? o.steps[0].goto : (o.steps || []).filter((s) => s.goto).length && !js.includes('"check"') && !js.includes('"combat"') ? (o.steps.find((s) => s.goto) || {}).goto : null;
   return { label: o.label, kind: conv ? "talk" : go ? "go" : js.includes('"check"') ? "find" : "other", npc: conv && conv[1], goto: go || undefined }; });
   const txt = JSON.stringify(sc.onEnter || []).replace(/"(say|text)":"([^"]*)"/g, " $2 ").replace(/[{}\[\]"]/g, " ").slice(0, 500);
-  return { id, name: sc.name, theme: sc.theme, text: txt, cast: sc.cast || [], npcs: Object.fromEntries(Object.entries(a.npcs || {}).map(([k, v]) => [k, v.name])), options: opts }; };
+  return { id, name: sc.name, theme: sc.theme, year: a.year, setting: a.setting || "", text: txt, cast: sc.cast || [], npcs: Object.fromEntries(Object.entries(a.npcs || {}).map(([k, v]) => [k, v.name])), options: opts }; };
 (async () => {
-  if (!want.length) return console.log("Nothing to do.");
+  if (!want.length && !process.argv.includes("--plan")) return console.log("Nothing to do.");
+  if (process.argv.includes("--plan")) { /* dry run: which preset each scene would get, nothing is drawn */
+    const srv0 = spawn("node", ["server.js"], { cwd: root, env: { ...process.env, PORT: "8768" } }); await new Promise((r) => setTimeout(r, 1500));
+    const b0 = await chromium.launch(), p0 = await b0.newPage(); await p0.goto("http://localhost:8768/lab/auto.html"); await p0.waitForFunction(() => window.READY);
+    for (const cid of (ids.length ? ids : Object.keys(lib))) { const a = lib[cid]; if (!a) continue; const row = []; for (const sid of Object.keys(a.scenes)) row.push(sid + ":" + await p0.evaluate((s) => window.PLAN(s), spec(a, sid))); console.log(`${cid} (${a.year}) ${row.join(" ")}`); }
+    await b0.close(); srv0.kill(); return;
+  }
   const srv = spawn("node", ["server.js"], { cwd: root, env: { ...process.env, PORT: "8767" } }); await new Promise((r) => setTimeout(r, 1500));
   const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] }), p = await b.newPage({ viewport: { width: 1700, height: 1300 } });
   await p.goto("http://localhost:8767/lab/auto.html"); await p.waitForFunction(() => window.READY);

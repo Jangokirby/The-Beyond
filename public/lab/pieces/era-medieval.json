@@ -1,0 +1,2075 @@
+[
+ {
+  "id": "castle_wall",
+  "name": "Castle wall (3 m)",
+  "tags": [
+   "medieval",
+   "outdoor",
+   "castle"
+  ],
+  "size": [
+   3,
+   0.8
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     3,
+     2.6,
+     0.8
+    ],
+    "pos": [
+     0,
+     1.3,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.4,
+     0.8
+    ],
+    "pos": [
+     -1.2,
+     2.8,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.4,
+     0.8
+    ],
+    "pos": [
+     -0.4,
+     2.8,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.4,
+     0.8
+    ],
+    "pos": [
+     0.4,
+     2.8,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.4,
+     0.8
+    ],
+    "pos": [
+     1.2,
+     2.8,
+     0
+    ],
+    "mat": "stone"
+   }
+  ]
+ },
+ {
+  "id": "tower_round",
+  "name": "Round tower",
+  "tags": [
+   "medieval",
+   "outdoor",
+   "castle"
+  ],
+  "size": [
+   2.6,
+   2.6
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 1.25,
+    "h": 4.2,
+    "pos": [
+     0,
+     2.1,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "cyl",
+    "r": 1.45,
+    "h": 0.4,
+    "pos": [
+     0,
+     4.3,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cone",
+    "r": 1.5,
+    "h": 1.6,
+    "pos": [
+     0,
+     5.3,
+     0
+    ],
+    "mat": "#5a3a30"
+   }
+  ]
+ },
+ {
+  "id": "gate_arch",
+  "name": "Gatehouse",
+  "tags": [
+   "medieval",
+   "outdoor",
+   "castle"
+  ],
+  "size": [
+   4,
+   1.4
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.2,
+     3.6,
+     1.4
+    ],
+    "pos": [
+     -1.4,
+     1.8,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.2,
+     3.6,
+     1.4
+    ],
+    "pos": [
+     1.4,
+     1.8,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     4,
+     0.9,
+     1.4
+    ],
+    "pos": [
+     0,
+     3.6,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.4,
+     1.4
+    ],
+    "pos": [
+     -1.5,
+     4.2,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.4,
+     1.4
+    ],
+    "pos": [
+     1.5,
+     4.2,
+     0
+    ],
+    "mat": "stone"
+   }
+  ]
+ },
+ {
+  "id": "banner_stand",
+  "name": "Banner",
+  "tags": [
+   "medieval",
+   "castle",
+   "hall"
+  ],
+  "size": [
+   0.5,
+   0.5
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.04,
+    "h": 2.6,
+    "pos": [
+     0,
+     1.3,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.8,
+     1.4,
+     0.04
+    ],
+    "pos": [
+     0,
+     1.8,
+     0
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.3,
+     0.3,
+     0.05
+    ],
+    "pos": [
+     0,
+     1.9,
+     0.03
+    ],
+    "mat": "gold"
+   }
+  ]
+ },
+ {
+  "id": "throne",
+  "name": "Throne",
+  "tags": [
+   "medieval",
+   "castle",
+   "hall"
+  ],
+  "size": [
+   1.1,
+   1.1
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1,
+     0.5,
+     0.9
+    ],
+    "pos": [
+     0,
+     0.25,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1,
+     1.6,
+     0.15
+    ],
+    "pos": [
+     0,
+     1.1,
+     -0.4
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.15,
+     0.5,
+     0.8
+    ],
+    "pos": [
+     -0.5,
+     0.7,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.15,
+     0.5,
+     0.8
+    ],
+    "pos": [
+     0.5,
+     0.7,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.8,
+     0.12,
+     0.7
+    ],
+    "pos": [
+     0,
+     0.55,
+     0
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.3,
+     0.02,
+     1.4
+    ],
+    "pos": [
+     0,
+     0.02,
+     0.1
+    ],
+    "mat": "cloth"
+   }
+  ]
+ },
+ {
+  "id": "wall_torch",
+  "name": "Standing torch",
+  "tags": [
+   "medieval",
+   "castle",
+   "dungeon",
+   "cellar"
+  ],
+  "size": [
+   0.4,
+   0.4
+  ],
+  "block": false,
+  "light": {
+   "c": 16752704,
+   "i": 14,
+   "r": 8,
+   "y": 2.2
+  },
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.04,
+    "h": 1.6,
+    "pos": [
+     0,
+     0.8,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 0.15,
+    "pos": [
+     0,
+     1.65,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.14,
+    "pos": [
+     0,
+     1.8,
+     0
+    ],
+    "mat": "torch"
+   }
+  ]
+ },
+ {
+  "id": "brazier",
+  "name": "Brazier",
+  "tags": [
+   "medieval",
+   "camp",
+   "ancient"
+  ],
+  "size": [
+   0.7,
+   0.7
+  ],
+  "block": false,
+  "light": {
+   "c": 16751168,
+   "i": 16,
+   "r": 8,
+   "y": 1.4
+  },
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.06,
+    "h": 0.8,
+    "pos": [
+     0,
+     0.4,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.32,
+    "h": 0.18,
+    "pos": [
+     0,
+     0.85,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.22,
+    "pos": [
+     0,
+     0.98,
+     0
+    ],
+    "mat": "torch"
+   }
+  ]
+ },
+ {
+  "id": "weapon_rack",
+  "name": "Weapon rack",
+  "tags": [
+   "medieval",
+   "castle",
+   "barracks"
+  ],
+  "size": [
+   1.4,
+   0.4
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.4,
+     0.06,
+     0.4
+    ],
+    "pos": [
+     0,
+     0.05,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     1.5,
+     0.06
+    ],
+    "pos": [
+     -0.65,
+     0.75,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     1.5,
+     0.06
+    ],
+    "pos": [
+     0.65,
+     0.75,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.3,
+     0.05,
+     0.05
+    ],
+    "pos": [
+     0,
+     1.2,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.7,
+     0.04
+    ],
+    "pos": [
+     -0.4,
+     0.9,
+     0.08
+    ],
+    "mat": "steel"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.7,
+     0.04
+    ],
+    "pos": [
+     -0.1,
+     0.9,
+     0.08
+    ],
+    "mat": "steel"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.7,
+     0.04
+    ],
+    "pos": [
+     0.2,
+     0.9,
+     0.08
+    ],
+    "mat": "steel"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.7,
+     0.04
+    ],
+    "pos": [
+     0.5,
+     0.9,
+     0.08
+    ],
+    "mat": "steel"
+   }
+  ]
+ },
+ {
+  "id": "armour_stand",
+  "name": "Armour stand",
+  "tags": [
+   "medieval",
+   "castle",
+   "hall"
+  ],
+  "size": [
+   0.6,
+   0.6
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.05,
+    "h": 1.6,
+    "pos": [
+     0,
+     0.8,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.7,
+     0.3
+    ],
+    "pos": [
+     0,
+     1.2,
+     0
+    ],
+    "mat": "steel"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.17,
+    "pos": [
+     0,
+     1.75,
+     0
+    ],
+    "mat": "steel"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.14,
+     0.5,
+     0.14
+    ],
+    "pos": [
+     -0.34,
+     1.25,
+     0
+    ],
+    "mat": "steel"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.14,
+     0.5,
+     0.14
+    ],
+    "pos": [
+     0.34,
+     1.25,
+     0
+    ],
+    "mat": "steel"
+   }
+  ]
+ },
+ {
+  "id": "anvil_forge",
+  "name": "Forge and anvil",
+  "tags": [
+   "medieval",
+   "forge",
+   "workshop",
+   "industrial"
+  ],
+  "size": [
+   2.2,
+   1.4
+  ],
+  "block": true,
+  "light": {
+   "c": 16747056,
+   "i": 14,
+   "r": 8,
+   "y": 1.3
+  },
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.2,
+     0.8,
+     1.2
+    ],
+    "pos": [
+     -0.5,
+     0.4,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1,
+     0.1,
+     1
+    ],
+    "pos": [
+     -0.5,
+     0.85,
+     0
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.25,
+    "pos": [
+     -0.5,
+     1,
+     0
+    ],
+    "mat": "torch"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.4,
+     0.5,
+     0.3
+    ],
+    "pos": [
+     0.7,
+     0.25,
+     0.2
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.6,
+     0.18,
+     0.22
+    ],
+    "pos": [
+     0.7,
+     0.6,
+     0.2
+    ],
+    "mat": "steel"
+   }
+  ]
+ },
+ {
+  "id": "hay_bale",
+  "name": "Hay bale",
+  "tags": [
+   "medieval",
+   "yard",
+   "farm",
+   "outdoor"
+  ],
+  "size": [
+   1.1,
+   0.7
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.1,
+     0.6,
+     0.7
+    ],
+    "pos": [
+     0,
+     0.3,
+     0
+    ],
+    "mat": "straw"
+   }
+  ]
+ },
+ {
+  "id": "straw_bed",
+  "name": "Straw pallet",
+  "tags": [
+   "medieval",
+   "bedroom",
+   "cell",
+   "camp"
+  ],
+  "size": [
+   0.9,
+   1.9
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.15,
+     1.9
+    ],
+    "pos": [
+     0,
+     0.08,
+     0
+    ],
+    "mat": "straw"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.6,
+     0.1,
+     0.4
+    ],
+    "pos": [
+     0,
+     0.2,
+     -0.7
+    ],
+    "mat": "sheet"
+   }
+  ]
+ },
+ {
+  "id": "hut_thatch",
+  "name": "Thatched hut",
+  "tags": [
+   "medieval",
+   "outdoor",
+   "village"
+  ],
+  "size": [
+   3.4,
+   3
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     3.2,
+     1.7,
+     2.8
+    ],
+    "pos": [
+     0,
+     0.85,
+     0
+    ],
+    "mat": "#8a7a5a"
+   },
+   {
+    "shape": "box",
+    "size": [
+     3.6,
+     0.3,
+     3.2
+    ],
+    "pos": [
+     0,
+     1.85,
+     0
+    ],
+    "mat": "thatch",
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     3,
+     0.3,
+     2.6
+    ],
+    "pos": [
+     0,
+     2.15,
+     0
+    ],
+    "mat": "thatch"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2.2,
+     0.3,
+     2
+    ],
+    "pos": [
+     0,
+     2.45,
+     0
+    ],
+    "mat": "thatch"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.6,
+     1.1,
+     0.08
+    ],
+    "pos": [
+     0,
+     0.55,
+     1.42
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "stocks",
+  "name": "Village stocks",
+  "tags": [
+   "medieval",
+   "village",
+   "outdoor"
+  ],
+  "size": [
+   1.6,
+   0.5
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     1.4,
+     0.1
+    ],
+    "pos": [
+     -0.7,
+     0.7,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     1.4,
+     0.1
+    ],
+    "pos": [
+     0.7,
+     0.7,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.5,
+     0.14,
+     0.14
+    ],
+    "pos": [
+     0,
+     1,
+     0
+    ],
+    "mat": "wood"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.5,
+     0.14,
+     0.14
+    ],
+    "pos": [
+     0,
+     1.2,
+     0
+    ],
+    "mat": "wood"
+   }
+  ]
+ },
+ {
+  "id": "pillar_stone",
+  "name": "Stone pillar",
+  "tags": [
+   "medieval",
+   "church",
+   "castle",
+   "ruins"
+  ],
+  "size": [
+   0.8,
+   0.8
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.3,
+     0.9
+    ],
+    "pos": [
+     0,
+     0.15,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.32,
+    "h": 2.2,
+    "pos": [
+     0,
+     1.4,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.8,
+     0.25,
+     0.8
+    ],
+    "pos": [
+     0,
+     2.6,
+     0
+    ],
+    "mat": "stone"
+   }
+  ]
+ },
+ {
+  "id": "font_stone",
+  "name": "Baptismal font",
+  "tags": [
+   "medieval",
+   "church"
+  ],
+  "size": [
+   0.9,
+   0.9
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.18,
+    "h": 0.8,
+    "pos": [
+     0,
+     0.4,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.45,
+    "h": 0.25,
+    "pos": [
+     0,
+     0.9,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.36,
+    "h": 0.06,
+    "pos": [
+     0,
+     1,
+     0
+    ],
+    "mat": "water"
+   }
+  ]
+ },
+ {
+  "id": "lectern",
+  "name": "Lectern",
+  "tags": [
+   "medieval",
+   "church",
+   "study"
+  ],
+  "size": [
+   0.6,
+   0.5
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     1,
+     0.2
+    ],
+    "pos": [
+     0,
+     0.5,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.6,
+     0.06,
+     0.45
+    ],
+    "pos": [
+     0,
+     1.08,
+     0
+    ],
+    "mat": "dark",
+    "rot": [
+     -20,
+     0,
+     0
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.03,
+     0.36
+    ],
+    "pos": [
+     0,
+     1.12,
+     0.02
+    ],
+    "mat": "sheet",
+    "rot": [
+     -20,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ {
+  "id": "cauldron",
+  "name": "Cauldron",
+  "tags": [
+   "medieval",
+   "camp",
+   "witch",
+   "kitchen"
+  ],
+  "size": [
+   0.9,
+   0.9
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "sphere",
+    "r": 0.42,
+    "pos": [
+     0,
+     0.5,
+     0
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.4,
+    "h": 0.1,
+    "pos": [
+     0,
+     0.88,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.32,
+    "h": 0.04,
+    "pos": [
+     0,
+     0.9,
+     0
+    ],
+    "mat": "greenm"
+   }
+  ]
+ },
+ {
+  "id": "cage_iron",
+  "name": "Iron cage",
+  "tags": [
+   "medieval",
+   "dungeon",
+   "cell"
+  ],
+  "size": [
+   1.6,
+   1.6
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.06,
+     1.6
+    ],
+    "pos": [
+     0,
+     0.03,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.06,
+     1.6
+    ],
+    "pos": [
+     0,
+     1.9,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.75,
+     0.95,
+     0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.75,
+     0.95,
+     -0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.78,
+     0.95,
+     -0.75
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.78,
+     0.95,
+     -0.75
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.4,
+     0.95,
+     0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.4,
+     0.95,
+     -0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.78,
+     0.95,
+     -0.4
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.78,
+     0.95,
+     -0.4
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0,
+     0.95,
+     0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0,
+     0.95,
+     -0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.78,
+     0.95,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.78,
+     0.95,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.4,
+     0.95,
+     0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.4,
+     0.95,
+     -0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.78,
+     0.95,
+     0.4
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.78,
+     0.95,
+     0.4
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.75,
+     0.95,
+     0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.75,
+     0.95,
+     -0.78
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     0.78,
+     0.95,
+     0.75
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.04,
+     1.9,
+     0.04
+    ],
+    "pos": [
+     -0.78,
+     0.95,
+     0.75
+    ],
+    "mat": "iron"
+   }
+  ]
+ },
+ {
+  "id": "bones_pile",
+  "name": "Pile of bones",
+  "tags": [
+   "medieval",
+   "dungeon",
+   "cellar",
+   "horror"
+  ],
+  "size": [
+   1,
+   1
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "sphere",
+    "r": 0.2,
+    "pos": [
+     0,
+     0.12,
+     0
+    ],
+    "mat": "bone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.06,
+     0.06
+    ],
+    "pos": [
+     0.2,
+     0.06,
+     0.1
+    ],
+    "mat": "bone",
+    "rot": [
+     0,
+     30,
+     0
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.06,
+     0.06
+    ],
+    "pos": [
+     -0.2,
+     0.06,
+     -0.1
+    ],
+    "mat": "bone",
+    "rot": [
+     0,
+     -50,
+     0
+    ]
+   },
+   {
+    "shape": "sphere",
+    "r": 0.14,
+    "pos": [
+     -0.3,
+     0.1,
+     0.3
+    ],
+    "mat": "bone"
+   }
+  ]
+ },
+ {
+  "id": "sarcophagus",
+  "name": "Stone coffin",
+  "tags": [
+   "medieval",
+   "ancient",
+   "crypt",
+   "ruins"
+  ],
+  "size": [
+   1,
+   2.1
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.5,
+     2
+    ],
+    "pos": [
+     0,
+     0.25,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1,
+     0.2,
+     2.1
+    ],
+    "pos": [
+     0,
+     0.6,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.08,
+     1.3
+    ],
+    "pos": [
+     0,
+     0.74,
+     0
+    ],
+    "mat": "#8a8780"
+   }
+  ]
+ },
+ {
+  "id": "candelabra",
+  "name": "Candelabra",
+  "tags": [
+   "medieval",
+   "castle",
+   "church",
+   "victorian"
+  ],
+  "size": [
+   0.5,
+   0.5
+  ],
+  "block": false,
+  "light": {
+   "c": 16760944,
+   "i": 8,
+   "r": 6,
+   "y": 1.7
+  },
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.04,
+    "h": 1.3,
+    "pos": [
+     0,
+     0.65,
+     0
+    ],
+    "mat": "gold"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.15,
+    "h": 0.04,
+    "pos": [
+     0,
+     0.02,
+     0
+    ],
+    "mat": "gold"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.025,
+    "h": 0.22,
+    "pos": [
+     -0.2,
+     1.4,
+     0
+    ],
+    "mat": "sheet"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.025,
+    "h": 0.22,
+    "pos": [
+     0,
+     1.4,
+     0
+    ],
+    "mat": "sheet"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.025,
+    "h": 0.22,
+    "pos": [
+     0.2,
+     1.4,
+     0
+    ],
+    "mat": "sheet"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.03,
+    "pos": [
+     -0.2,
+     1.55,
+     0
+    ],
+    "mat": "torch"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.03,
+    "pos": [
+     0,
+     1.55,
+     0
+    ],
+    "mat": "torch"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.03,
+    "pos": [
+     0.2,
+     1.55,
+     0
+    ],
+    "mat": "torch"
+   }
+  ]
+ },
+ {
+  "id": "hanging_pot",
+  "name": "Hearth with pot",
+  "tags": [
+   "medieval",
+   "kitchen",
+   "village"
+  ],
+  "size": [
+   1.4,
+   0.8
+  ],
+  "block": true,
+  "light": {
+   "c": 16748608,
+   "i": 12,
+   "r": 7,
+   "y": 1
+  },
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.4,
+     1.1,
+     0.8
+    ],
+    "pos": [
+     0,
+     0.55,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.8,
+     0.7,
+     0.5
+    ],
+    "pos": [
+     0,
+     0.45,
+     0.1
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.2,
+    "pos": [
+     0,
+     0.3,
+     0.1
+    ],
+    "mat": "torch"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.2,
+    "h": 0.25,
+    "pos": [
+     0,
+     0.85,
+     0.1
+    ],
+    "mat": "iron"
+   }
+  ]
+ },
+ {
+  "id": "market_cart_fruit",
+  "name": "Fruit stall",
+  "tags": [
+   "medieval",
+   "market",
+   "street",
+   "outdoor"
+  ],
+  "size": [
+   2,
+   1.2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.8,
+     0.7,
+     0.9
+    ],
+    "pos": [
+     0,
+     0.35,
+     0
+    ],
+    "mat": "wood"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.9,
+     0.05,
+     1
+    ],
+    "pos": [
+     0,
+     1.9,
+     0
+    ],
+    "mat": "cloth"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     1.9,
+     0.06
+    ],
+    "pos": [
+     -0.9,
+     0.95,
+     0.45
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.06,
+     1.9,
+     0.06
+    ],
+    "pos": [
+     0.9,
+     0.95,
+     0.45
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.1,
+    "pos": [
+     -0.5,
+     0.8,
+     0
+    ],
+    "mat": "red"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.1,
+    "pos": [
+     0,
+     0.8,
+     0.1
+    ],
+    "mat": "yellow"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.1,
+    "pos": [
+     0.5,
+     0.8,
+     0
+    ],
+    "mat": "leaf"
+   }
+  ]
+ },
+ {
+  "id": "gallows",
+  "name": "Gallows",
+  "tags": [
+   "medieval",
+   "village",
+   "outdoor",
+   "horror"
+  ],
+  "size": [
+   2.4,
+   1.2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     3.2,
+     0.2
+    ],
+    "pos": [
+     -1,
+     1.6,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2.2,
+     0.2,
+     0.2
+    ],
+    "pos": [
+     0,
+     3.1,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.8,
+     0.1,
+     0.1
+    ],
+    "pos": [
+     -0.7,
+     2.8,
+     0
+    ],
+    "mat": "dark",
+    "rot": [
+     0,
+     0,
+     40
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.03,
+     0.9,
+     0.03
+    ],
+    "pos": [
+     0.6,
+     2.6,
+     0
+    ],
+    "mat": "straw"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.5,
+     1
+    ],
+    "pos": [
+     0.5,
+     0.25,
+     0.5
+    ],
+    "mat": "wood"
+   }
+  ]
+ }
+]

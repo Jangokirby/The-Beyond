@@ -1,0 +1,1797 @@
+[
+ {
+  "id": "palm",
+  "name": "Palm tree",
+  "tags": [
+   "tropic",
+   "desert",
+   "outdoor",
+   "jungle"
+  ],
+  "size": [
+   1.2,
+   1.2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.14,
+    "h": 3.4,
+    "pos": [
+     0,
+     1.7,
+     0
+    ],
+    "mat": "#6a5030"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.05,
+     0.35
+    ],
+    "pos": [
+     0.7,
+     3.4,
+     0
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     0,
+     18
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.05,
+     0.35
+    ],
+    "pos": [
+     0.35000000000000003,
+     3.4,
+     0.606217782649107
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -60,
+     18
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.05,
+     0.35
+    ],
+    "pos": [
+     -0.3499999999999998,
+     3.4,
+     0.6062177826491071
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -120,
+     18
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.05,
+     0.35
+    ],
+    "pos": [
+     -0.7,
+     3.4,
+     8.572527594031472e-17
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -180,
+     18
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.05,
+     0.35
+    ],
+    "pos": [
+     -0.3500000000000003,
+     3.4,
+     -0.6062177826491069
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -240,
+     18
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.05,
+     0.35
+    ],
+    "pos": [
+     0.35000000000000003,
+     3.4,
+     -0.606217782649107
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -300,
+     18
+    ]
+   }
+  ]
+ },
+ {
+  "id": "cactus",
+  "name": "Cactus",
+  "tags": [
+   "desert",
+   "outdoor"
+  ],
+  "size": [
+   0.7,
+   0.7
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.18,
+    "h": 1.6,
+    "pos": [
+     0,
+     0.8,
+     0
+    ],
+    "mat": "greenm"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 0.7,
+    "pos": [
+     0.3,
+     1,
+     0
+    ],
+    "mat": "greenm"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 0.5,
+    "pos": [
+     -0.3,
+     0.8,
+     0
+    ],
+    "mat": "greenm"
+   }
+  ]
+ },
+ {
+  "id": "dune",
+  "name": "Sand dune",
+  "tags": [
+   "desert",
+   "outdoor"
+  ],
+  "size": [
+   3,
+   2
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "sphere",
+    "r": 1.5,
+    "pos": [
+     0,
+     -0.5,
+     0
+    ],
+    "mat": "#b9a374"
+   },
+   {
+    "shape": "sphere",
+    "r": 1,
+    "pos": [
+     1.2,
+     -0.4,
+     0.3
+    ],
+    "mat": "#c0aa7c"
+   }
+  ]
+ },
+ {
+  "id": "mud_hut",
+  "name": "Mud-brick house",
+  "tags": [
+   "desert",
+   "outdoor",
+   "village",
+   "ancient"
+  ],
+  "size": [
+   3,
+   2.8
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     3,
+     2,
+     2.6
+    ],
+    "pos": [
+     0,
+     1,
+     0
+    ],
+    "mat": "#b99a6e"
+   },
+   {
+    "shape": "box",
+    "size": [
+     3.2,
+     0.15,
+     2.8
+    ],
+    "pos": [
+     0,
+     2.05,
+     0
+    ],
+    "mat": "#a88a5e"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     1.3,
+     0.06
+    ],
+    "pos": [
+     0,
+     0.65,
+     1.32
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.4,
+     0.4,
+     0.06
+    ],
+    "pos": [
+     1,
+     1.3,
+     1.32
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "adobe_wall",
+  "name": "Adobe wall (3 m)",
+  "tags": [
+   "desert",
+   "outdoor",
+   "ancient",
+   "ruins"
+  ],
+  "size": [
+   3,
+   0.4
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     3,
+     1.6,
+     0.4
+    ],
+    "pos": [
+     0,
+     0.8,
+     0
+    ],
+    "mat": "#b99a6e"
+   }
+  ]
+ },
+ {
+  "id": "temple_column",
+  "name": "Temple column",
+  "tags": [
+   "ancient",
+   "ruins",
+   "outdoor",
+   "temple"
+  ],
+  "size": [
+   1,
+   1
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.1,
+     0.3,
+     1.1
+    ],
+    "pos": [
+     0,
+     0.15,
+     0
+    ],
+    "mat": "#c8b898"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.38,
+    "h": 3,
+    "pos": [
+     0,
+     1.8,
+     0
+    ],
+    "mat": "#d4c4a4"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1,
+     0.3,
+     1
+    ],
+    "pos": [
+     0,
+     3.4,
+     0
+    ],
+    "mat": "#c8b898"
+   }
+  ]
+ },
+ {
+  "id": "statue",
+  "name": "Statue",
+  "tags": [
+   "ancient",
+   "ruins",
+   "outdoor",
+   "temple",
+   "church",
+   "garden"
+  ],
+  "size": [
+   1,
+   1
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.8,
+     0.9
+    ],
+    "pos": [
+     0,
+     0.4,
+     0
+    ],
+    "mat": "stone"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.4,
+     1,
+     0.3
+    ],
+    "pos": [
+     0,
+     1.3,
+     0
+    ],
+    "mat": "#9a978f"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.2,
+    "pos": [
+     0,
+     2,
+     0
+    ],
+    "mat": "#9a978f"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.14,
+     0.8,
+     0.14
+    ],
+    "pos": [
+     -0.32,
+     1.3,
+     0
+    ],
+    "mat": "#9a978f"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.14,
+     0.8,
+     0.14
+    ],
+    "pos": [
+     0.32,
+     1.3,
+     0
+    ],
+    "mat": "#9a978f"
+   }
+  ]
+ },
+ {
+  "id": "shrine_gate",
+  "name": "Torii / gate",
+  "tags": [
+   "ancient",
+   "outdoor",
+   "temple",
+   "japan"
+  ],
+  "size": [
+   3,
+   0.5
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.15,
+    "h": 3.2,
+    "pos": [
+     -1.2,
+     1.6,
+     0
+    ],
+    "mat": "red"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.15,
+    "h": 3.2,
+    "pos": [
+     1.2,
+     1.6,
+     0
+    ],
+    "mat": "red"
+   },
+   {
+    "shape": "box",
+    "size": [
+     3.4,
+     0.22,
+     0.3
+    ],
+    "pos": [
+     0,
+     3.2,
+     0
+    ],
+    "mat": "black"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2.9,
+     0.15,
+     0.22
+    ],
+    "pos": [
+     0,
+     2.7,
+     0
+    ],
+    "mat": "red"
+   }
+  ]
+ },
+ {
+  "id": "paper_lantern",
+  "name": "Paper lantern",
+  "tags": [
+   "ancient",
+   "outdoor",
+   "street",
+   "market",
+   "festival"
+  ],
+  "size": [
+   0.5,
+   0.5
+  ],
+  "block": false,
+  "light": {
+   "c": 16756832,
+   "i": 9,
+   "r": 6,
+   "y": 1.9
+  },
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.03,
+    "h": 1.8,
+    "pos": [
+     0,
+     0.9,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.25,
+    "pos": [
+     0,
+     1.9,
+     0
+    ],
+    "mat": "torch"
+   }
+  ]
+ },
+ {
+  "id": "rail_track",
+  "name": "Railway track (3 m)",
+  "tags": [
+   "rail",
+   "outdoor",
+   "train",
+   "station"
+  ],
+  "size": [
+   3,
+   1.6
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     3,
+     0.14,
+     0.12
+    ],
+    "pos": [
+     0,
+     0.1,
+     -0.6
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     3,
+     0.14,
+     0.12
+    ],
+    "pos": [
+     0,
+     0.1,
+     0.6
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     0.1,
+     1.8
+    ],
+    "pos": [
+     -1.3,
+     0.04,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     0.1,
+     1.8
+    ],
+    "pos": [
+     -0.65,
+     0.04,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     0.1,
+     1.8
+    ],
+    "pos": [
+     0,
+     0.04,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     0.1,
+     1.8
+    ],
+    "pos": [
+     0.65,
+     0.04,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.2,
+     0.1,
+     1.8
+    ],
+    "pos": [
+     1.3,
+     0.04,
+     0
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "train_carriage",
+  "name": "Train carriage",
+  "tags": [
+   "rail",
+   "train",
+   "outdoor"
+  ],
+  "size": [
+   7,
+   2.4
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     7,
+     2.2,
+     2.4
+    ],
+    "pos": [
+     0,
+     1.6,
+     0
+    ],
+    "mat": "#5a3a30"
+   },
+   {
+    "shape": "box",
+    "size": [
+     7.2,
+     0.18,
+     2.5
+    ],
+    "pos": [
+     0,
+     2.8,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.6,
+     0.05
+    ],
+    "pos": [
+     -2.4,
+     1.9,
+     1.22
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.6,
+     0.05
+    ],
+    "pos": [
+     -2.4,
+     1.9,
+     -1.22
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.6,
+     0.05
+    ],
+    "pos": [
+     -0.8,
+     1.9,
+     1.22
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.6,
+     0.05
+    ],
+    "pos": [
+     -0.8,
+     1.9,
+     -1.22
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.6,
+     0.05
+    ],
+    "pos": [
+     0.8,
+     1.9,
+     1.22
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.6,
+     0.05
+    ],
+    "pos": [
+     0.8,
+     1.9,
+     -1.22
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.6,
+     0.05
+    ],
+    "pos": [
+     2.4,
+     1.9,
+     1.22
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.6,
+     0.05
+    ],
+    "pos": [
+     2.4,
+     1.9,
+     -1.22
+    ],
+    "mat": "win"
+   },
+   {
+    "shape": "box",
+    "size": [
+     7,
+     0.4,
+     2
+    ],
+    "pos": [
+     0,
+     0.3,
+     0
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "train_seats",
+  "name": "Train seats (bench pair)",
+  "tags": [
+   "rail",
+   "train",
+   "indoor"
+  ],
+  "size": [
+   1.8,
+   1
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.1,
+     0.5
+    ],
+    "pos": [
+     0,
+     0.45,
+     -0.35
+    ],
+    "mat": "cloth2"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.6,
+     0.1
+    ],
+    "pos": [
+     0,
+     0.8,
+     -0.6
+    ],
+    "mat": "cloth2"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.1,
+     0.5
+    ],
+    "pos": [
+     0,
+     0.45,
+     0.35
+    ],
+    "mat": "cloth2"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.6,
+     0.1
+    ],
+    "pos": [
+     0,
+     0.8,
+     0.6
+    ],
+    "mat": "cloth2"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.05,
+     0.4
+    ],
+    "pos": [
+     0,
+     0.62,
+     0
+    ],
+    "mat": "wood"
+   }
+  ]
+ },
+ {
+  "id": "canoe",
+  "name": "Canoe",
+  "tags": [
+   "jungle",
+   "tropic",
+   "outdoor",
+   "harbour"
+  ],
+  "size": [
+   3,
+   0.8
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     3,
+     0.2,
+     0.6
+    ],
+    "pos": [
+     0,
+     0.2,
+     0
+    ],
+    "mat": "#6a4a30"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.25,
+     0.55
+    ],
+    "pos": [
+     1.4,
+     0.3,
+     0
+    ],
+    "mat": "#6a4a30",
+    "rot": [
+     0,
+     0,
+     20
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.25,
+     0.55
+    ],
+    "pos": [
+     -1.4,
+     0.3,
+     0
+    ],
+    "mat": "#6a4a30",
+    "rot": [
+     0,
+     0,
+     -20
+    ]
+   }
+  ]
+ },
+ {
+  "id": "fern",
+  "name": "Ferns",
+  "tags": [
+   "jungle",
+   "tropic",
+   "outdoor"
+  ],
+  "size": [
+   1,
+   1
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.04,
+     0.22
+    ],
+    "pos": [
+     0.3,
+     0.35,
+     0
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     0,
+     25
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.04,
+     0.22
+    ],
+    "pos": [
+     0.09270509831248423,
+     0.35,
+     0.285316954888546
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -72,
+     25
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.04,
+     0.22
+    ],
+    "pos": [
+     -0.24270509831248419,
+     0.35,
+     0.17633557568774197
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -144,
+     25
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.04,
+     0.22
+    ],
+    "pos": [
+     -0.2427050983124842,
+     0.35,
+     -0.1763355756877419
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -216,
+     25
+    ]
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.04,
+     0.22
+    ],
+    "pos": [
+     0.09270509831248416,
+     0.35,
+     -0.2853169548885461
+    ],
+    "mat": "leaf",
+    "rot": [
+     0,
+     -288,
+     25
+    ]
+   }
+  ]
+ },
+ {
+  "id": "vine_tree",
+  "name": "Rainforest tree",
+  "tags": [
+   "jungle",
+   "tropic",
+   "outdoor"
+  ],
+  "size": [
+   2,
+   2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.3,
+    "h": 3.6,
+    "pos": [
+     0,
+     1.8,
+     0
+    ],
+    "mat": "#4a3a28"
+   },
+   {
+    "shape": "sphere",
+    "r": 1.4,
+    "pos": [
+     0,
+     4.2,
+     0
+    ],
+    "mat": "#2f6a35"
+   },
+   {
+    "shape": "sphere",
+    "r": 1,
+    "pos": [
+     0.9,
+     3.6,
+     0.5
+    ],
+    "mat": "#3a7a3a"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.03,
+    "h": 2.6,
+    "pos": [
+     0.5,
+     2.4,
+     0.3
+    ],
+    "mat": "leaf"
+   }
+  ]
+ },
+ {
+  "id": "stilt_hut",
+  "name": "Stilt house",
+  "tags": [
+   "jungle",
+   "tropic",
+   "outdoor",
+   "village"
+  ],
+  "size": [
+   3,
+   2.6
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 1.2,
+    "pos": [
+     -1.2,
+     0.6,
+     -1
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 1.2,
+    "pos": [
+     -1.2,
+     0.6,
+     1
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 1.2,
+    "pos": [
+     1.2,
+     0.6,
+     -1
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 1.2,
+    "pos": [
+     1.2,
+     0.6,
+     1
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     3,
+     0.15,
+     2.6
+    ],
+    "pos": [
+     0,
+     1.2,
+     0
+    ],
+    "mat": "wood"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2.8,
+     1.4,
+     2.4
+    ],
+    "pos": [
+     0,
+     1.95,
+     0
+    ],
+    "mat": "#8a6a40"
+   },
+   {
+    "shape": "cone",
+    "r": 2.2,
+    "h": 1,
+    "pos": [
+     0,
+     3.15,
+     0
+    ],
+    "mat": "thatch"
+   }
+  ]
+ },
+ {
+  "id": "life_raft",
+  "name": "Life raft",
+  "tags": [
+   "ship",
+   "sea",
+   "outdoor",
+   "harbour"
+  ],
+  "size": [
+   1.6,
+   1
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.5,
+    "h": 0.3,
+    "pos": [
+     0,
+     0.2,
+     0
+    ],
+    "mat": "yellow"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.4,
+    "h": 0.05,
+    "pos": [
+     0,
+     0.38,
+     0
+    ],
+    "mat": "dark"
+   }
+  ]
+ },
+ {
+  "id": "ship_mast",
+  "name": "Mast",
+  "tags": [
+   "ship",
+   "sea",
+   "outdoor"
+  ],
+  "size": [
+   0.8,
+   0.8
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.12,
+    "h": 6,
+    "pos": [
+     0,
+     3,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2.6,
+     0.08,
+     0.08
+    ],
+    "pos": [
+     0,
+     5.2,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     2.4,
+     1.6,
+     0.03
+    ],
+    "pos": [
+     0,
+     4.2,
+     0
+    ],
+    "mat": "canvas"
+   }
+  ]
+ },
+ {
+  "id": "deck_gun",
+  "name": "Deck gun",
+  "tags": [
+   "ship",
+   "sea",
+   "military",
+   "outdoor"
+  ],
+  "size": [
+   1.6,
+   1
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.45,
+    "h": 0.5,
+    "pos": [
+     0,
+     0.25,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.5,
+     0.5,
+     0.7
+    ],
+    "pos": [
+     0,
+     0.75,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 2,
+    "pos": [
+     0,
+     1,
+     -0.9
+    ],
+    "mat": "iron",
+    "rot": [
+     90,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ {
+  "id": "anchor",
+  "name": "Anchor",
+  "tags": [
+   "ship",
+   "sea",
+   "harbour",
+   "outdoor"
+  ],
+  "size": [
+   1,
+   0.5
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "cyl",
+    "r": 0.05,
+    "h": 1.2,
+    "pos": [
+     0,
+     0.6,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.9,
+     0.08,
+     0.08
+    ],
+    "pos": [
+     0,
+     1.2,
+     0
+    ],
+    "mat": "iron"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     0.08,
+     0.08
+    ],
+    "pos": [
+     0,
+     0.08,
+     0
+    ],
+    "mat": "iron"
+   }
+  ]
+ },
+ {
+  "id": "coral",
+  "name": "Coral",
+  "tags": [
+   "reef",
+   "sea",
+   "outdoor",
+   "tropic"
+  ],
+  "size": [
+   1.2,
+   1.2
+  ],
+  "block": false,
+  "parts": [
+   {
+    "shape": "cone",
+    "r": 0.3,
+    "h": 0.9,
+    "pos": [
+     0,
+     0.45,
+     0
+    ],
+    "mat": "#e0607a"
+   },
+   {
+    "shape": "cone",
+    "r": 0.22,
+    "h": 0.7,
+    "pos": [
+     0.35,
+     0.35,
+     0.1
+    ],
+    "mat": "#e8a040"
+   },
+   {
+    "shape": "cone",
+    "r": 0.2,
+    "h": 0.6,
+    "pos": [
+     -0.3,
+     0.3,
+     0.2
+    ],
+    "mat": "#9a5ad0"
+   },
+   {
+    "shape": "sphere",
+    "r": 0.25,
+    "pos": [
+     0.1,
+     0.2,
+     -0.3
+    ],
+    "mat": "#e08a9a"
+   }
+  ]
+ },
+ {
+  "id": "ice_block",
+  "name": "Ice block",
+  "tags": [
+   "snow",
+   "polar",
+   "outdoor"
+  ],
+  "size": [
+   1.2,
+   1.2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.2,
+     1.1,
+     1
+    ],
+    "pos": [
+     0,
+     0.55,
+     0
+    ],
+    "mat": "ice"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.6,
+     0.7,
+     0.6
+    ],
+    "pos": [
+     0.5,
+     0.35,
+     0.4
+    ],
+    "mat": "ice",
+    "rot": [
+     0,
+     20,
+     0
+    ]
+   }
+  ]
+ },
+ {
+  "id": "prefab_hut",
+  "name": "Prefab hut",
+  "tags": [
+   "polar",
+   "outdoor",
+   "snow",
+   "camp",
+   "modern"
+  ],
+  "size": [
+   3.4,
+   2.4
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     3.4,
+     2.1,
+     2.4
+    ],
+    "pos": [
+     0,
+     1.05,
+     0
+    ],
+    "mat": "#c8503a"
+   },
+   {
+    "shape": "box",
+    "size": [
+     3.5,
+     0.12,
+     2.5
+    ],
+    "pos": [
+     0,
+     2.15,
+     0
+    ],
+    "mat": "white"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.7,
+     1.5,
+     0.06
+    ],
+    "pos": [
+     0,
+     0.75,
+     1.22
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.6,
+     0.5,
+     0.05
+    ],
+    "pos": [
+     1,
+     1.4,
+     1.22
+    ],
+    "mat": "win"
+   }
+  ]
+ },
+ {
+  "id": "drill_rig",
+  "name": "Drill rig",
+  "tags": [
+   "polar",
+   "industrial",
+   "outdoor",
+   "modern",
+   "scifi"
+  ],
+  "size": [
+   2,
+   2
+  ],
+  "block": true,
+  "parts": [
+   {
+    "shape": "box",
+    "size": [
+     1.6,
+     0.3,
+     1.6
+    ],
+    "pos": [
+     0,
+     0.15,
+     0
+    ],
+    "mat": "dark"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     4,
+     0.1
+    ],
+    "pos": [
+     -0.42,
+     2.1,
+     -0.42
+    ],
+    "mat": "yellow"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     4,
+     0.1
+    ],
+    "pos": [
+     0.42,
+     2.1,
+     -0.42
+    ],
+    "mat": "yellow"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     4,
+     0.1
+    ],
+    "pos": [
+     0.42,
+     2.1,
+     0.42
+    ],
+    "mat": "yellow"
+   },
+   {
+    "shape": "box",
+    "size": [
+     0.1,
+     4,
+     0.1
+    ],
+    "pos": [
+     -0.42,
+     2.1,
+     0.42
+    ],
+    "mat": "yellow"
+   },
+   {
+    "shape": "cyl",
+    "r": 0.1,
+    "h": 4,
+    "pos": [
+     0,
+     2,
+     0
+    ],
+    "mat": "steel"
+   },
+   {
+    "shape": "box",
+    "size": [
+     1.2,
+     0.1,
+     1.2
+    ],
+    "pos": [
+     0,
+     4,
+     0
+    ],
+    "mat": "yellow"
+   }
+  ]
+ }
+]

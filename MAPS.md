@@ -22,6 +22,21 @@ Add one entry to `CATALOG` in `kit.js`: a name, tags, a footprint `[width, depth
 ## To add an era's look
 Add floor and wall surfaces to `FLOORS` and `WALLS`, then pieces tagged for that period. A new era is mostly pieces (40 or so cover a period).
 
+## Eras (what exists for each period)
+The auto-mapper reads the case's **year, setting and theme** plus each scene's name, and picks a period-right preset. Check the choices for any case without drawing anything:
+`node tools/room3d/automap.js --plan [case ...]`
+
+| Period | Rooms | Outdoors |
+|---|---|---|
+| Medieval and older (to 1700) | great_hall, dungeon, smithy, chapel, tavern | medieval_village, castle_yard, graveyard, woods, ruins, temple_court, desert_town |
+| Victorian to WWII (1700-1960) | tenement, factory, theatre, cinema, gallery, ward, study, cellar, canteen | street, yard, trench, harbour, rail, ship_deck, garden |
+| Modern (1960-2070) | apartment, office_mod, shop, subway, server_room, hospital_mod | modern_street, rooftop |
+| Far future (2070+) | lab_scifi, corridor, cargo_bay, quarters, reactor_hall | neon_alley, orbital, rooftop |
+| Anywhere | train_car | jungle, reef, polar_station, snowfield, camp |
+
+About 100 era pieces live in `public/lab/pieces/era-*.json`, written by `node tools/room3d/make-era-pieces.js` (add a piece = add one line, run it). New floors: asphalt, carpet, marble, metal, flag, water, gravel, sand. New walls: stone, metal, adobe, tin, whitewash. Glowing materials for neon, screens, torches.
+To change which preset a word picks, edit `ERA_RULES` / `GENERIC` in `public/lab/auto.js`.
+
 ## Outdoors
 Presets `street, woods, camp, yard, graveyard, harbour, trench, snowfield` build outdoor maps (ground, trees, tents, lamps, fences, boats, sandbags). The auto-mapper chooses
 indoor or outdoor from the scene's theme and name. Outdoor pieces are data files in `public/lab/pieces/outdoor.json`.
