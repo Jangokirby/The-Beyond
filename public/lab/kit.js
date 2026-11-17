@@ -26,6 +26,10 @@ const FLOORS = {
   wood: () => tex(512, 512, (g, w, h) => { for (let i = 0; i < 8; i++) { const y = i * h / 8; g.fillStyle = `hsl(${28 + rnd() * 6},${30 + rnd() * 8}%,${24 + rnd() * 8}%)`; g.fillRect(0, y, w, h / 8 - 2); g.strokeStyle = "rgba(0,0,0,.35)"; g.strokeRect(0, y, w, h / 8 - 2); } }),
   stone: () => tex(512, 512, (g, w, h) => { for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { const c = 78 + rnd() * 26 | 0; g.fillStyle = `rgb(${c},${c - 4},${c - 10})`; g.fillRect(i * 128, j * 128, 126, 126); } }),
   tile: () => tex(512, 512, (g, w, h) => { for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) { g.fillStyle = (i + j) % 2 ? "#cfd0c8" : "#2e3a3c"; g.fillRect(i * 64, j * 64, 62, 62); } }),
+  grass: () => tex(256, 256, (g, w, h) => { g.fillStyle = "#4f6a3a"; g.fillRect(0, 0, w, h); for (let i = 0; i < 2200; i++) { g.fillStyle = `rgba(${rnd() < .5 ? "30,60,25" : "120,150,70"},${rnd() * .22})`; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 4, 2 + rnd() * 6); } }),
+  snow: () => tex(256, 256, (g, w, h) => { g.fillStyle = "#dfe7ee"; g.fillRect(0, 0, w, h); for (let i = 0; i < 1600; i++) { g.fillStyle = `rgba(${rnd() < .5 ? "150,170,190" : "255,255,255"},${rnd() * .25})`; g.fillRect(rnd() * w, rnd() * h, 2 + rnd() * 7, 2 + rnd() * 5); } }),
+  cobble: () => tex(256, 256, (g, w, h) => { g.fillStyle = "#4b4a47"; g.fillRect(0, 0, w, h); for (let j = 0; j < 8; j++) for (let i = 0; i < 8; i++) { const c = 70 + rnd() * 40 | 0; g.fillStyle = `rgb(${c},${c - 3},${c - 8})`; g.fillRect(i * 32 + (j % 2) * 16 - 16, j * 32, 29, 29); } }),
+  sand: () => tex(256, 256, (g, w, h) => { g.fillStyle = "#b9a374"; g.fillRect(0, 0, w, h); for (let i = 0; i < 1600; i++) { g.fillStyle = `rgba(${rnd() < .5 ? "120,95,55" : "240,220,170"},${rnd() * .2})`; g.fillRect(rnd() * w, rnd() * h, 1 + rnd() * 4, 1 + rnd() * 3); } }),
   dirt: () => tex(256, 256, (g, w, h) => { g.fillStyle = "#4a3a2a"; g.fillRect(0, 0, w, h); for (let i = 0; i < 1400; i++) { g.fillStyle = `rgba(${rnd() < .5 ? "20,14,8" : "120,96,64"},${rnd() * .18})`; g.fillRect(rnd() * w, rnd() * h, 2 + rnd() * 5, 2 + rnd() * 5); } })
 };
 const WALLS = {
@@ -111,12 +115,14 @@ export function measureModel(file) { return new Promise((res, rej) => new GLTFLo
 export function build(L, opt = {}) {
   const S = new THREE.Scene(), mood = (L.style && L.style.mood) || "day", Wm = L.w, Hm = L.h, T = .3, WH = 2.6;
   S.background = new THREE.Color(0x0b0d10);
-  const floorMap = FLOORS[(L.style && L.style.floor) || "wood"](); floorMap.repeat.set(Wm / 4, Hm / 4);
+  const out = !!(L.style && L.style.outdoor), draw = !out;   // outdoors: no walls are drawn, the ground runs on past the edges
+  const floorMap = FLOORS[(L.style && L.style.floor) || "wood"](); floorMap.repeat.set((Wm + (out ? 20 : 2)) / 4, (Hm + (out ? 20 : 2)) / 4);
   const wallMap = WALLS[(L.style && L.style.wall) || "plaster"]();
   const m = { floor: M(0xffffff, { map: floorMap, roughness: .9 }), wall: M(0xffffff, { map: wallMap }), trim: M(0x5a4636), iron: M(0x59606b, { roughness: .55, metalness: .35 }), sheet: M(0xe9e4d6), blanket: M(0x6b7b5e), wood: M(0x9a6f46), dark: M(0x6a4c34), glass: M(0xffe9b0, { emissive: 0xffd48a, emissiveIntensity: 1.6 }), win: M(0x9bb4cf, { emissive: 0x6f8fb8, emissiveIntensity: .9 }), brass: M(0xb18b3a, { metalness: .7, roughness: .4 }), crate: M(0xa98250), canvas: M(0xb8ad8c), brick: M(0x7a4332), stone: M(0x8a8780), fire: M(0xff9a40, { emissive: 0xff7a20, emissiveIntensity: 2 }), rug: M(0x7a2f2f), rug2: M(0xb59a5a), metalBlue: M(0x4a6a86), red: M(0xb0302a) };
   const add = (o, cast = true) => { o.castShadow = cast; o.receiveShadow = true; S.add(o); return o; };
   const box = (w, h, d, mat, x, y, z, cast = true) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); o.position.set(x, y, z); return add(o, cast); };
-  box(Wm + 2, .1, Hm + 2, m.floor, Wm / 2, -.05, Hm / 2, false);
+  box(Wm + (out ? 20 : 2), .1, Hm + (out ? 20 : 2), m.floor, Wm / 2, -.05, Hm / 2, false);
+  if (out) S.background = new THREE.Color({ day: 0x6f8f6a, dim: 0x3a4a44, night: 0x0a0e14 }[mood] || 0x3a4a44);
   /* walls: default is the room's outline */
   const walls = (L.walls && L.walls.length) ? L.walls : [{ a: [0, 0], b: [Wm, 0] }, { a: [Wm, 0], b: [Wm, Hm] }, { a: [0, Hm], b: [Wm, Hm] }, { a: [0, 0], b: [0, Hm] }];
   const cuts = []; const collide = []; const exits = [];
@@ -126,8 +132,8 @@ export function build(L, opt = {}) {
     const hh = (horiz && fix > .01) ? (near ? .5 : 1.2) : WH;
     const ops = [...(L.doors || []).map((d) => ({ ...d, door: true })), ...(L.windows || []).map((d) => ({ ...d }))].filter((o) => (horiz ? o.axis === "h" && Math.abs(o.z - fix) < .2 && o.x >= c0 - .01 && o.x <= c0 + len + .01 : o.axis === "v" && Math.abs(o.x - fix) < .2 && o.z >= c0 - .01 && o.z <= c0 + len + .01)).sort((p, q) => (horiz ? p.x - q.x : p.z - q.z));
     let p = c0;
-    const solid = (a, b, h, y0, mat = m.wall) => { if (b - a < .02) return; if (horiz) box(b - a, h, T, mat, (a + b) / 2, y0 + h / 2, fix); else box(T, h, b - a, mat, fix, y0 + h / 2, (a + b) / 2); };
-    for (const o of ops) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; solid(p, a, hh, 0); if (o.door) { solid(a, b, Math.max(0, hh - 2.1), 2.1); exits.push({ x: horiz ? o.x : fix, z: horiz ? fix : o.z, w: o.w || 1.4, axis: o.axis }); cuts.push([a, b, horiz, fix]); } else { solid(a, b, Math.min(.9, hh), 0); if (hh > 1.1) solid(a, b, Math.max(0, hh - 1.9), 1.9); if (hh > 1.1) { if (horiz) box(b - a - .1, 1.0, .06, m.win, (a + b) / 2, 1.4, fix); else box(.06, 1.0, b - a - .1, m.win, fix, 1.4, (a + b) / 2); } } p = b; }
+    const solid = (a, b, h, y0, mat = m.wall) => { if (b - a < .02 || !draw) return; if (horiz) box(b - a, h, T, mat, (a + b) / 2, y0 + h / 2, fix); else box(T, h, b - a, mat, fix, y0 + h / 2, (a + b) / 2); };
+    for (const o of ops) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; solid(p, a, hh, 0); if (o.door) { solid(a, b, Math.max(0, hh - 2.1), 2.1); exits.push({ x: horiz ? o.x : fix, z: horiz ? fix : o.z, w: o.w || 1.4, axis: o.axis }); cuts.push([a, b, horiz, fix]); } else { solid(a, b, Math.min(.9, hh), 0); if (hh > 1.1) solid(a, b, Math.max(0, hh - 1.9), 1.9); if (hh > 1.1 && draw) { if (horiz) box(b - a - .1, 1.0, .06, m.win, (a + b) / 2, 1.4, fix); else box(.06, 1.0, b - a - .1, m.win, fix, 1.4, (a + b) / 2); } } p = b; }
     solid(p, c0 + len, hh, 0);
     /* collision: the wall's solid spans (doors are gaps; windows block) */
     let q = c0; for (const o of ops) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; if (!o.door) continue; if (a > q) collide.push(horiz ? [q, fix, a, fix] : [fix, q, fix, a]); q = b; }
@@ -135,7 +141,7 @@ export function build(L, opt = {}) {
     for (const o of ops) if (!o.door) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; collide.push(horiz ? [a, fix, b, fix] : [fix, a, fix, b]); }
   }
   /* baseboards on the back and side walls */
-  box(Wm, .2, .08, m.trim, Wm / 2, .1, .04, false); box(.08, .2, Hm, m.trim, .04, .1, Hm / 2, false); box(.08, .2, Hm, m.trim, Wm - .04, .1, Hm / 2, false);
+  if (draw) { box(Wm, .2, .08, m.trim, Wm / 2, .1, .04, false); box(.08, .2, Hm, m.trim, .04, .1, Hm / 2, false); box(.08, .2, Hm, m.trim, Wm - .04, .1, Hm / 2, false); }
   /* props */
   const lights = [], foot = [];
   const k = { m, group: () => new THREE.Group(), book: () => M(new THREE.Color().setHSL(rnd(), .35, .3 + rnd() * .15)),
@@ -149,7 +155,7 @@ export function build(L, opt = {}) {
     if (def.light) { const l = new THREE.PointLight(def.light.c, def.light.i * (mood === "night" ? 1.3 : 1), def.light.r, 1.5); l.position.set(p.x, def.light.y, p.z + (def.light.dz || 0)); l.castShadow = true; l.shadow.mapSize.set(512, 512); l.shadow.bias = -.002; S.add(l); lights.push({ x: p.x, z: p.z, r: def.light.r, c: def.light.c }); }
   }
   /* daylight */
-  const day = { day: [1.4, 2.0], dim: [1.0, 1.0], night: [.35, .25] }[mood] || [1.2, 1.5];
+  const day = (out ? { day: [1.7, 2.4], dim: [1.0, 1.1], night: [.3, .35] } : { day: [1.4, 2.0], dim: [1.0, 1.0], night: [.35, .25] })[mood] || [1.2, 1.5];
   S.add(new THREE.HemisphereLight(0xb4c4dc, 0x4a3a2c, day[0]));
   const sun = new THREE.DirectionalLight(0xc8d8f0, day[1]); sun.position.set(Wm * .3, 12, -6); sun.target.position.set(Wm / 2, 0, Hm / 2); sun.castShadow = true; Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16 }); sun.shadow.mapSize.set(2048, 2048); S.add(sun, sun.target);
   return { scene: S, collide, foot, lights, exits };

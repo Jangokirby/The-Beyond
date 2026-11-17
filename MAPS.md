@@ -22,5 +22,9 @@ Add one entry to `CATALOG` in `kit.js`: a name, tags, a footprint `[width, depth
 ## To add an era's look
 Add floor and wall surfaces to `FLOORS` and `WALLS`, then pieces tagged for that period. A new era is mostly pieces (40 or so cover a period).
 
+## Outdoors
+Presets `street, woods, camp, yard, graveyard, harbour, trench, snowfield` build outdoor maps (ground, trees, tents, lamps, fences, boats, sandbags). The auto-mapper chooses
+indoor or outdoor from the scene's theme and name. Outdoor pieces are data files in `public/lab/pieces/outdoor.json`.
+
 ## What this is for
 Each place in each case gets a layout. Places repeat as types (a ward, a cellar, a street), so a preset gets most of the way and the examine spots and people come from the case text.
