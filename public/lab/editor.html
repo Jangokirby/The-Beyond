@@ -85,12 +85,13 @@ const mkPack = async () => { if (!pack) await $("#render").onclick(); return JSO
 $("#pack").onclick = async () => dl(nm() + ".beyondmap", await mkPack());
 $("#test").onclick = async () => { try { localStorage.setItem("beyond.lab.pack", await mkPack()); window.open("./#local", "_blank"); } catch (e) { alert("That map is too big to hand to the lab directly. Use Download map pack, then Open a map pack in the lab."); } };
 /* ---------------------------------------------------------------- describe the room (optional, your own AI key) */
+const cleanKey = (k) => { let s = String(k || "").trim(); const m = s.match(/(sk-[A-Za-z0-9_\-]{20,}|AIza[A-Za-z0-9_\-]{20,}|gsk_[A-Za-z0-9_\-]{20,})/); if (m) return m[1]; s = s.replace(/^export\s+\w+=/i, "").replace(/^bearer\s+/i, "").replace(/^["']|["']$/g, "").trim(); return s; };
 const AI = () => { try { return JSON.parse(localStorage.getItem("beyond.ai") || "{}"); } catch (e) { return {}; } };
 { const a = AI(); $("#ai_kind").value = a.kind || "anthropic"; $("#ai_model").value = a.model || ""; $("#ai_end").value = a.end || ""; $("#ai_key").value = a.key || ""; }
 const PRE = { gemini: ["gemini", "gemini-3.8-flash", ""], groq: ["openai", "llama-3.3-70b-versatile", "https://api.groq.com/openai/v1/chat/completions"], openrouter: ["openai", "meta-llama/llama-3.3-70b-instruct:free", "https://openrouter.ai/api/v1/chat/completions"], ollama: ["openai", "qwen2.5:7b-instruct", "http://localhost:11434/v1/chat/completions"], claude: ["anthropic", "claude-haiku-5-5", ""], openai: ["openai", "gpt-4o-mini", "https://api.openai.com/v1/chat/completions"] };
 $("#ai_pre").onchange = (e) => { const p = PRE[e.target.value]; if (p) { $("#ai_kind").value = p[0]; $("#ai_model").value = p[1]; $("#ai_end").value = p[2]; $("#askst").textContent = "Preset filled in. Add your key (not needed for Ollama), then Save settings."; } };
 $("#ai_test").onclick = async () => {
-  const a = { kind: $("#ai_kind").value, model: $("#ai_model").value.trim(), end: $("#ai_end").value.trim(), key: $("#ai_key").value.trim() }, out = $("#ai_out"); out.textContent = "Sending a tiny test…";
+  const a = { kind: $("#ai_kind").value, model: $("#ai_model").value.trim(), end: $("#ai_end").value.trim(), key: cleanKey($("#ai_key").value) }, out = $("#ai_out"); out.textContent = "Sending a tiny test…";
   let url, init;
   if (a.kind === "gemini") { url = `https://generativelanguage.googleapis.com/v1beta/models/${a.model || "gemini-3.8-flash"}:generateContent?key=${encodeURIComponent(a.key)}`; init = { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ contents: [{ parts: [{ text: "Reply with the single word OK." }] }] }) }; }
   else if (a.kind === "openai") { url = a.end || "https://api.openai.com/v1/chat/completions"; init = { method: "POST", headers: { "content-type": "application/json", ...(a.key ? { authorization: "Bearer " + a.key } : {}) }, body: JSON.stringify({ model: a.model, messages: [{ role: "user", content: "Reply with the single word OK." }], max_tokens: 20 }) }; }
@@ -99,7 +100,7 @@ $("#ai_test").onclick = async () => {
   try { const r = await fetch(url, init), raw = await r.text(); out.textContent = `Sent to: ${host}\nModel: ${a.model || "(default)"}\nKey: ${a.key ? a.key.slice(0, 6) + "… (" + a.key.length + " characters)" : "none"}\nStatus: ${r.status} ${r.statusText} in ${Date.now() - t0} ms\nReply: ${raw.slice(0, 600)}`; }
   catch (e) { out.textContent = `Sent to: ${host}\nThe browser could not reach it (${e.message}). That usually means the address is wrong, you are offline, or the service blocks web pages from calling it.`; }
 };
-$("#ai_save").onclick = () => { localStorage.setItem("beyond.ai", JSON.stringify({ kind: $("#ai_kind").value, model: $("#ai_model").value.trim(), end: $("#ai_end").value.trim(), key: $("#ai_key").value.trim() })); $("#askst").textContent = "Saved."; };
+$("#ai_save").onclick = () => { localStorage.setItem("beyond.ai", JSON.stringify({ kind: $("#ai_kind").value, model: $("#ai_model").value.trim(), end: $("#ai_end").value.trim(), key: cleanKey($("#ai_key").value) })); $("#askst").textContent = "Saved."; };
 $("#ask").onclick = async () => {
   const a = AI(), st = $("#askst"); if (!a.key && !/localhost|127\.0\.0\.1/.test(a.end || "")) { st.textContent = "Add your key in AI settings first (pick a preset, paste the key, Save settings)."; return; }
   const cat = Object.entries(CATALOG).map(([id, d]) => `${id} | ${d.name} | ${d.size[0]}x${d.size[1]} m | ${d.tags.join(",")}${d.light ? " | light" : ""}`).join("\n");
