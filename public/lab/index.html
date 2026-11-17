@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Beyond: Map Lab</title>
+<style>
+ :root{color-scheme:dark} *{box-sizing:border-box}
+ body{margin:0;background:#0b0d10;color:#e8e4d6;font:15px/1.4 system-ui,sans-serif;display:flex;flex-direction:column;height:100vh}
+ header{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 12px;background:#12161c;border-bottom:1px solid #2a313b}
+ header b{font-size:1rem} button,select,label.btn{background:#1d242d;color:#e8e4d6;border:1px solid #3b4654;padding:6px 10px;border-radius:6px;font:inherit;cursor:pointer}
+ button:hover{background:#2a3440} #stage{position:relative;flex:1;min-height:0} canvas{width:100%;height:100%;display:block;background:#050607}
+ #hint{position:absolute;left:12px;bottom:10px;background:rgba(10,12,16,.85);padding:6px 10px;border-radius:6px;font-size:.85rem;max-width:60ch}
+ #prompt{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:rgba(10,12,16,.9);border:1px solid #f2c14e;color:#f2c14e;padding:6px 14px;border-radius:6px;display:none;font-weight:600}
+ #card{position:absolute;inset:0;background:rgba(5,6,8,.78);display:none;align-items:center;justify-content:center;padding:16px}
+ #card .box{background:#161b22;border:1px solid #3b4654;border-radius:10px;max-width:640px;width:100%;padding:18px}
+ #talk{position:absolute;inset:0;background:#0a0c10;display:none;grid-template-columns:minmax(220px,38%) 1fr}
+ #talk img{width:100%;height:100%;object-fit:cover;filter:contrast(1.05)} #talk .rt{padding:28px;display:flex;flex-direction:column;gap:12px;justify-content:center}
+ #talk h2{margin:0;font-weight:500} #talk .say{font-size:1.15rem;min-height:5.5em} #talk .opts button{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px}
+ .chips button.on{background:#f2c14e;color:#111;border-color:#f2c14e} @media(max-width:700px){#talk{grid-template-columns:1fr;grid-template-rows:34% 1fr}}
+</style></head><body>
+<header><b>Map Lab</b> <span style="opacity:.7">a test of walkable maps</span>
+ <select id="map"><option value="ward">Ward 9, Étaples (3D kit render)</option><option value="sample">Sample dungeon (.dd2vtt import)</option></select>
+ <label class="btn">Open a .dd2vtt <input id="file" type="file" accept=".dd2vtt,.json,.uvtt" hidden></label>
+ <button id="dark">Lights out</button> <button id="grid">Show walls</button> <a href="../" style="color:#9ab">← the game</a></header>
+<div id="stage"><canvas id="c"></canvas><div id="hint">WASD / arrows to walk, or click the ground. E (or click) to examine a thing, talk, or open a door.</div><div id="prompt"></div>
+ <div id="card"><div class="box"><h3 id="ct" style="margin-top:0"></h3><p id="cb"></p><div id="ca"></div></div></div>
+ <div id="talk"><img id="tp" alt=""><div class="rt"><h2 id="tn"></h2><div class="say" id="ts"></div><div class="chips" id="tc"></div><div class="opts" id="to"></div></div></div></div>
+<script>
+const $ = (s) => document.querySelector(s), cv = $("#c"), g = cv.getContext("2d");
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+let M = null, img = new Image(), P = { x: 10, z: 10 }, trail = [], keys = new Set(), target = null, dark = false, showWalls = false, busy = false, near = null, manner = "direct";
+const R = 0.3;   // body radius, in metres / grid squares
+/* ------------------------------------------------------------- maps */
+async function loadWard() {
+  const [meta, lay] = await Promise.all([fetch("ward.map.json").then((r) => r.json()), fetch("ward.layout.json").then((r) => r.json())]);
+  const rects = [], seg = [], things = [], lights = [];
+  const SIZE = { bed: [1.0, 2.1], desk: [1.8, .9], stove: [.9, .9], crate: [.8, .8], gramophone: [.7, .6], stretcher: [.7, 2.0], lamp: [.5, .5] };
+  for (const p of lay.props) { const [w, h] = SIZE[p.t]; rects.push({ x: p.x - w / 2, z: p.y - h / 2, w, h }); if (p.t === "lamp") lights.push({ x: p.x, z: p.y, r: 6.5, c: "255,196,120" }); if (p.t === "stove") lights.push({ x: p.x, z: p.y, r: 4, c: "255,120,60" }); }
+  const W = lay.w, H = lay.h; seg.push([0, 0, W, 0], [0, 0, 0, H], [W, 0, W, H], [0, H, W, H]);
+  const D = { bed: ["An iron bed", "Whoever lay here stopped speaking in the night. The sheet is turned back with great care, as if for someone who might come back to it.", "Look under the pillow", "A folded note in a nurse's hand: 'Stopped speaking 3.07. Smiling. Did not wake.'"],
+    lamp: ["A hurricane lamp", "Trimmed low. Beside it a cup of tea gone cold, and a chair nobody has sat in since midnight.", null],
+    desk: ["The sister's desk", "A ward register, a pen, a watch pinned to a blotter. The last entry is half a line long.", "Read the register", "Forty-one names in three weeks. Each with a note: 'Quiet from' and a time an hour earlier. The notes are the same length, like a column of stitches."],
+    stove: ["The stove", "Banked down. Something has been burned in it lately: paper, and a little cloth.", "Look in the ashes", "A scrap of paper, scorched: '...please. Somebody. Hear me say it.' The rest is gone."],
+    crate: ["Supply crates", "Lint, carbolic, and a hundred small brown bottles.", null], gramophone: ["A gramophone", "A trophy of Ward 6. Somebody has left a record on it: a music-hall song, very loud.", "Wind it up", "It plays, dreadfully, at full volume. Along the ward, forty heads turn. For a moment it is not quiet at all."], stretcher: ["A stretcher", "Canvas, still faintly warm.", null] };
+  for (const p of lay.props) { const d = D[p.t]; if (d) things.push({ x: p.x, z: p.y, r: Math.max(.9, SIZE[p.t][0] / 2 + .55), label: d[0], text: d[1], act: d[2], res: d[3] }); }
+  const proj = (x, z) => [meta.view.W / 2 + (x - meta.view.cx) * meta.view.k, meta.view.H / 2 + (z - meta.view.cz) * meta.view.sin * meta.view.k];
+  const npc = { x: 16.2, z: 6.3, r: 1.3, label: "Sister Marlow", portrait: "../assets/painted/a/wars-f-05.jpg" };
+  const doors = lay.doors.map((d) => ({ x: d.x, z: d.y, label: d.side === "S" ? "The south door" : "The east door", text: "Another place, another map. (In the real game this would take you there.)", isDoor: true, r: 1.2 }));
+  return { name: meta.name, W: meta.view.W, H: meta.view.H, image: "ward.jpg", proj, unit: meta.view.k * 1, rects, seg, things: [...things, ...doors], npc, lights, start: [10, 9.5], bounds: [0, 0, W, H], tilt: true };
+}
+async function loadVtt(j) {
+  const ppg = j.resolution.pixels_per_grid, sz = j.resolution.map_size, org = j.resolution.map_origin || { x: 0, y: 0 };
+  const seg = [], rects = [], doors = [];
+  for (const line of j.line_of_sight || []) for (let i = 0; i < line.length - 1; i++) seg.push([line[i].x, line[i].y, line[i + 1].x, line[i + 1].y]);
+  const portals = (j.portals || []).map((p) => ({ x: p.position.x, z: p.position.y, a: p.bounds[0], b: p.bounds[1], closed: p.closed !== false, label: "A door", text: "", isPortal: true, r: 1.2 }));
+  for (const p of portals) { p.seg = [p.a.x, p.a.y, p.b.x, p.b.y]; }
+  const lights = (j.lights || []).map((l) => { const c = (l.color || "ffffffff").slice(2, 8); return { x: l.position.x, z: l.position.y, r: l.range || 5, c: [0, 2, 4].map((i) => parseInt(c.substr(i, 2), 16)).join(",") }; });
+  const im = new Image(); const src = j.image.startsWith("data:") ? j.image : "data:image/png;base64," + j.image;
+  return { name: "Imported map", W: sz.x * ppg, H: sz.y * ppg, image: src, proj: (x, z) => [(x - org.x) * ppg, (z - org.y) * ppg], unit: ppg, rects, seg, things: portals, npc: null, lights, start: (j.lights && j.lights[0]) ? [j.lights[0].position.x + .8, j.lights[0].position.y + .8] : [sz.x / 2 - .5, sz.y / 2], bounds: [0, 0, sz.x, sz.y], tilt: false, ambient: j.environment && j.environment.ambient_light };
+}
+async function open(kind, data) {
+  M = kind === "ward" ? await loadWard() : await loadVtt(data || await fetch("sample.dd2vtt").then((r) => r.json()));
+  await new Promise((res) => { img = new Image(); img.onload = res; img.src = M.image; });
+  P = { x: M.start[0], z: M.start[1] }; trail = []; target = null;
+  if (kind !== "ward") { /* find a free spot near the middle */ for (let k = 0; k < 400 && blocked(P.x, P.z); k++) { P.x += (Math.random() - .5) * 2; P.z += (Math.random() - .5) * 2; } }
+}
+/* ------------------------------------------------------------- collision */
+function segDist(px, pz, [x1, z1, x2, z2]) { const dx = x2 - x1, dz = z2 - z1, l = dx * dx + dz * dz || 1, t = clamp(((px - x1) * dx + (pz - z1) * dz) / l, 0, 1); return Math.hypot(px - (x1 + t * dx), pz - (z1 + t * dz)); }
+function blocked(x, z) {
+  if (x < M.bounds[0] + R || z < M.bounds[1] + R || x > M.bounds[2] - R || z > M.bounds[3] - R) return true;
+  for (const r of M.rects) if (x > r.x - R && x < r.x + r.w + R && z > r.z - R && z < r.z + r.h + R) return true;
+  const openP = M.things.filter((t) => t.isPortal && !t.closed && Math.hypot(x - t.x, z - t.z) < 1.1);
+  for (const s of M.seg) if (segDist(x, z, s) < R * .9 && !openP.some((t) => segDist(t.x, t.z, s) < .3)) return true;
+  for (const t of M.things) if (t.isPortal && t.closed && segDist(x, z, t.seg) < R * 1.1) return true;
+  if (M.npc && Math.hypot(x - M.npc.x, z - M.npc.z) < .55) return true;
+  return false;
+}
+function move(dx, dz) { const nx = P.x + dx, nz = P.z + dz; if (!blocked(nx, P.z)) P.x = nx; if (!blocked(P.x, nz)) P.z = nz; }
+/* ------------------------------------------------------------- drawing */
+let view = { s: 1, ox: 0, oy: 0 };
+function fit() { const w = cv.clientWidth, h = cv.clientHeight, dpr = devicePixelRatio || 1; cv.width = w * dpr; cv.height = h * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0); const s = Math.min(w / M.W, h / M.H); view = { s, ox: (w - M.W * s) / 2, oy: (h - M.H * s) / 2, w, h }; }
+const scr = (x, z) => { const [ix, iy] = M.proj(x, z); return [view.ox + ix * view.s, view.oy + iy * view.s]; };
+const unscr = (sx, sy) => { const x0 = M.proj(0, 0), x1 = M.proj(1, 0), z1 = M.proj(0, 1); const ix = (sx - view.ox) / view.s, iy = (sy - view.oy) / view.s; const ax = x1[0] - x0[0], bz = z1[1] - x0[1], bx = z1[0] - x0[0]; return [(ix - x0[0] - bx * ((iy - x0[1]) / bz)) / ax, (iy - x0[1]) / bz]; };
+const portrait = new Image(); let figs = [];
+function draw() {
+  requestAnimationFrame(draw); if (!M || !img.complete) return; if (cv.width !== Math.round(cv.clientWidth * (devicePixelRatio || 1))) fit();
+  g.clearRect(0, 0, view.w, view.h); g.drawImage(img, view.ox, view.oy, M.W * view.s, M.H * view.s);
+  const ppm = M.unit * view.s * (M.tilt ? 1 : 1);
+  if (M.npc) { const [x, y] = scr(M.npc.x, M.npc.z); person(x, y, "#c9b27a", "S", ppm, M.npc.portrait); }
+  const party = [P, ...[1, 2].map((i) => trail[Math.min(trail.length - 1, i * 14)] || P)];
+  for (let i = party.length - 1; i >= 0; i--) { const [x, y] = scr(party[i].x, party[i].z); person(x, y, i ? "#8fa3b8" : "#f2c14e", ["A", "B", "C"][i], ppm); }
+  if (dark) darkness(ppm);
+  if (showWalls) { g.strokeStyle = "rgba(255,80,80,.9)"; g.lineWidth = 2; for (const s of M.seg) { const a = scr(s[0], s[1]), b = scr(s[2], s[3]); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } g.strokeStyle = "rgba(80,200,255,.9)"; for (const r of M.rects) { const a = scr(r.x, r.z), b = scr(r.x + r.w, r.z + r.h); g.strokeRect(a[0], a[1], b[0] - a[0], b[1] - a[1]); } for (const t of M.things) if (t.isPortal) { g.strokeStyle = t.closed ? "#fa0" : "#6f6"; const a = scr(t.seg[0], t.seg[1]), b = scr(t.seg[2], t.seg[3]); g.beginPath(); g.moveTo(...a); g.lineTo(...b); g.stroke(); } }
+  if (!busy) update();
+}
+function person(x, y, col, ch, ppm, portraitSrc) { const r = Math.max(10, R * ppm * 1.1); g.fillStyle = "rgba(0,0,0,.35)"; g.beginPath(); g.ellipse(x, y, r * .9, r * .45, 0, 0, 7); g.fill(); g.fillStyle = col; g.strokeStyle = "#111"; g.lineWidth = 2; g.beginPath(); g.arc(x, y - r * 1.1, r, 0, 7); g.fill(); g.stroke(); g.fillStyle = "#111"; g.font = `700 ${r}px system-ui`; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(ch, x, y - r * 1.1); }
+function darkness(ppm) {
+  const c = document.createElement("canvas"); c.width = view.w; c.height = view.h; const k = c.getContext("2d"); k.fillStyle = "rgba(3,4,8,.93)"; k.fillRect(0, 0, view.w, view.h); k.globalCompositeOperation = "destination-out";
+  const hole = (x, z, r, a) => { const [sx, sy] = scr(x, z), rr = r * ppm * (M.tilt ? 1 : 1); const gr = k.createRadialGradient(sx, sy, rr * .1, sx, sy, rr); gr.addColorStop(0, `rgba(0,0,0,${a})`); gr.addColorStop(1, "rgba(0,0,0,0)"); k.fillStyle = gr; k.beginPath(); k.ellipse(sx, sy, rr, rr * (M.tilt ? .8 : 1), 0, 0, 7); k.fill(); };
+  for (const l of M.lights) hole(l.x, l.z, l.r * .8, .85); hole(P.x, P.z, 4.2, .9);
+  g.drawImage(c, 0, 0);
+}
+/* ------------------------------------------------------------- interaction */
+function update() {
+  let dx = (keys.has("d") || keys.has("arrowright") ? 1 : 0) - (keys.has("a") || keys.has("arrowleft") ? 1 : 0), dz = (keys.has("s") || keys.has("arrowdown") ? 1 : 0) - (keys.has("w") || keys.has("arrowup") ? 1 : 0);
+  if (dx || dz) target = null; else if (target) { const ex = target.x - P.x, ez = target.z - P.z, d = Math.hypot(ex, ez); if (d < .12) target = null; else { dx = ex / d; dz = ez / d; } }
+  if (dx || dz) { const n = Math.hypot(dx, dz) || 1, sp = .075, ox = P.x, oz = P.z; move(dx / n * sp, dz / n * sp); if (Math.hypot(P.x - ox, P.z - oz) > .01) { trail.unshift({ x: P.x, z: P.z }); trail.length = Math.min(trail.length, 60); } else if (target) target = null; }
+  near = null; let bd = 1e9; const cand = [...M.things.map((t) => ({ t, k: "thing" })), ...(M.npc ? [{ t: M.npc, k: "npc" }] : [])];
+  for (const { t, k } of cand) { const d = Math.hypot(P.x - t.x, P.z - t.z) - (t.r || 1); if (d < bd && d < 0.6) { bd = d; near = { t, k }; } }
+  const pr = $("#prompt"); if (near) { pr.style.display = "block"; pr.textContent = near.k === "npc" ? `E · Talk to ${near.t.label}` : near.t.isPortal ? `E · ${near.t.closed ? "Open" : "Close"} the door` : near.t.isDoor ? `E · ${near.t.label}` : `E · Examine: ${near.t.label}`; } else pr.style.display = "none";
+}
+function act() {
+  if (!near || busy) return; const { t, k } = near;
+  if (k === "npc") return talk(t);
+  if (t.isPortal) { t.closed = !t.closed; return; }
+  card(t.label, t.text, t.act ? [[t.act, () => card(t.label, t.res, [["Done", () => hide()]])], ["Leave it", () => hide()]] : [["Done", () => hide()]]);
+}
+function card(title, body, btns) { busy = true; $("#ct").textContent = title; $("#cb").textContent = body; const a = $("#ca"); a.innerHTML = ""; for (const [l, f] of btns) { const b = document.createElement("button"); b.textContent = l; b.style.marginRight = "8px"; b.onclick = f; a.append(b); } $("#card").style.display = "flex"; }
+function hide() { $("#card").style.display = "none"; $("#talk").style.display = "none"; busy = false; }
+/* close-up talking: the view changes to the person, with the same kinds of choices as the game's interviews */
+const TOPICS = [
+  ["What happens at night?", { direct: "They stop speaking. Between one sentence and the next. Then they go. It is not painful, and that is the worst of it.", warm: "Oh, you have kind eyes. Sit. It is the quiet, you see. It comes to the beds where someone was kind, and takes the kind with it. I have not told the doctors.", pressing: "Do not look at me like that. They stop talking, and then they die. That is all I will say about it." }, 0],
+  ["Who sat with the last one?", { direct: "I did. I held his hand until he stopped answering. It was ten past three.", warm: "I did. I always do. He asked me to read him the football results. He was a very kind man. He was smiling at the end.", pressing: "I did. And if you are suggesting I had a hand in it, I will thank you to leave my ward." }, 1],
+  ["Is there anything you have not told the doctors?", { direct: "…Yes. The ward goes quiet an hour before each one. Not the patients: the ward. Even the rain.", warm: "…Yes. I think it is the same thing I saw in France. I have said it aloud to nobody. Please do not laugh.", pressing: "No." }, 2] ];
+let said = new Set(), trust = 0;
+function talk(n) {
+  busy = true; $("#tp").src = n.portrait; $("#tn").textContent = n.label; $("#talk").style.display = "grid"; renderTalk("She looks up from the register, and does not quite smile. \"You are the ones Matron wrote to.\"");
+}
+function renderTalk(line) {
+  $("#ts").textContent = line; const chips = $("#tc"); chips.innerHTML = "Manner: "; for (const [m, l] of [["warm", "Warm"], ["direct", "Direct"], ["pressing", "Pressing"]]) { const b = document.createElement("button"); b.textContent = l; b.className = manner === m ? "on" : ""; b.onclick = () => { manner = m; renderTalk(line); }; chips.append(b); }
+  chips.append(Object.assign(document.createElement("span"), { textContent: `  Trust ${"▮".repeat(clamp(trust + 2, 0, 4))}${"▯".repeat(4 - clamp(trust + 2, 0, 4))}`, style: "margin-left:10px;opacity:.8" }));
+  const o = $("#to"); o.innerHTML = ""; for (const [q, ans, i] of TOPICS) { if (said.has(i)) continue; const b = document.createElement("button"); b.textContent = q; b.onclick = () => { said.add(i); if (manner === "warm") trust = Math.min(3, trust + 1); if (manner === "pressing") trust = Math.max(-3, trust - 1); renderTalk(trust <= -2 ? "\"That is enough. I think you had better go.\"" : `"${ans[manner]}"`); if (trust <= -2) { said = new Set(TOPICS.map((t) => t[2])); } }; o.append(b); }
+  const bye = document.createElement("button"); bye.textContent = "That's all for now"; bye.onclick = hide; o.append(bye);
+}
+/* ------------------------------------------------------------- input */
+addEventListener("keydown", (e) => { if (busy) { if (e.key === "Escape") hide(); return; } const k = e.key.toLowerCase(); if (["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) { keys.add(k); e.preventDefault(); } else if (k === "e" || k === "enter") act(); });
+addEventListener("keyup", (e) => keys.delete(e.key.toLowerCase()));
+cv.addEventListener("click", (e) => { if (busy || !M) return; const r = cv.getBoundingClientRect(), [x, z] = unscr(e.clientX - r.left, e.clientY - r.top);
+  const hit = [...M.things, ...(M.npc ? [M.npc] : [])].find((t) => Math.hypot(x - t.x, z - t.z) < (t.r || 1) * .8);
+  if (hit && near && near.t === hit) return act(); target = hit ? { x: hit.x + (P.x < hit.x ? -1 : 1) * ((hit.r || 1) * .8), z: hit.z + .2 } : { x, z }; });
+$("#dark").onclick = () => { dark = !dark; $("#dark").textContent = dark ? "Lights on" : "Lights out"; };
+$("#grid").onclick = () => { showWalls = !showWalls; $("#grid").textContent = showWalls ? "Hide walls" : "Show walls"; };
+$("#map").onchange = (e) => open(e.target.value === "ward" ? "ward" : "sample");
+$("#file").onchange = async (e) => { const f = e.target.files[0]; if (!f) return; try { await open("vtt", JSON.parse(await f.text())); } catch (err) { alert("That file could not be read as a .dd2vtt map: " + err.message); } };
+open("ward").then(() => { fit(); draw(); });
+addEventListener("resize", () => M && fit());
+</script></body></html>

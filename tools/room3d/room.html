@@ -1,0 +1,58 @@
+<!doctype html><html><body style="margin:0;background:#000"><canvas id="c" width="1600" height="1100"></canvas>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from "three";
+const L = await (await fetch(location.hash.slice(1) || "ward.json")).json();
+const cv = document.getElementById("c"), R = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap; R.setPixelRatio(1); R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.25;
+const S = new THREE.Scene(); S.background = new THREE.Color(0x0b0d10);
+/* ---------- textures drawn in code (no image files) */
+const tex = (w, h, fn) => { const c = document.createElement("canvas"); c.width = w; c.height = h; fn(c.getContext("2d"), w, h); const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.colorSpace = THREE.SRGBColorSpace; return t; };
+const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+const wood = tex(512, 512, (g, w, h) => { for (let i = 0; i < 8; i++) { const y = i * h / 8; g.fillStyle = `hsl(${28 + rnd() * 6},${30 + rnd() * 8}%,${24 + rnd() * 8}%)`; g.fillRect(0, y, w, h / 8 - 2); g.strokeStyle = "rgba(0,0,0,.35)"; g.strokeRect(0, y, w, h / 8 - 2); for (let k = 0; k < 40; k++) { g.strokeStyle = `rgba(0,0,0,${rnd() * .12})`; g.beginPath(); const yy = y + rnd() * h / 8; g.moveTo(rnd() * w, yy); g.lineTo(rnd() * w, yy + rnd() * 2); g.stroke(); } } });
+wood.repeat.set(L.w / 4, L.h / 4);
+const plaster = tex(256, 256, (g, w, h) => { g.fillStyle = "#cfc8b4"; g.fillRect(0, 0, w, h); for (let i = 0; i < 1500; i++) { g.fillStyle = `rgba(${rnd() < .5 ? "90,80,60" : "255,255,240"},${rnd() * .07})`; g.fillRect(rnd() * w, rnd() * h, 2 + rnd() * 6, 2 + rnd() * 6); } });
+const M = (c, o = {}) => new THREE.MeshStandardMaterial({ color: c, roughness: .85, metalness: 0, ...o });
+const mats = { floor: M(0xffffff, { map: wood, roughness: .9 }), wall: M(0xffffff, { map: plaster }), trim: M(0x5a4636), iron: M(0x59606b, { roughness: .55, metalness: .35 }), sheet: M(0xe9e4d6), blanket: M(0x6b7b5e), wood: M(0x9a6f46), dark: M(0x6a4c34), glass: M(0xffe9b0, { emissive: 0xffd48a, emissiveIntensity: 1.6 }), win: M(0x9bb4cf, { emissive: 0x6f8fb8, emissiveIntensity: .9 }), brass: M(0xb18b3a, { metalness: .7, roughness: .4 }), crate: M(0xa98250), canvas: M(0xb8ad8c) };
+const box = (w, h, d, m, x, y, z, cast = true) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); o.castShadow = cast; o.receiveShadow = true; S.add(o); return o; };
+const cyl = (r, h, m, x, y, z, seg = 16) => { const o = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, seg), m); o.position.set(x, y, z); o.castShadow = true; o.receiveShadow = true; S.add(o); return o; };
+/* ground plane: x right, z down the room (y of the layout), y up */
+box(L.w + 2, .1, L.h + 2, mats.floor, L.w / 2, -.05, L.h / 2, false);
+const WH = 2.6, T = .3;
+const gaps = (side, len) => [...(L.doors || []), ...(L.windows || [])].filter((o) => o.side === side).map((o) => ({ c: side === "N" || side === "S" ? o.x : o.y, w: o.w || 1.3, door: !!o.w, ref: o }));
+const wallRun = (side, len, mk) => { const g = gaps(side, len).sort((a, b) => a.c - b.c); let p = 0; for (const x of g) { const a = x.c - x.w / 2; if (a > p) mk(p, a, WH, 0); mk(x.c - x.w / 2, x.c + x.w / 2, x.door ? WH - 2.1 : WH - 1.0, x.door ? 2.1 : 1.0, x); p = x.c + x.w / 2; } if (p < len) mk(p, len, WH, 0); };
+const mkN = (a, b, h, y0, g) => { box(b - a, h, T, mats.wall, (a + b) / 2, y0 + h / 2 + (g ? 0 : 0), -T / 2); if (g && !g.door) { box(b - a - .1, 1.0, .06, mats.win, (a + b) / 2, 1.0 + 0.2, -T / 2 + .02); box(b - a + .2, .1, .4, mats.trim, (a + b) / 2, .95, -T / 2); } };
+const mkS = (a, b, h, y0, g) => { box(b - a, h, T, mats.wall, (a + b) / 2, y0 + h / 2, L.h + T / 2); };
+const mkW = (a, b, h, y0) => box(T, h, b - a, mats.wall, -T / 2, y0 + h / 2, (a + b) / 2);
+const mkE = (a, b, h, y0) => box(T, h, b - a, mats.wall, L.w + T / 2, y0 + h / 2, (a + b) / 2);
+/* the near (south) wall is cut down to a low sill so the camera can see in */
+wallRun("N", L.w, (a, b, h, y0, g) => { mkN(a, b, h, y0, g); if (g && g.door) box(b - a, WH - 2.1, T, mats.wall, (a + b) / 2, 2.1 + (WH - 2.1) / 2, -T / 2); });
+box(L.w, .5, T, mats.wall, L.w / 2, .25, L.h + T / 2);
+wallRun("W", L.h, (a, b, h, y0) => mkW(a, b, h, y0));
+wallRun("E", L.h, (a, b, h, y0, g) => { mkE(a, b, h, y0); if (g && g.door) box(T, WH - 2.1, b - a, mats.wall, L.w + T / 2, 2.1 + (WH - 2.1) / 2, (a + b) / 2); });
+for (const d of L.doors || []) { if (d.side === "S") { box(d.w + .2, .12, .5, mats.trim, d.x, .06, L.h + .1); } box(.1, 2.1, .1, mats.trim, d.side === "E" ? L.w + .1 : d.x - d.w / 2, 1.05, d.side === "E" ? d.y - d.w / 2 : L.h + .1); box(.1, 2.1, .1, mats.trim, d.side === "E" ? L.w + .1 : d.x + d.w / 2, 1.05, d.side === "E" ? d.y + d.w / 2 : L.h + .1); }
+/* baseboard along the far and side walls */
+box(L.w, .22, .08, mats.trim, L.w / 2, .11, .04); box(.08, .22, L.h, mats.trim, .04, .11, L.h / 2); box(.08, .22, L.h, mats.trim, L.w - .04, .11, L.h / 2);
+/* ---------- props */
+const lights = [];
+const bed = (x, z) => { const g = new THREE.Group(); const add = (m, w, h, d, px, py, pz) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(px, py, pz); o.castShadow = o.receiveShadow = true; g.add(o); };
+  add(mats.iron, 1.0, .06, 2.1, 0, .42, 0); add(mats.sheet, .92, .16, 2.0, 0, .53, 0); add(mats.blanket, .94, .1, 1.3, 0, .64, .35); add(mats.sheet, .6, .12, .4, 0, .66, -.75);
+  for (const [px, pz] of [[-.5, -1.04], [.5, -1.04], [-.5, 1.04], [.5, 1.04]]) add(mats.iron, .05, .9, .05, px, .45, pz); add(mats.iron, 1.0, .05, .05, 0, .88, -1.04); add(mats.iron, 1.0, .05, .05, 0, .6, 1.04);
+  g.position.set(x, 0, z); S.add(g); };
+const lamp = (x, z) => { box(.5, .5, .5, mats.wood, x, .25, z); cyl(.09, .22, mats.brass, x, .6, z); const b = new THREE.Mesh(new THREE.SphereGeometry(.1, 12, 8), mats.glass); b.position.set(x, .78, z); S.add(b); const l = new THREE.PointLight(0xffc27a, 14, 8.5, 1.5); l.position.set(x, .95, z); l.castShadow = true; l.shadow.mapSize.set(512, 512); l.shadow.bias = -.002; S.add(l); lights.push(l); };
+const prop = { bed, lamp,
+  desk: (x, z) => { box(1.8, .8, .9, mats.wood, x, .4, z); box(.5, .05, .4, mats.sheet, x, .83, z); },
+  stove: (x, z) => { cyl(.45, 1.1, mats.iron, x, .55, z, 12); cyl(.07, 1.8, mats.iron, x, 1.9, z, 8); const l = new THREE.PointLight(0xff8a3a, 6, 6, 1.8); l.position.set(x, .6, z - .4); S.add(l); },
+  crate: (x, z) => box(.8, .8, .8, mats.crate, x, .4, z), gramophone: (x, z) => { box(.7, .8, .6, mats.wood, x, .4, z); cyl(.3, .06, mats.dark, x, .83, z); const h = new THREE.Mesh(new THREE.ConeGeometry(.28, .5, 14, 1, true), mats.brass); h.position.set(x + .1, 1.15, z); h.rotation.z = -.9; h.castShadow = true; S.add(h); },
+  stretcher: (x, z) => { box(.7, .06, 2.0, mats.canvas, x, .4, z); box(.05, .4, 2.0, mats.dark, x - .35, .2, z); box(.05, .4, 2.0, mats.dark, x + .35, .2, z); } };
+for (const p of L.props) (prop[p.t] || (() => {}))(p.x, p.y);
+/* daylight from the windows: a cool fill */
+S.add(new THREE.HemisphereLight(0xb4c4dc, 0x4a3a2c, 1.25));
+const sun = new THREE.DirectionalLight(0xc8d8f0, 1.7); sun.position.set(L.w * .3, 12, -6); sun.target.position.set(L.w / 2, 0, L.h / 2); sun.castShadow = true; sun.shadow.camera.left = -14; sun.shadow.camera.right = 14; sun.shadow.camera.top = 14; sun.shadow.camera.bottom = -14; sun.shadow.mapSize.set(2048, 2048); S.add(sun, sun.target);
+/* ---------- the camera: orthographic, tilted 3/4 view */
+const asp = cv.width / cv.height, tilt = 52 * Math.PI / 180, size = (L.w + 3) / 2 / 1; 
+const cam = new THREE.OrthographicCamera(-size, size, size / asp, -size / asp, 0.1, 100);
+const cx = L.w / 2, cz = L.h / 2 - 1.5, dist = 30; cam.position.set(cx, Math.sin(tilt) * dist, cz + Math.cos(tilt) * dist); cam.lookAt(cx, 0, cz);
+window.VIEW = { tilt, size, asp, cx, cz, dist, w: cv.width, h: cv.height };
+R.render(S, cam); window.DONE = true;
+</script></body></html>
