@@ -11,10 +11,14 @@
  <button data-tool="select" class="on">Select</button><button data-tool="wall">Wall</button><button data-tool="door">Door</button><button data-tool="window">Window</button><button data-tool="thing">Examine spot</button><button data-tool="npc">Person</button><button data-tool="start">Start</button><button data-tool="erase">Erase</button>
  <span style="opacity:.6">R rotates the selected piece · Delete removes it</span>
  <span style="flex:1"></span><a href="./" style="color:#9ab">Map Lab →</a></header>
-<aside><h4>Room</h4>
+<aside> <h4 style="margin-top:0">Generate a room (no AI)</h4>
+ <div class="row" style="opacity:.75;font-size:.8rem">Pick a kind of place and a size. It builds and furnishes a whole room in one click. Press Shuffle for another version, then fine-tune by hand.</div>
+ <div class="row"><select id="preset" style="max-width:100%"></select></div>
+ <div class="row"><button id="gen" style="font-weight:600">Generate</button> <button id="shuf">🎲 Shuffle</button> <span id="genst" style="opacity:.7;font-size:.8rem"></span></div>
+ <h4>Room</h4>
  <div class="row">Size <input id="W" type="number" value="20" min="4" max="60"> × <input id="H" type="number" value="12" min="4" max="60"> m <button id="new">New</button></div>
- <div class="row">Floor <select id="floor"><option>wood</option><option>stone</option><option>tile</option><option>dirt</option></select> Walls <select id="wall"><option>plaster</option><option>brick</option><option>wood</option><option>concrete</option></select> Light <select id="mood"><option>day</option><option selected>dim</option><option>night</option></select></div>
- <h4>Furnish a room</h4><div class="row"><select id="preset"></select><button id="fill">Fill</button></div>
+ <div class="row">Floor <select id="floor"><option>wood</option><option>stone</option><option>tile</option><option>dirt</option><option>grass</option><option>snow</option><option>cobble</option><option>sand</option><option>asphalt</option><option>carpet</option><option>marble</option><option>metal</option><option>flag</option><option>water</option><option>gravel</option></select> Walls <select id="wall"><option>plaster</option><option>brick</option><option>wood</option><option>concrete</option><option>stone</option><option>metal</option><option>adobe</option><option>tin</option><option>whitewash</option></select> Light <select id="mood"><option>day</option><option selected>dim</option><option>night</option></select> <label><input type="checkbox" id="out"> Outdoors</label></div>
+ <h4>Fill with a preset</h4><div class="row"><select id="preset2" style="max-width:100%"></select><button id="fill">Fill</button></div>
  <h4>Pieces <input id="q" placeholder="filter: medical, tavern…" style="width:140px"></h4><div id="cat"></div></aside>
 <main style="position:relative"><canvas id="c"></canvas></main>
 <aside id="right"><h4>Selected</h4><div id="sel" style="min-height:60px">Nothing selected.</div>
@@ -33,11 +37,12 @@
  <div class="row"><button id="pack">Download map pack</button><button id="test">Test in the lab</button></div>
  <p style="opacity:.65;font-size:.8rem">A map pack is one file: picture, walls, light sources and examine spots. The lab opens it with “Open a map pack”.</p></aside>
 <script type="module">
-import { CATALOG, render, project, loadPieces, prepare } from "./kit.js"; import { PRESETS, furnish, blank } from "./gen.js";
+import { CATALOG, render, project, loadPieces, prepare } from "./kit.js"; import { PRESETS, furnish, blank } from "./gen.js"; import { SIZE } from "./auto.js";
 const $ = (s) => document.querySelector(s), cv = $("#c"), g = cv.getContext("2d");
 let L = blank(20, 12, "New room"), tool = "select", piece = null, sel = null, S = 40, ox = 30, oz = 30, drag = null, wallStart = null, pack = null;
 const snap = (v, q = .25) => Math.round(v / q) * q, toW = (e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left - ox) / S, (e.clientY - r.top - oz) / S]; };
-for (const [k, p] of Object.entries(PRESETS)) $("#preset").append(new Option(p.name, k));
+const GROUPS = [["Rooms: medieval and older", "great_hall dungeon smithy chapel"], ["Rooms: Victorian to WWII", "tenement factory theatre cinema gallery ward tavern study office cellar bedroom canteen"], ["Rooms: modern", "apartment office_mod shop subway server_room hospital_mod"], ["Rooms: far future", "lab_scifi corridor cargo_bay quarters reactor_hall"], ["Rooms: transport", "train_car"], ["Outdoors: old world", "medieval_village castle_yard graveyard woods ruins temple_court desert_town camp yard garden"], ["Outdoors: 1800s-1950s", "street trench harbour rail ship_deck snowfield"], ["Outdoors: modern and future", "modern_street rooftop neon_alley orbital polar_station"], ["Outdoors: wild", "jungle reef"]];
+for (const sel of ["#preset", "#preset2"]) { const used = new Set(); for (const [lab, ids] of GROUPS) { const og = document.createElement("optgroup"); og.label = lab; for (const k of ids.split(" ")) if (PRESETS[k]) { og.append(new Option(PRESETS[k].name, k)); used.add(k); } $(sel).append(og); } for (const [k, p] of Object.entries(PRESETS)) if (!used.has(k)) $(sel).append(new Option(p.name, k)); }
 await loadPieces();
 function cat() { const f = $("#q").value.toLowerCase(), c = $("#cat"); c.innerHTML = ""; for (const [id, d] of Object.entries(CATALOG)) { if (f && !(id + d.name + d.tags.join(" ")).toLowerCase().includes(f)) continue; const b = document.createElement("button"); b.innerHTML = `${d.name}<small>${d.size.join(" × ")} m · ${d.tags.join(", ")}</small>`; b.className = piece === id ? "on" : ""; b.onclick = () => { piece = id; tool = "place"; document.querySelectorAll("header [data-tool]").forEach((x) => x.classList.remove("on")); cat(); }; c.append(b); } }
 cat(); $("#q").oninput = cat;
@@ -73,9 +78,12 @@ cv.onmousedown = (e) => { const [x, z] = toW(e), sx = snap(x), sz = snap(z);
   if (tool === "npc") { const n = { x: sx, z: sz, label: "Someone", portrait: "../assets/painted/a/wars-f-05.jpg" }; L.npcs = [n]; sel = n; panel(); return; }
   if (tool === "start") { L.start = [sx, sz]; } };
 cv.onmousemove = (e) => { if (!drag || !sel) return; const [x, z] = toW(e); sel.x = snap(x + drag.dx); sel.z = snap(z + drag.dz); }; addEventListener("mouseup", () => { drag = null; });
-function sync() { L.style = { floor: $("#floor").value, wall: $("#wall").value, mood: $("#mood").value }; } for (const id of ["floor", "wall", "mood"]) $("#" + id).onchange = sync;
+function sync() { L.style = { ...L.style, floor: $("#floor").value, wall: $("#wall").value, mood: $("#mood").value, outdoor: $("#out").checked }; } for (const id of ["floor", "wall", "mood", "out"]) $("#" + id).onchange = sync;
+const show = () => { $("#floor").value = L.style.floor; $("#wall").value = L.style.wall; $("#mood").value = L.style.mood; $("#out").checked = !!L.style.outdoor; };
 $("#new").onclick = () => { L = blank(+$("#W").value, +$("#H").value); sync(); sel = null; fit(); panel(); };
-$("#fill").onclick = () => { sync(); furnish(L, $("#preset").value, Date.now() % 997); $("#floor").value = L.style.floor; $("#wall").value = L.style.wall; $("#mood").value = L.style.mood; };
+$("#fill").onclick = () => { sync(); furnish(L, $("#preset2").value, Date.now() % 997); show(); sel = null; panel(); };
+let seed = 1; const gen = async (reseed) => { const k = $("#preset").value, P = PRESETS[k]; if (reseed) seed = 1 + Math.floor(Math.random() * 990); const [w, h] = SIZE[k] || [14, 10]; $("#W").value = w; $("#H").value = h; L = blank(w, h, P.name); furnish(L, k, seed); show(); sel = null; fit(); panel(); $("#genst").textContent = "Rendering…"; await $("#render").onclick(); $("#genst").textContent = "Done. Shuffle for another, or edit it."; };
+$("#gen").onclick = () => gen(true); $("#shuf").onclick = () => gen(true); $("#preset").onchange = () => gen(true);
 $("#render").onclick = async () => { sync(); $("#render").textContent = "Rendering…"; await new Promise((r) => setTimeout(r, 30)); await prepare(L); const c = document.createElement("canvas"); pack = render(L, c); pack.image = c.toDataURL("image/jpeg", .86); $("#prev").src = pack.image; $("#render").textContent = "Render 3D"; };
 const dl = (name, data, type = "application/json") => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name; a.click(); };
 const nm = () => (L.name || "room").toLowerCase().replace(/[^a-z0-9]+/g, "-");

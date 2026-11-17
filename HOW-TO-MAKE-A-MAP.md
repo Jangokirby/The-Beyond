@@ -1,3 +1,5 @@
+> **Quickest way, no AI:** open the Map Builder (`/lab/editor.html`), pick a kind of place under **Generate a room (no AI)** (castle, tenement, neon alley, jungle...), press **Generate**, then **Shuffle** until you like it. Fix details by hand, then **Download map pack**.
+
 # Making maps, without me
 
 You can make and tidy maps yourself. There are three ways, cheapest first.
