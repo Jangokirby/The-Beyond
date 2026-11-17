@@ -19,6 +19,15 @@
 <main style="position:relative"><canvas id="c"></canvas></main>
 <aside id="right"><h4>Selected</h4><div id="sel" style="min-height:60px">Nothing selected.</div>
  <h4>Preview <button id="render">Render 3D</button></h4><img id="prev" alt="">
+ <h4>Describe the room (optional AI)</h4>
+ <textarea id="desc" placeholder="e.g. a cramped hospital storeroom with two cots, a broken window and a locked cabinet" style="min-height:70px"></textarea>
+ <div class="row"><button id="ask">Make it</button><span id="askst" style="opacity:.7;font-size:.8rem"></span></div>
+ <details><summary style="cursor:pointer;opacity:.8">AI settings (your own key; kept in this browser only)</summary>
+  <div class="row">Kind <select id="ai_kind"><option value="anthropic">Anthropic (Claude)</option><option value="openai">OpenAI-compatible (also local models)</option></select></div>
+  <div class="row">Model <input id="ai_model" style="width:170px" placeholder="claude-haiku-5-5"></div>
+  <div class="row">Endpoint <input id="ai_end" style="width:200px" placeholder="https://api.anthropic.com/v1/messages"></div>
+  <div class="row">Key <input id="ai_key" type="password" style="width:200px" placeholder="paste your key"></div><div class="row"><button id="ai_save">Save settings</button></div>
+  <p style="opacity:.6;font-size:.78rem;margin:4px 0">A room costs a small fraction of a cent on a small model. Nothing is sent anywhere except to the address you set.</p></details>
  <h4>Save</h4><div class="row"><button id="save">Save layout (.json)</button><label class="btn">Load layout <input id="load" type="file" accept=".json" hidden></label></div>
  <div class="row"><button id="pack">Download map pack</button><button id="test">Test in the lab</button></div>
  <p style="opacity:.65;font-size:.8rem">A map pack is one file: picture, walls, light sources and examine spots. The lab opens it with “Open a map pack”.</p></aside>
@@ -73,5 +82,29 @@ $("#load").onchange = async (e) => { const f = e.target.files[0]; if (f) { L = J
 const mkPack = async () => { if (!pack) await $("#render").onclick(); return JSON.stringify({ format: "beyond-map-1", layout: L, view: pack.view, collide: pack.collide, foot: pack.foot, lights: pack.lights, exits: pack.exits, image: pack.image }); };
 $("#pack").onclick = async () => dl(nm() + ".beyondmap", await mkPack());
 $("#test").onclick = async () => { try { localStorage.setItem("beyond.lab.pack", await mkPack()); window.open("./#local", "_blank"); } catch (e) { alert("That map is too big to hand to the lab directly. Use Download map pack, then Open a map pack in the lab."); } };
+/* ---------------------------------------------------------------- describe the room (optional, your own AI key) */
+const AI = () => { try { return JSON.parse(localStorage.getItem("beyond.ai") || "{}"); } catch (e) { return {}; } };
+{ const a = AI(); $("#ai_kind").value = a.kind || "anthropic"; $("#ai_model").value = a.model || ""; $("#ai_end").value = a.end || ""; $("#ai_key").value = a.key || ""; }
+$("#ai_save").onclick = () => { localStorage.setItem("beyond.ai", JSON.stringify({ kind: $("#ai_kind").value, model: $("#ai_model").value.trim(), end: $("#ai_end").value.trim(), key: $("#ai_key").value.trim() })); $("#askst").textContent = "Saved."; };
+$("#ask").onclick = async () => {
+  const a = AI(), st = $("#askst"); if (!a.key && a.kind !== "openai") { st.textContent = "Add your key in AI settings first."; return; }
+  const cat = Object.entries(CATALOG).map(([id, d]) => `${id} | ${d.name} | ${d.size[0]}x${d.size[1]} m | ${d.tags.join(",")}${d.light ? " | light" : ""}`).join("\n");
+  const prompt = `You lay out a room for a top-down map. Reply with ONLY a JSON object, no prose.\nThe room is ${L.w} by ${L.h} metres (x runs 0..${L.w} left to right, z runs 0..${L.h} top to bottom; the "top" wall is z=0, the camera looks from the bottom).\nPieces you may use (id | name | size | tags):\n${cat}\nFormat: {"style":{"floor":"wood|stone|tile|dirt","wall":"plaster|brick|wood|concrete","mood":"day|dim|night"},"doors":[{"x":n,"z":n,"w":1.5,"axis":"h|v"}],"windows":[{"x":n,"z":n,"w":1.3,"axis":"h|v"}],"props":[{"t":"id","x":n,"z":n,"rot":0|90|180|270}],"things":[{"x":n,"z":n,"label":"short name","text":"what the players see","act":"a search action or empty","res":"what the search finds or empty"}],"npcs":[{"x":n,"z":n,"label":"name"}],"start":[x,z]}\nRules: doors and windows sit ON a wall (axis h = a wall along x at z=0 or z=${L.h}; axis v = a wall along z at x=0 or x=${L.w}); props centred on x,z must stay inside the room and not overlap; leave walking space; 8 to 20 props; 2 to 5 things worth examining placed at props; one door at least; start near a door.\nThe room: ${$("#desc").value}`;
+  st.textContent = "Thinking…"; $("#ask").disabled = true;
+  try {
+    let text;
+    if (a.kind === "openai") { const r = await fetch(a.end || "https://api.openai.com/v1/chat/completions", { method: "POST", headers: { "content-type": "application/json", ...(a.key ? { authorization: "Bearer " + a.key } : {}) }, body: JSON.stringify({ model: a.model || "gpt-4o-mini", messages: [{ role: "user", content: prompt }], temperature: .6 }) }); const j = await r.json(); text = j.choices[0].message.content; }
+    else { const r = await fetch(a.end || "https://api.anthropic.com/v1/messages", { method: "POST", headers: { "content-type": "application/json", "x-api-key": a.key, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" }, body: JSON.stringify({ model: a.model || "claude-haiku-5-5", max_tokens: 2500, messages: [{ role: "user", content: prompt }] }) }); const j = await r.json(); if (j.error) throw new Error(j.error.message); text = j.content[0].text; }
+    const o = JSON.parse(text.slice(text.indexOf("{"), text.lastIndexOf("}") + 1)), cl = (v, m) => Math.max(.3, Math.min(m - .3, +v || 0));
+    L.style = { ...L.style, ...(o.style || {}) }; for (const k of ["floor", "wall", "mood"]) $("#" + k).value = L.style[k];
+    L.props = (o.props || []).filter((p) => CATALOG[p.t]).map((p) => ({ t: p.t, x: cl(p.x, L.w), z: cl(p.z, L.h), rot: [0, 90, 180, 270].includes(+p.rot) ? +p.rot : 0 }));
+    const edge = (d) => { const h = d.axis === "h"; return { x: h ? cl(d.x, L.w) : (+d.x > L.w / 2 ? L.w : 0), z: h ? (+d.z > L.h / 2 ? L.h : 0) : cl(d.z, L.h), w: +d.w || 1.4, axis: h ? "h" : "v" }; };
+    L.doors = (o.doors || []).map(edge); if (!L.doors.length) L.doors = [{ x: L.w / 2, z: L.h, w: 1.6, axis: "h" }]; L.windows = (o.windows || []).map(edge);
+    L.things = (o.things || []).map((x) => ({ x: cl(x.x, L.w), z: cl(x.z, L.h), label: String(x.label || "Something"), text: String(x.text || ""), act: x.act || undefined, res: x.res || undefined }));
+    L.npcs = (o.npcs || []).slice(0, 1).map((x) => ({ x: cl(x.x, L.w), z: cl(x.z, L.h), label: String(x.label || "Someone"), portrait: "../assets/painted/a/wars-f-05.jpg" }));
+    if (o.start) L.start = [cl(o.start[0], L.w), cl(o.start[1], L.h)]; sel = null; panel(); st.textContent = "Done. Check it, move things, then Render 3D.";
+  } catch (e) { st.textContent = "That did not work: " + e.message; }
+  $("#ask").disabled = false;
+};
 panel(); draw();
 </script></body></html>
