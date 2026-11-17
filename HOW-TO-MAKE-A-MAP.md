@@ -21,9 +21,8 @@ Open `/lab/editor.html` (on your site, or locally). Load the layout from `public
 - **Render 3D** shows the room. **Download map pack** saves it as one file. **Test in the lab** walks it at once.
 To put a hand-made room into a job, save it over the automatic one: `public/lab/maps/<case>/<scene>.beyondmap`.
 
-## 3. Describe a room and let a small AI draft it (a few cents)
-In the Map Builder, type what you want under "Describe the room", add your own key under AI settings, and press Make it.
-It works with Claude (set the model to a small one) or any OpenAI-style service, including free local models.
+## 3. Let a local AI agent build rooms
+The in-page AI box was removed. An agent (for example Overlord's Mapper) uses the same tools through Node, MCP or the CLI instead: see "For agents" in `MAPS.md`.
 
 ## Hand-made maps from Dungeondraft
 Export as `.dd2vtt` and open it in the Map Lab (`/lab/`). Your walls, doors and lights come with it.
