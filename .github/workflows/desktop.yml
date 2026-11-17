@@ -1,8 +1,6 @@
 name: Build desktop app
 on:
-  workflow_dispatch:
-  push:
-    tags: ["v*"]
+  workflow_dispatch:   # run by hand only: it builds on three systems and uses a lot of free minutes
 jobs:
   build:
     strategy:

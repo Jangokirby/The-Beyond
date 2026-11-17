@@ -391,7 +391,7 @@
 
   /* ================================================================== LEVEL UP */
   ui.levelUp = (a) => {
-    const st = { core: "body", asp: {}, benefit: "promotion", question: "", injury: 0 };
+    const st = { core: "body", asp: {}, benefit: "promotion", question: "", injury: 0, perk: "" }, usePerk = window.RPGX && RPGX.on("perks");
     const pts = () => Object.values(st.asp).reduce((s, n) => s + n, 0);
     const redraw = () => {
       const left = 2 - pts();
@@ -412,11 +412,12 @@
         st.benefit === "answers" ? el("label", { class: "field" }, el("span", {}, "Your question for the GM"), el("input", { type: "text", maxlength: "200", value: st.question, oninput: (e) => { st.question = e.target.value; } })) : null,
         st.benefit === "recovery" ? el("label", { class: "field" }, el("span", {}, "Which injury?"), el("select", { onchange: (e) => { st.injury = +e.target.value; } }, ...a.injuries.map((i, n) => el("option", { value: String(n) }, i.name)))) : null,
         st.benefit === "artifact" ? note("You will claim the artifact in the Artifacts tab.") : null, st.benefit === "patron" ? note("You will choose or advance a patron in the Patrons tab.") : null));
+      if (usePerk) { const mine = a.perks || []; body.append(panel("A Perk (experimental)", el("div", { class: "bggrid" }, ...Object.entries(CAMP.PERKS).filter(([k]) => !mine.includes(k)).map(([k, p]) => el("button", { class: "bgcard" + (st.perk === k ? " sel" : ""), onclick: () => { st.perk = k; redraw(); } }, el("b", {}, p.name), el("small", {}, p.text)))))); }
       body.append(el("div", { class: "row" }, btn("Later", () => ui.hub(), "ghost"), btn("Level up", () => {
-        CAMP.levelUp(a, { core: st.core, aspects: st.asp, benefit: st.benefit, question: st.question, injury: st.injury });
+        CAMP.levelUp(a, { core: st.core, aspects: st.asp, benefit: st.benefit, question: st.question, injury: st.injury, perk: st.perk });
         CAMP.save(); toast(`${a.name} is now level ${a.level}.`);
         if (a.pending > 0) ui.levelUp(a); else ui.hub();
-      }, "primary", { disabled: left !== 0 })));
+      }, "primary", { disabled: left !== 0 || (usePerk && !st.perk && Object.keys(CAMP.PERKS).some((k) => !(a.perks || []).includes(k))) })));
       mount(body);
     };
     redraw();

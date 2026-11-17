@@ -298,7 +298,16 @@
   /* ================================================================ level ups */
   CAMP.aspectCap = (a, k) => (a.special === k ? a.level + 3 : a.level + 2);
   CAMP.canRetire = (a) => a.levelUps >= 3 && a.status === "active";
+  CAMP.PERKS = {
+    night_eyes: { name: "Night Eyes", text: "You see in the dark. Darkness never penalises your rolls." },
+    quick_hands: { name: "Quick Hands", text: "Puzzles go easier: a bad roll costs you nothing." },
+    silver_tongue: { name: "Silver Tongue", text: "+1 to every roll to talk, ask or persuade." },
+    light_sleeper: { name: "Light Sleeper", text: "The first event in each case that would hurt you does not." },
+    scavenger: { name: "Scavenger", text: "Scavenging finds more, and fails less." },
+    steady: { name: "Steady", text: "+5 Sanity, for good." }
+  };
   CAMP.levelUp = (a, o) => {
+    if (o && o.perk && CAMP.PERKS[o.perk]) { (a.perks = a.perks || []).push(o.perk); if (o.perk === "night_eyes") a.vision = "dark"; if (o.perk === "steady") { a.poolMax.sanity += 5; a.pools.sanity.max += 5; a.pools.sanity.cur += 5; } }
     // o: { core, aspects:{k:+n} (total 2), benefit:'answers'|'artifact'|'patron'|'recovery'|'promotion', ... }
     a.level += 1; a.levelUps += 1; a.pending -= 1;
     a.core[o.core] += 1; a.poolMax[{ body: "health", mind: "sanity", spirit: "stability" }[o.core]] += 5;

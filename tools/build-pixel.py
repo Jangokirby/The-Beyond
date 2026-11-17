@@ -27,7 +27,7 @@ def pixelate(im, box, ncol):
     pal = base.convert("RGB")
     out = Image.fromarray(np.clip(a + thr, 0, 255).astype("uint8")).quantize(palette=base, dither=Image.Dither.NONE)
     return out
-CUT = ("a", "n")   # portraits become cut-out busts (transparent background) so they can stand in the scene
+CUT = ("a", "n") if "--cutout" in sys.argv else ()   # cut-out busts looked poor, so they are off unless asked for
 def cutout(path, box):
     img = cv2.resize(cv2.imread(path), (256, 256), interpolation=cv2.INTER_AREA); h, w = img.shape[:2]
     mask = np.zeros((h, w), np.uint8); bgd = np.zeros((1, 65)); fgd = np.zeros((1, 65))
@@ -37,8 +37,9 @@ def cutout(path, box):
     k, lab, st, _ = cv2.connectedComponentsWithStats(m)
     if k > 1: m = np.where(lab == 1 + np.argmax(st[1:, cv2.CC_STAT_AREA]), 255, 0).astype(np.uint8)
     return Image.fromarray(m).resize(box, Image.NEAREST).point(lambda v: 255 if v > 127 else 0)
-only = sys.argv[1:] or list(SIZE)
-if not sys.argv[1:]: shutil.rmtree(DST, ignore_errors=True)
+args = [x for x in sys.argv[1:] if not x.startswith("--")]
+only = args or list(SIZE)
+if not args: shutil.rmtree(DST, ignore_errors=True)
 n = 0
 for d, box in SIZE.items():
     if d not in only: continue

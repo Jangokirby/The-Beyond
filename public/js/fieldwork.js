@@ -143,7 +143,8 @@
     const id = await U.choose("What do you do?", e.c.map((c, i) => ({ id: String(i), label: c.l, hint: `${R.ASPECT_LABEL[c.a] || c.a} · ${c.cr}` })));
     const c = e.c[+id] || e.c[0];
     const r = await G.check({ aspect: c.a, cr: R.cr(c.cr), label: c.l, who: "choose", tags: ["event"] });
-    await G.api.narrate(r.ok ? c.ok : c.fail); await fx(r.agent, r.ok ? c.okfx : c.failfx); G.refreshParty();
+    await G.api.narrate(r.ok ? c.ok : c.fail);
+    if (!r.ok && G.active().some((a) => (a.perks || []).includes("light_sleeper")) && !G.state._ls) { G.state._ls = true; await G.api.narrate("<small>Light Sleeper: you were already half awake, and it comes to nothing.</small>"); } else await fx(r.agent, r.ok ? c.okfx : c.failfx); G.refreshParty();
   };
   const run0 = G.run;
   G.run = async function (fn) {

@@ -99,6 +99,7 @@
       if (lighting === "blinding" && !sun && !sees) mods.push({ label: "Blinding light", value: -R.BLIND_PENALTY });
     }
     if (window.PRESS && PRESS.stage() >= 3) mods.push({ label: "Late and tired", value: -1 });
+    if ((agent.perks || []).includes("silver_tongue") && (opts.aspect === "charisma" || (opts.tags || []).some((x) => x === "talk" || x === "interview"))) mods.push({ label: "Silver Tongue", value: 1 });
     if (opts.aspect === "charisma" && agent.prop && agent.prop.decorated && ((G.loc() && G.loc().theme) || "") === "interior") mods.push({ label: "Well Decorated", value: 2 });
     const sev = ctx.severity !== undefined ? ctx.severity : ((G.loc() && G.loc().severity) || 0);
     if (R.weatherMod(sev)) mods.push({ label: `Weather ${sev}`, value: R.weatherMod(sev) });
