@@ -39,7 +39,8 @@ To change which preset a word picks, edit `ERA_RULES` / `GENERIC` in `public/lab
 
 ## For agents (Overlord and other local AIs): the contract
 **Stable contract.** The tool list `TOOLS` in `public/lab/api.js` (also `tools/room3d/tools.json`, the MCP server `tools/room3d/mcp.js` and the CLI `tools/room3d/cli.js`) is what outside agents depend on.
-Tools: `list_pieces, new_room, apply_ops, validate, ascii, render, add_piece_type, map_case` (and `import_model`, `install_map` in the CLI/MCP).
+Tools (16, defined once in `TOOLS` in `public/lab/api.js`; the MCP server reads that list and `node tools/room3d/build-tools-json.js` regenerates `tools.json`): `list_pieces, list_presets, new_room, apply_ops, validate, ascii, render, add_piece_type, import_model, import_vtt, install_map, plan_case, map_case, list_bust_parts, suggest_bust, render_portrait`.
+Check a machine or a change with `node tools/room3d/selftest.js` (runs every tool once, cleans up after itself).
 Ops for `apply_ops`: `set_style, furnish, clear_props, add_piece, move_piece, remove_piece, add_door, add_window, add_wall, add_thing, set_npc, set_start`.
 Rule: **adding** tools, ops, presets or pieces is fine. **Renaming or removing** any of the above needs a note here first. Layout fields (`w,h,style{floor,wall,mood,outdoor},walls,doors,windows,props{t,x,z,rot},things,npcs,start`) follow the same rule.
 `style.outdoor: true` draws no walls (walls still block walking). `furnish{preset}` takes any id from `presets()`; new era presets are listed in the Eras table above.
@@ -60,3 +61,7 @@ indoor or outdoor from the scene's theme and name. Outdoor pieces are data files
 
 ## What this is for
 Each place in each case gets a layout. Places repeat as types (a ward, a cellar, a street), so a preset gets most of the way and the examine spots and people come from the case text.
+
+## Characters (portrait busts)
+`/lab/characters.html` is the Character Builder: one smooth mannequin bust with swappable brows, mouth, nose, eyes, moustache, beard, hair, hat, glasses, outfit and colours. Fill it in by hand or press **Suggest a person** (name, gender, age, year, job, origin: period-right clothes, hats, facial hair, skin; same name gives the same face). Save as a picture or as a small JSON spec.
+Agents use `list_bust_parts` (what exists), `suggest_bust` (a spec from facts about a person), then `render_portrait` (spec to PNG in `public/lab/portraits/`). Rules live in `public/lab/bust-rules.js`; parts are one-line entries in `public/lab/figure-bust.js`. Not wired into the game's portraits yet.

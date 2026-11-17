@@ -93,10 +93,15 @@ export function buildBust(spec) {
 function shade(hex, f) { return "#" + new THREE.Color(hex).multiplyScalar(f).getHexString(); }
 
 /* draw one bust into a canvas (portrait framing) */
+const RENDERERS = new WeakMap();
 export function renderBust(spec, canvas, bg = 0x2b303a) {
-  const r = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true }); r.setSize(canvas.width, canvas.height, false); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap; r.setClearColor(bg);
-  const sc = new THREE.Scene(); sc.background = new THREE.Color(bg); sc.add(buildBust(spec));
+  let r = RENDERERS.get(canvas); if (!r) { r = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true }); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap; RENDERERS.set(canvas, r); }
+  r.setSize(canvas.width, canvas.height, false); r.setClearColor(bg);
+  const sc = new THREE.Scene(); sc.background = new THREE.Color(bg); const fig = buildBust(spec); sc.add(fig);
   sc.add(new THREE.HemisphereLight(0xffffff, 0x8a8076, 1.25)); const d = new THREE.DirectionalLight(0xfff0dc, 2.2); d.position.set(-1.2, 1.4, 2.2); d.castShadow = true; d.shadow.mapSize.set(1024, 1024); Object.assign(d.shadow.camera, { left: -1, right: 1, top: 1, bottom: -1 }); sc.add(d);
   const back = new THREE.DirectionalLight(0x9ab8ff, .7); back.position.set(1.5, 1, -1.5); sc.add(back);
-  const cam = new THREE.PerspectiveCamera(24, canvas.width / canvas.height, .1, 20); cam.position.set(0, -.05, 1.9); cam.lookAt(0, -.1, 0); r.render(sc, cam); return canvas.toDataURL("image/png");
+  const cam = new THREE.PerspectiveCamera(24, canvas.width / canvas.height, .1, 20); cam.position.set(0, -.05, 1.9); cam.lookAt(0, -.1, 0); r.render(sc, cam);
+  const url = canvas.toDataURL("image/png");
+  fig.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m.dispose()); }); d.shadow.map && d.shadow.map.dispose();
+  return url;
 }
