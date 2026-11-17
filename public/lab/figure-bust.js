@@ -15,6 +15,7 @@ function headGeo() { const g = new THREE.SphereGeometry(1, 48, 36), p = g.attrib
 
 export const BROWS = { flat: [0, .055], worried: [18, .058], stern: [-20, .05], raised: [8, .068], arched: [10, .06] };
 export const EYES = {
+  none: () => {},
   dot: (g, s, k) => sym(g, (q) => add(g, sph(.011), k.dark, .045 * q, .02, front(.045 * q, .02) + .002, [1, 1.2, .6])),
   closed: (g, s, k) => sym(g, (q) => add(g, tor(.02, .0045, Math.PI * .8), k.dark, .045 * q, .022, front(.045 * q, .022) + .002, [1, 1, .4], [0, 0, 180 + 18])),
   wide: (g, s, k) => sym(g, (q) => { add(g, sph(.021), k.white, .045 * q, .02, front(.045 * q, .02) + .003, [1, 1, .5]); add(g, sph(.011), k.dark, .045 * q, .02, front(.045 * q, .02) + .014, [1, 1, .4]); }),
@@ -85,7 +86,7 @@ export function buildBust(spec) {
   add(g, sph(1), k.cloth, 0, -.5, 0, [.17, .27, .1]);                                                 // chest
   sym(g, (q) => { add(g, cap(.055, .3), k.cloth, .205 * q, -.42, 0, [1, 1, .9], [0, 0, 6 * q]); add(g, sph(.034), k.skin, .105 * q, .0, 0.0, [.5, 1.2, .7]).position.set(.108 * q, -.005, -.005); });  // upper arms and ears
   const br = BROWS[s.brows || "flat"]; sym(g, (q) => add(g, cap(.0065, .042), k.hair, .045 * q, br[1], front(.045 * q, br[1]) + .004, [1, 1, .6], [0, 0, 90 - br[0] * q]));
-  (EYES[s.eyes || "dot"])(g, s, k); (NOSES[s.nose || "small"])(g, s, k); (MOUTHS[s.mouth || "line"])(g, s, k); (MOUSTACHES[s.moustache || "none"])(g, s, k); (BEARDS[s.beard || "none"])(g, s, k);
+  (EYES[s.eyes || "none"])(g, s, k); (NOSES[s.nose || "small"])(g, s, k); (MOUTHS[s.mouth || "line"])(g, s, k); (MOUSTACHES[s.moustache || "none"])(g, s, k); (BEARDS[s.beard || "none"])(g, s, k);
   (OUTFITS[s.outfit || "plain"])(g, s, k); (HAIR[s.hair || "none"])(g, s, k); (HATS[s.hat || "none"])(g, s, k); (GLASSES[s.glasses || "none"])(g, s, k);
   g.rotation.y = (s.yaw || 0) * Math.PI / 180; return g;
 }
