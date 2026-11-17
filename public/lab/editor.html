@@ -32,11 +32,12 @@
  <div class="row"><button id="pack">Download map pack</button><button id="test">Test in the lab</button></div>
  <p style="opacity:.65;font-size:.8rem">A map pack is one file: picture, walls, light sources and examine spots. The lab opens it with “Open a map pack”.</p></aside>
 <script type="module">
-import { CATALOG, render, project } from "./kit.js"; import { PRESETS, furnish, blank } from "./gen.js";
+import { CATALOG, render, project, loadPieces, prepare } from "./kit.js"; import { PRESETS, furnish, blank } from "./gen.js";
 const $ = (s) => document.querySelector(s), cv = $("#c"), g = cv.getContext("2d");
 let L = blank(20, 12, "New room"), tool = "select", piece = null, sel = null, S = 40, ox = 30, oz = 30, drag = null, wallStart = null, pack = null;
 const snap = (v, q = .25) => Math.round(v / q) * q, toW = (e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left - ox) / S, (e.clientY - r.top - oz) / S]; };
 for (const [k, p] of Object.entries(PRESETS)) $("#preset").append(new Option(p.name, k));
+await loadPieces();
 function cat() { const f = $("#q").value.toLowerCase(), c = $("#cat"); c.innerHTML = ""; for (const [id, d] of Object.entries(CATALOG)) { if (f && !(id + d.name + d.tags.join(" ")).toLowerCase().includes(f)) continue; const b = document.createElement("button"); b.innerHTML = `${d.name}<small>${d.size.join(" × ")} m · ${d.tags.join(", ")}</small>`; b.className = piece === id ? "on" : ""; b.onclick = () => { piece = id; tool = "place"; document.querySelectorAll("header [data-tool]").forEach((x) => x.classList.remove("on")); cat(); }; c.append(b); } }
 cat(); $("#q").oninput = cat;
 document.querySelectorAll("header [data-tool]").forEach((b) => b.onclick = () => { tool = b.dataset.tool; piece = null; wallStart = null; document.querySelectorAll("header [data-tool]").forEach((x) => x.classList.toggle("on", x === b)); cat(); });
@@ -74,7 +75,7 @@ cv.onmousemove = (e) => { if (!drag || !sel) return; const [x, z] = toW(e); sel.
 function sync() { L.style = { floor: $("#floor").value, wall: $("#wall").value, mood: $("#mood").value }; } for (const id of ["floor", "wall", "mood"]) $("#" + id).onchange = sync;
 $("#new").onclick = () => { L = blank(+$("#W").value, +$("#H").value); sync(); sel = null; fit(); panel(); };
 $("#fill").onclick = () => { sync(); furnish(L, $("#preset").value, Date.now() % 997); $("#floor").value = L.style.floor; $("#wall").value = L.style.wall; $("#mood").value = L.style.mood; };
-$("#render").onclick = async () => { sync(); $("#render").textContent = "Rendering…"; await new Promise((r) => setTimeout(r, 30)); const c = document.createElement("canvas"); pack = render(L, c); pack.image = c.toDataURL("image/jpeg", .86); $("#prev").src = pack.image; $("#render").textContent = "Render 3D"; };
+$("#render").onclick = async () => { sync(); $("#render").textContent = "Rendering…"; await new Promise((r) => setTimeout(r, 30)); await prepare(L); const c = document.createElement("canvas"); pack = render(L, c); pack.image = c.toDataURL("image/jpeg", .86); $("#prev").src = pack.image; $("#render").textContent = "Render 3D"; };
 const dl = (name, data, type = "application/json") => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([data], { type })); a.download = name; a.click(); };
 const nm = () => (L.name || "room").toLowerCase().replace(/[^a-z0-9]+/g, "-");
 $("#save").onclick = () => { sync(); dl(nm() + ".layout.json", JSON.stringify(L, null, 1)); };

@@ -2,7 +2,7 @@
    Input (a "spec"): { id, name, theme, text, cast:[npcIds], npcs:{id:name}, options:[{label, kind:"talk"|"find"|"go"|"other", npc, goto}] }
    It picks a preset from the scene's words, sizes the room from how much happens in it, puts a door for every way out,
    places the people, and puts a spot for every option (talk at the person, find at a fitting piece, go at the door). */
-import { CATALOG, render } from "./kit.js"; import { PRESETS, furnish, blank } from "./gen.js";
+import { CATALOG, render, loadPieces, prepare } from "./kit.js"; import { PRESETS, furnish, blank } from "./gen.js";
 const RULES = [[/\b(ward|hospital|infirmary|clinic|sick|nurse)\b/, "ward"], [/\b(cellar|crypt|vault|basement|store|dock|tunnel|mine|cave|shelter|hold|engine room)\b/, "cellar"], [/\b(tavern|inn\b|bar\b|pub|caf[eé]|club|saloon|noodle|stall|stage|cabaret)\b/, "tavern"],
   [/\b(chapel|church|abbey|cathedral|shrine|temple|altar|hut|vestry)\b/, "chapel"], [/\b(office|record|archive|study|library|desk|studio|lab|institute|monitor|workshop|lathe|engineer|bridge|cabin|room|plan|desk)\b/, "study"],
   [/\b(canteen|mess|kitchen|hall|lobby|dining|refectory|station|platform|market)\b/, "canteen"], [/\b(bedroom|flat|apartment|house|home|cell|guest|bunk|bed)\b/, "bedroom"]];
@@ -48,7 +48,9 @@ export function planScene(spec, seed = 1) {
   }
   L.npcs = []; L.start = out.start; return { layout: L, map: out, preset: key };
 }
+let loaded = false;
 export async function buildPack(spec, seed) {
-  const plan = planScene(spec, seed), c = document.createElement("canvas"), r = render(plan.layout, c);
+  if (!loaded) { await loadPieces(); loaded = true; }
+  const plan = planScene(spec, seed); await prepare(plan.layout); const c = document.createElement("canvas"), r = render(plan.layout, c);
   return { plan, pack: { format: "beyond-map-1", layout: plan.layout, view: r.view, collide: r.collide, foot: r.foot, lights: r.lights, exits: r.exits, image: c.toDataURL("image/jpeg", .82) } };
 }

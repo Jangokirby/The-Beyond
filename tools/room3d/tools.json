@@ -1,0 +1,360 @@
+{
+ "openai": [
+  {
+   "type": "function",
+   "function": {
+    "name": "list_pieces",
+    "description": "List the furniture and props you may place: id, size in metres, whether it blocks walking, tags.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "tag": {
+       "type": "string",
+       "description": "optional: only pieces with this tag or id part, e.g. medical, tavern, church, modern"
+      }
+     }
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "new_room",
+    "description": "Start a room. Returns the layout. x runs 0..w left to right, z runs 0..h top to bottom.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "w": {
+       "type": "number"
+      },
+      "h": {
+       "type": "number"
+      },
+      "name": {
+       "type": "string"
+      },
+      "style": {
+       "type": "object",
+       "properties": {
+        "floor": {
+         "enum": [
+          "wood",
+          "stone",
+          "tile",
+          "dirt"
+         ]
+        },
+        "wall": {
+         "enum": [
+          "plaster",
+          "brick",
+          "wood",
+          "concrete"
+         ]
+        },
+        "mood": {
+         "enum": [
+          "day",
+          "dim",
+          "night"
+         ]
+        }
+       }
+      }
+     },
+     "required": [
+      "w",
+      "h"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "apply_ops",
+    "description": "Change the room with a list of operations. ops: set_style{style}, furnish{preset}, clear_props, add_piece{t,x,z,rot}, move_piece{index,x,z,rot}, remove_piece{index}, add_door{x,z,w,axis}, add_window{x,z,w,axis}, add_wall{a:[x,z],b:[x,z]}, add_thing{x,z,label,text,act,res}, set_npc{x,z,label}, set_start{x,z}. Errors say exactly what to fix.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "layout": {
+       "type": "object"
+      },
+      "ops": {
+       "type": "array",
+       "items": {
+        "type": "object"
+       }
+      }
+     },
+     "required": [
+      "layout",
+      "ops"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "validate",
+    "description": "Check a layout: overlaps, pieces outside the room, doors or examine spots that cannot be reached.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "layout": {
+       "type": "object"
+      }
+     },
+     "required": [
+      "layout"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "ascii",
+    "description": "Draw the room as text so you can see where things are. Use it after changes.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "layout": {
+       "type": "object"
+      }
+     },
+     "required": [
+      "layout"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "render",
+    "description": "Render the room to a picture (jpg) and a map pack the game can use. Returns the file paths.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "layout": {
+       "type": "object"
+      },
+      "name": {
+       "type": "string",
+       "description": "file name without extension"
+      }
+     },
+     "required": [
+      "layout",
+      "name"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "add_piece_type",
+    "description": "Define a NEW piece from primitives: {id,name,tags,size:[w,d],block,parts:[{shape:box|cyl|cone|sphere,size:[w,h,d] or r,h or r,pos:[x,y,z],rot:[deg,deg,deg],mat:wood|dark|iron|brass|sheet|stone|brick|crate|canvas|red|metalBlue|or '#rrggbb'}]}. y is up; the piece stands on y=0 and is centred on x,z.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "spec": {
+       "type": "object"
+      }
+     },
+     "required": [
+      "spec"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "map_case",
+    "description": "Make maps for every scene of a written case (by id), automatically.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "case_id": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "case_id"
+     ]
+    }
+   }
+  }
+ ],
+ "anthropic": [
+  {
+   "name": "list_pieces",
+   "description": "List the furniture and props you may place: id, size in metres, whether it blocks walking, tags.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "tag": {
+      "type": "string",
+      "description": "optional: only pieces with this tag or id part, e.g. medical, tavern, church, modern"
+     }
+    }
+   }
+  },
+  {
+   "name": "new_room",
+   "description": "Start a room. Returns the layout. x runs 0..w left to right, z runs 0..h top to bottom.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "w": {
+      "type": "number"
+     },
+     "h": {
+      "type": "number"
+     },
+     "name": {
+      "type": "string"
+     },
+     "style": {
+      "type": "object",
+      "properties": {
+       "floor": {
+        "enum": [
+         "wood",
+         "stone",
+         "tile",
+         "dirt"
+        ]
+       },
+       "wall": {
+        "enum": [
+         "plaster",
+         "brick",
+         "wood",
+         "concrete"
+        ]
+       },
+       "mood": {
+        "enum": [
+         "day",
+         "dim",
+         "night"
+        ]
+       }
+      }
+     }
+    },
+    "required": [
+     "w",
+     "h"
+    ]
+   }
+  },
+  {
+   "name": "apply_ops",
+   "description": "Change the room with a list of operations. ops: set_style{style}, furnish{preset}, clear_props, add_piece{t,x,z,rot}, move_piece{index,x,z,rot}, remove_piece{index}, add_door{x,z,w,axis}, add_window{x,z,w,axis}, add_wall{a:[x,z],b:[x,z]}, add_thing{x,z,label,text,act,res}, set_npc{x,z,label}, set_start{x,z}. Errors say exactly what to fix.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "layout": {
+      "type": "object"
+     },
+     "ops": {
+      "type": "array",
+      "items": {
+       "type": "object"
+      }
+     }
+    },
+    "required": [
+     "layout",
+     "ops"
+    ]
+   }
+  },
+  {
+   "name": "validate",
+   "description": "Check a layout: overlaps, pieces outside the room, doors or examine spots that cannot be reached.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "layout": {
+      "type": "object"
+     }
+    },
+    "required": [
+     "layout"
+    ]
+   }
+  },
+  {
+   "name": "ascii",
+   "description": "Draw the room as text so you can see where things are. Use it after changes.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "layout": {
+      "type": "object"
+     }
+    },
+    "required": [
+     "layout"
+    ]
+   }
+  },
+  {
+   "name": "render",
+   "description": "Render the room to a picture (jpg) and a map pack the game can use. Returns the file paths.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "layout": {
+      "type": "object"
+     },
+     "name": {
+      "type": "string",
+      "description": "file name without extension"
+     }
+    },
+    "required": [
+     "layout",
+     "name"
+    ]
+   }
+  },
+  {
+   "name": "add_piece_type",
+   "description": "Define a NEW piece from primitives: {id,name,tags,size:[w,d],block,parts:[{shape:box|cyl|cone|sphere,size:[w,h,d] or r,h or r,pos:[x,y,z],rot:[deg,deg,deg],mat:wood|dark|iron|brass|sheet|stone|brick|crate|canvas|red|metalBlue|or '#rrggbb'}]}. y is up; the piece stands on y=0 and is centred on x,z.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "spec": {
+      "type": "object"
+     }
+    },
+    "required": [
+     "spec"
+    ]
+   }
+  },
+  {
+   "name": "map_case",
+   "description": "Make maps for every scene of a written case (by id), automatically.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "case_id": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "case_id"
+    ]
+   }
+  }
+ ]
+}

@@ -14,6 +14,7 @@
    To add a piece: add an entry to CATALOG (its size, tags and a `make` that builds it from boxes and cylinders).
    ========================================================================== */
 import * as THREE from "./lib/three.module.js";
+import { GLTFLoader } from "./lib/GLTFLoader.js";
 export { THREE };
 
 const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
@@ -69,6 +70,42 @@ export const CATALOG = {
   gramophone: { name: "Gramophone", tags: ["1900-1960", "domestic"], size: [.7, .6], block: true, make: (k) => { const g = k.group(); k.box(g, .7, .8, .6, k.m.wood, 0, .4, 0); k.cyl(g, .3, .06, k.m.dark, 0, .83); const h = new THREE.Mesh(new THREE.ConeGeometry(.28, .5, 14, 1, true), k.m.brass); h.position.set(.1, 1.15, 0); h.rotation.z = -.9; h.castShadow = true; g.add(h); return g; } },
   crate_med: { name: "Medical crate", tags: ["medical", "military"], size: [.9, .6], block: true, make: (k) => { const g = k.group(); k.box(g, .9, .5, .6, k.m.crate, 0, .25, 0); k.box(g, .3, .22, .02, k.m.red, 0, .3, .31); return g; } }
 };
+
+
+/* ---------------------------------------------------------------- pieces defined as DATA (so a person or an AI can add one without writing code)
+   A spec: { id, name, tags:[...], size:[w,d], block:true|false, light:{c,i,r,y}|null,
+             parts:[ { shape:"box|cyl|cone|sphere", size:[w,h,d] | r,h | r, pos:[x,y,z], rot:[rx,ry,rz] (degrees), mat:"wood"|"#8a3b2e" } ],
+             model: { file:"models/chest.glb", scale:1, rotY:0, yOffset:0 }   // instead of parts: a glTF/GLB model, sized by its scale }
+   Spec files live in public/lab/pieces/ and are listed in pieces/index.json. */
+const MODELS = {};
+export function registerPiece(s) {
+  const mat = (k, m) => (typeof k === "string" && k[0] === "#" ? M(new THREE.Color(k)) : m[k] || m.dark);
+  CATALOG[s.id] = { name: s.name || s.id, tags: s.tags || [], size: s.size || [1, 1], block: s.block !== false, light: s.light || undefined, data: true, spec: s,
+    make: (k) => {
+      const g = k.group();
+      if (s.model) { const src = MODELS[s.model.file]; if (src) { const o = src.clone(true); o.scale.setScalar(s.model.scale || 1); o.rotation.y = (s.model.rotY || 0) * Math.PI / 180; o.position.y = s.model.yOffset || 0; o.traverse((c) => { if (c.isMesh) { c.castShadow = c.receiveShadow = true; } }); g.add(o); } return g; }
+      for (const p of s.parts || []) {
+        let geo; const sz = p.size || [1, 1, 1];
+        if (p.shape === "cyl") geo = new THREE.CylinderGeometry(p.r || .2, p.r || .2, p.h || 1, 16); else if (p.shape === "cone") geo = new THREE.ConeGeometry(p.r || .2, p.h || 1, 16); else if (p.shape === "sphere") geo = new THREE.SphereGeometry(p.r || .2, 14, 10); else geo = new THREE.BoxGeometry(sz[0], sz[1], sz[2]);
+        const o = new THREE.Mesh(geo, mat(p.mat, k.m)); o.position.set(...(p.pos || [0, 0, 0])); if (p.rot) o.rotation.set(...p.rot.map((d) => d * Math.PI / 180)); o.castShadow = o.receiveShadow = true; g.add(o);
+      }
+      return g;
+    } };
+}
+/* read the spec files (from the web in the browser, from disk in Node) and register them */
+export async function loadPieces(read) {
+  const get = read || (async (u) => (await fetch(new URL(u, import.meta.url))).json());
+  let idx = []; try { idx = await get("./pieces/index.json"); } catch (e) { return 0; }
+  let n = 0; for (const f of idx) { try { const spec = await get("./pieces/" + f); for (const s of Array.isArray(spec) ? spec : [spec]) { registerPiece(s); n++; } } catch (e) { console.warn("piece", f, e.message); } }
+  return n;
+}
+/* models used by a layout must be loaded before it is built */
+export async function prepare(L) {
+  const need = new Set(); for (const p of L.props || []) { const d = CATALOG[p.t]; if (d && d.spec && d.spec.model && !MODELS[d.spec.model.file]) need.add(d.spec.model.file); }
+  await Promise.all([...need].map((f) => new Promise((res) => new GLTFLoader().load(new URL("./" + f, import.meta.url).href, (g) => { MODELS[f] = g.scene; res(); }, undefined, () => { console.warn("model failed", f); res(); }))));
+}
+/* the size of a model file, for the importer */
+export function measureModel(file) { return new Promise((res, rej) => new GLTFLoader().load(new URL("./" + file, import.meta.url).href, (g) => { const b = new THREE.Box3().setFromObject(g.scene), s = new THREE.Vector3(); b.getSize(s); res({ w: s.x, h: s.y, d: s.z }); }, undefined, rej)); }
 
 /* ---------------------------------------------------------------- the builder */
 export function build(L, opt = {}) {

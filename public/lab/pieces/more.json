@@ -1,0 +1,18 @@
+[
+ { "id": "coffin", "name": "Coffin", "tags": ["church", "crypt", "death"], "size": [0.8, 2.0], "block": true, "parts": [
+   { "shape": "box", "size": [0.8, 0.45, 2.0], "pos": [0, 0.25, 0], "mat": "wood" }, { "shape": "box", "size": [0.7, 0.06, 1.9], "pos": [0, 0.5, 0], "mat": "dark" }, { "shape": "box", "size": [0.2, 0.02, 0.5], "pos": [0, 0.54, -0.5], "mat": "brass" }] },
+ { "id": "chest", "name": "Chest", "tags": ["any", "bedroom", "dock"], "size": [1.0, 0.55], "block": true, "parts": [
+   { "shape": "box", "size": [1.0, 0.45, 0.55], "pos": [0, 0.23, 0], "mat": "wood" }, { "shape": "box", "size": [1.04, 0.12, 0.58], "pos": [0, 0.5, 0], "mat": "dark" }, { "shape": "box", "size": [0.14, 0.16, 0.04], "pos": [0, 0.42, 0.3], "mat": "brass" }] },
+ { "id": "altar", "name": "Altar", "tags": ["church", "shrine"], "size": [1.8, 0.7], "block": true, "parts": [
+   { "shape": "box", "size": [1.8, 1.0, 0.7], "pos": [0, 0.5, 0], "mat": "stone" }, { "shape": "box", "size": [1.9, 0.08, 0.8], "pos": [0, 1.04, 0], "mat": "sheet" }, { "shape": "cyl", "r": 0.04, "h": 0.3, "pos": [-0.6, 1.23, 0], "mat": "brass" }, { "shape": "cyl", "r": 0.04, "h": 0.3, "pos": [0.6, 1.23, 0], "mat": "brass" }] },
+ { "id": "bathtub", "name": "Bathtub", "tags": ["bathroom", "domestic", "medical"], "size": [0.8, 1.7], "block": true, "parts": [
+   { "shape": "box", "size": [0.8, 0.55, 1.7], "pos": [0, 0.28, 0], "mat": "sheet" }, { "shape": "box", "size": [0.62, 0.1, 1.5], "pos": [0, 0.56, 0], "mat": "#5b7a8c" }] },
+ { "id": "radio_set", "name": "Wireless set", "tags": ["1920-1960", "domestic", "office"], "size": [0.7, 0.45], "block": true, "parts": [
+   { "shape": "box", "size": [0.7, 0.1, 0.45], "pos": [0, 0.8, 0], "mat": "wood" }, { "shape": "box", "size": [0.6, 0.35, 0.35], "pos": [0, 1.0, 0], "mat": "dark" }, { "shape": "cyl", "r": 0.09, "h": 0.04, "pos": [-0.15, 1.0, 0.19], "mat": "brass", "rot": [90, 0, 0] }, { "shape": "box", "size": [0.7, 0.8, 0.45], "pos": [0, 0.4, 0], "mat": "wood" }] },
+ { "id": "computer_desk", "name": "Computer desk", "tags": ["modern", "1980+", "office"], "size": [1.6, 0.8], "block": true, "parts": [
+   { "shape": "box", "size": [1.6, 0.05, 0.8], "pos": [0, 0.74, 0], "mat": "iron" }, { "shape": "box", "size": [0.05, 0.72, 0.75], "pos": [-0.75, 0.36, 0], "mat": "iron" }, { "shape": "box", "size": [0.05, 0.72, 0.75], "pos": [0.75, 0.36, 0], "mat": "iron" }, { "shape": "box", "size": [0.5, 0.34, 0.06], "pos": [0, 1.0, -0.1], "mat": "#1b2a3a" }, { "shape": "box", "size": [0.42, 0.02, 0.16], "pos": [0, 0.78, 0.15], "mat": "#cfd3d8" }] },
+ { "id": "server_rack", "name": "Server rack", "tags": ["future", "modern", "office"], "size": [0.7, 0.9], "block": true, "light": { "c": 3401215, "i": 5, "r": 5, "y": 1.2 }, "parts": [
+   { "shape": "box", "size": [0.7, 2.0, 0.9], "pos": [0, 1.0, 0], "mat": "#20262e" }, { "shape": "box", "size": [0.5, 0.04, 0.02], "pos": [0, 1.7, 0.46], "mat": "#34d6ff" }, { "shape": "box", "size": [0.5, 0.04, 0.02], "pos": [0, 1.4, 0.46], "mat": "#34d6ff" }, { "shape": "box", "size": [0.5, 0.04, 0.02], "pos": [0, 1.1, 0.46], "mat": "#34d6ff" }] },
+ { "id": "plant", "name": "Plant", "tags": ["any", "domestic"], "size": [0.5, 0.5], "block": false, "parts": [
+   { "shape": "cyl", "r": 0.2, "h": 0.35, "pos": [0, 0.18, 0], "mat": "brick" }, { "shape": "sphere", "r": 0.32, "pos": [0, 0.65, 0], "mat": "#3f6b3a" }] }
+]
