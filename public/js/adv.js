@@ -119,7 +119,7 @@
         const c = st.check;
         let asp = c.aspect, crv = R.cr(c.cr), im = ADV.improv;
         if (im) { ADV.improv = null; asp = im.aspect; crv += im.shift; if (im.note) await g.narrate(im.note); }   // a player's own approach to this roll
-        const r = await G.check({ aspect: asp, cr: crv, label: c.label || "Check", who: c.who || "choose", tags: c.tags || [], investigate: !!c.investigate, tryKey: c.tryKey });
+        const r = (im && im.auto) ? { ok: true, agent: G.active().find((a) => !a.dead) || G.active()[0], total: 99, auto: true } : await G.check({ aspect: asp, cr: crv, label: c.label || "Check", who: c.who || "choose", tags: c.tags || [], investigate: !!c.investigate, tryKey: c.tryKey });
         if (await ADV.exec(r.ok ? c.ok : c.fail, g, M)) return true;
       } else if (st.group) {
         const c = st.group;
@@ -214,8 +214,9 @@
         /* A limited interview (the rulebook's interview rule, as in Death of a Bloodline): the first time, a Charisma roll decides
            how many questions this person will answer. Medium 10 or better: five. Challenging 14 or better: as many as you like.
            Below that: two. Topics with `cha: N` are the extra things only a persuasive agent in the party can draw out. */
-        const lk = `conv:${npcId}:${cv.id || ""}:limit`;
-        if (cv.limit && g.flag(lk) == null) {
+        const lk = `conv:${npcId}:${cv.id || ""}:limit`, useRap = window.RPGX && window.RPGX.on("rapport");
+        if (cv.limit && g.flag(lk) == null && useRap) { g.set(lk, 5); await g.narrate("They will talk, for a while. How much they tell you depends on how you go about it: be patient, and they will tell you more."); }
+        else if (cv.limit && g.flag(lk) == null) {
           const r = await G.check({ aspect: "charisma", cr: R.cr("medium"), label: `Win ${(M.npcs[npcId] || {}).name ? M.npcs[npcId].name.split(" ")[0] : "their"} trust`, investigate: true, who: "choose", tags: ["interview"] });
           const tot = r.total || 0;
           g.set(lk, tot >= R.cr("challenging") ? 99 : tot >= R.cr("medium") ? 5 : 2);
@@ -223,15 +224,20 @@
           await g.narrate(lim >= 99 ? "They relax, and it is clear they will tell you whatever you ask." : lim === 5 ? "They will answer some questions, but not all night." : "They will give you a minute, and not a second more.");
         }
         const bestCha = Math.max(0, ...G.active().map((a) => R.aspect(a, "charisma")));
+        const MN = { warm: "Warm", direct: "Direct", pressing: "Pressing" }, rk = `rap:${npcId}`;
+        let manner = "direct";
         for (;;) {
+          const rap = useRap ? Number(g.flag(rk) || 0) : 0;
           const used = (cv.topics || []).reduce((n, t, i) => n + (g.flag(k(i)) && !t.free ? 1 : 0), 0);
-          const cap = cv.limit ? g.flag(lk) : 99;
-          const left = (cv.topics || []).map((t, i) => ({ t, i })).filter(({ t, i }) => ADV.cond(t.if, g) && !(t.once !== false && g.flag(k(i))) && (!t.cha || bestCha >= t.cha));
+          const cap = cv.limit ? (g.flag(lk) < 99 ? g.flag(lk) + (rap >= 3 ? 2 : 0) : 99) : 99;
+          const left = (cv.topics || []).map((t, i) => ({ t, i })).filter(({ t, i }) => ADV.cond(t.if, g) && !(t.once !== false && g.flag(k(i))) && (!t.cha || bestCha >= t.cha || rap >= 2));
+          if (useRap && rap <= -2) { for (const l of cv.cutoff || ["That is enough. I think you had better go."]) await speak(l); break; }
           if (!left.length) { for (const l of cv.done || []) await speak(l); break; }
           if (cv.limit && cap < 99 && used >= cap && left.every(({ t }) => !t.free)) { for (const l of cv.cutoff || ["That's all I have to say. I have things to do."]) await speak(l); break; }
           const npc = M.npcs[npcId] || {};
-          const more = cv.limit && cap < 99 ? ` (${Math.max(0, cap - used)} question${cap - used === 1 ? "" : "s"} left)` : "";
-          let id = await g.choose((cv.prompt || `What do you ask ${npc.name || "them"}?`) + more, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask, hint: t.cha ? "Your Charisma draws this out" : t.free ? "" : undefined })), ...(window.RPGX.on("typed") ? [{ id: "_type", label: "Ask about something else…", hint: "Type your own question" }] : []), { id: "bye", label: cv.leave || "That's all for now" }]);
+          const more = (cv.limit && cap < 99 ? ` (${Math.max(0, cap - used)} question${cap - used === 1 ? "" : "s"} left)` : "") + (useRap ? ` · Trust ${"▮".repeat(Math.max(0, Math.min(4, rap + 2)))}${"▯".repeat(4 - Math.max(0, Math.min(4, rap + 2)))}` : "");
+          let id = await g.choose((cv.prompt || `What do you ask ${npc.name || "them"}?`) + more, [...left.map(({ t, i }) => ({ id: String(i), label: t.ask, hint: t.cha ? "Your Charisma draws this out" : t.free ? "" : undefined })), ...(useRap ? [{ id: "_manner", label: `Manner: ${MN[manner]}  (change)`, hint: manner === "warm" ? "Patient and kind: builds trust, and trust opens more" : manner === "pressing" ? "Hard on them: they may crack, or shut you out" : "Plain and level: no change" }] : []), ...(window.RPGX.on("typed") ? [{ id: "_type", label: "Ask about something else…", hint: "Type your own question" }] : []), { id: "bye", label: cv.leave || "That's all for now" }]);
+          if (id === "_manner") { manner = manner === "direct" ? "warm" : manner === "warm" ? "pressing" : "direct"; continue; }
           if (id === "_type") {
             const q = await ADV.askText(`Ask ${npc.name || "them"}`, "e.g. Who was here the night it happened?");
             if (!q) continue;
@@ -243,6 +249,13 @@
           const t = cv.topics[+id]; g.set(k(+id));
           for (const l of t.lines || []) { if (window.GAME.state.phase === "ending") return true; await speak(l); }
           if (t.then && await ADV.exec(t.then, g, M)) return true;
+          if (useRap && manner !== "direct") {
+            const was = Number(g.flag(rk) || 0), now = Math.max(-3, Math.min(4, was + (manner === "warm" ? 1 : -1))); g.set(rk, now);
+            const nm = (npc.name || "They").split(" ")[0];
+            if (manner === "warm" && now === 2 && was < 2) await g.narrate(`${nm} lets out a breath, and sits a little differently. They trust you more now, and there are things they will say that they would not before.`);
+            else if (manner === "pressing" && now <= -1 && was > -1) await g.narrate(`${nm} stiffens. You are leaning on them, and they know it.`);
+            else if (manner === "pressing" && now <= -2) await g.narrate(`${nm}'s face closes like a door.`);
+          }
         }
       } else if (st.inc) { g.set(st.inc, (Number(g.flag(st.inc)) || 0) + (st.by || 1)); }
       else if (st.join) { await g.join(st.join); }

@@ -47,14 +47,41 @@
   };
   const mark = G.paintLight; G.paintLight = function () { try { (G.state._seen = G.state._seen || {})[here()] = 1; } catch (e) {} return mark.apply(this, arguments); };
 
+  /* ---------------------------------------------------------------- a moment in character */
+  FW.moment = async () => {
+    const team = G.active(), who = team.length === 1 ? team[0].id : await U.choose("Whose moment?", team.map((a) => ({ id: a.id, label: a.short })));
+    const a = team.find((x) => x.id === who); if (!a) return;
+    const k = `mom:${a.id}:${here()}`; if (used()[k]) return U.toast(`${a.short} has already had their moment here.`);
+    const c = await U.choose(`${a.short} takes a moment. How?`, [
+      { id: "steady", label: "Steady yourself", hint: "+2 Sanity" }, { id: "say", label: "Say what you think, aloud", hint: "The team talks it through: a lead" },
+      { id: "lighten", label: "Lighten the mood", hint: "+1 Stability, all" }, { id: "why", label: "Remember who you are doing this for", hint: "+1 Focus, +1 Stability" },
+      { id: "own", label: "Say it in your own words…", hint: "Type a line, in character. It goes in the journal." }, { id: "x", label: "Never mind" }]);
+    if (!c || c === "x") return;
+    let line = "";
+    if (c === "own") { line = await ADV.askText(`${a.short}, in character`, "What do they say, or think?"); if (!line) return; }
+    used()[k] = true;
+    const J = (G.state.journal = G.state.journal || []);
+    const text = { steady: "Takes a breath, and counts. It helps.", say: "Says it aloud, and the others turn it over with them.", lighten: "Says something that is nearly a joke. Someone nearly laughs.", why: "Thinks, for a moment, of who is waiting at home.", own: line }[c];
+    J.push({ who: a.name || a.short, where: (G.loc() || {}).name || "", text: c === "own" ? `“${line}”` : text });
+    await G.run(async () => {
+      if (c === "own") { U.print(`“${line.replace(/[<>&]/g, "")}”`, "said", { who: a }); await G.api.narrate(`${a.short} says it, and means it. It steadies the whole team. (+2 Stability, ${a.short})`); a.pools.stability.cur = Math.min(a.pools.stability.max, a.pools.stability.cur + 2); }
+      else if (c === "steady") { a.pools.sanity.cur = Math.min(a.pools.sanity.max, a.pools.sanity.cur + 2); await G.api.narrate(`${a.short} takes a long breath, and counts to ten. (+2 Sanity)`); }
+      else if (c === "lighten") { for (const x of team) x.pools.stability.cur = Math.min(x.pools.stability.max, x.pools.stability.cur + 1); await G.api.narrate(`${a.short} says something that is very nearly a joke. Someone very nearly laughs. (+1 Stability, all)`); }
+      else if (c === "why") { a.pools.stability.cur = Math.min(a.pools.stability.max, a.pools.stability.cur + 1); if (window.FOCUS && FOCUS.on()) { const f = FOCUS.get(a); f.cur = Math.min(f.max, f.cur + 1); } await G.api.narrate(`${a.short} thinks, for a moment, of who is waiting. (+1 Focus, +1 Stability)`); }
+      else if (c === "say") { await G.api.narrate(`${a.short} says it aloud, plainly, and the others turn it over with them.`); const left = G.visibleHotspots().filter((h) => h.src && !h.go); const h = left[Math.floor(Math.random() * left.length)]; if (h) await G.api.narrate(`Between you, it comes down to one thing: <b>${h.label}</b>.`); }
+      G.refreshParty();
+    });
+  };
+
   /* ---------------------------------------------------------------- the menu */
   FW.menu = async () => {
     const o = [{ id: "item", label: "Use an item on something", hint: "The right tool makes it easier" }, { id: "skill", label: "Use what you know", hint: "Your Background gives you something to do" }, { id: "ask", label: "Ask around", hint: "Charisma, for a lead" }];
     if (RPGX.on("scavenge")) o.push({ id: "scav", label: "Scavenge", hint: "Spare lights and supplies. Takes time if it fails." });
     if (RPGX.on("map")) o.push({ id: "map", label: "Look at the map", hint: "Where you have been, and quick travel" });
+    if (RPGX.on("moments")) o.push({ id: "moment", label: "Take a moment, in character", hint: "Steady yourself, speak, or say it your own way" });
     o.push({ id: "stock", label: "Take stock", hint: "What you have, and what is open" }, { id: "x", label: "Never mind" });
     const c = await U.choose("Field work", o);
-    ({ item: FW.useItem, skill: FW.skill, ask: FW.ask, scav: FW.scavenge, map: FW.map, stock: FW.stock }[c] || (() => {}))();
+    ({ item: FW.useItem, skill: FW.skill, ask: FW.ask, scav: FW.scavenge, map: FW.map, stock: FW.stock, moment: FW.moment }[c] || (() => {}))();
   };
 
   /* ---------------------------------------------------------------- loud ways have a price */

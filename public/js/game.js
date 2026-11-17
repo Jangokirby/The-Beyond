@@ -563,7 +563,7 @@
     const sel = el("select", {}, ...list.map((k) => el("option", { value: k, selected: k === "awareness" ? "selected" : null }, R.ASPECT_LABEL[k] || k)));
     text.addEventListener("input", () => { const t = text.value.toLowerCase(); const g = GUESS.find(([re]) => re.test(t)); if (g) sel.value = g[1]; });
     const body = el("div", {}, el("p", { class: "small" }, "Say what your agent does, in your own words. Then choose how: the Aspect decides the roll."), text,
-      el("label", { class: "small", style: "display:block;margin-top:8px" }, "How? ", sel), el("p", { class: "small muted" }, "If it fits something here, that is what happens. A different approach is harder. If it fits nothing, it is a hunch."));
+      el("label", { class: "small", style: "display:block;margin-top:8px" }, "How? ", sel), el("p", { class: "small muted" }, "Be specific: name the thing and what you want from it, and if you are right there is nothing to roll. Vague ideas get the dice. If it fits nothing, it is a hunch."));
     const r = await U.modal({ title: "Try something else", body, buttons: [{ id: "no", label: "Never mind" }, { id: "go", label: "Do it", cls: "primary" }] });
     const said = text.value.trim(); if (r !== "go" || !said) return;
     const asp = sel.value, words = stems(said);
@@ -572,7 +572,9 @@
     for (const h of live) { const have = stems(steptext([h.label, h.src.hint, h.src.steps]).join(" ")); let n = 0; for (const w of words) if (have.has(w)) n++; if (n > bs) { bs = n; best = h; } }
     if (best && bs >= 1) {
       const chk = JSON.stringify(best.src.steps).match(/"aspect":"(\w+)"/), same = chk && chk[1] === asp;
-      ADV.improv = { aspect: asp, shift: same ? -1 : 2, note: same ? "Your own way into it is the right way: it goes a little easier." : "It is an unusual way in, and a harder one." };
+      const exact = bs >= 2 && window.RPGX.on("specific");
+      ADV.improv = exact ? { aspect: asp, shift: 0, auto: true, note: "You know exactly what you are looking for, and where. There is nothing to roll: it is simply there." }
+        : { aspect: asp, shift: same ? -1 : 2, note: same ? "Your own way into it is the right way: it goes a little easier." : "It is an unusual way in, and a harder one." };
       U.print(`<i>${said.replace(/[<>&]/g, "")}</i>`, "narr");
       G.useHotspot(best);
       setTimeout(() => { if (!G.busy) ADV.improv = null; }, 600);
@@ -861,7 +863,7 @@
   /* ================================================================== case file */
   G.caseFile = (tab = "obj") => {
     AudioMan.sfx("ui_open");
-    const tabs = [["obj", "Objectives"], ["clues", "Clues"], ...(window.CORK && CORK.on() ? [["theory", "Theory"]] : []), ["lore", "Lore"], ["rules", "Rules"]];
+    const tabs = [["obj", "Objectives"], ["clues", "Clues"], ...(window.RPGX && RPGX.on("moments") ? [["journal", "Journal"]] : []), ...(window.CORK && CORK.on() ? [["theory", "Theory"]] : []), ["lore", "Lore"], ["rules", "Rules"]];
     const body = el("div", { class: "casefile" });
     const nav = el("div", { class: "tabs", role: "tablist" });
     const pane = el("div", { class: "pane" });
@@ -879,6 +881,10 @@
         if (hidden) pane.append(el("p", { class: "small muted" }, `${hidden} secondary objective${hidden > 1 ? "s" : ""} not yet discovered.`));
         for (const [cid, x] of G.companions()) pane.append(el("button", { class: "btn", onclick: () => G.askCompanion(cid) }, `Ask ${x.ref.short} what they think`));
         if (M.id === "death-of-a-bloodline") pane.append(el("button", { class: "btn", onclick: () => G.hint() }, "Think it over (IQ, Medium)"));
+      } else if (t === "journal") {
+        const J = G.state.journal || [];
+        if (!J.length) pane.append(el("p", { class: "muted" }, "Nothing written yet. In a scene, Field work → Take a moment, and say something in character: it is kept here."));
+        for (const j of [...J].reverse()) pane.append(el("div", { class: "clue" }, el("b", {}, j.who), el("small", {}, j.where), el("p", {}, j.text)));
       } else if (t === "clues") {
         if (!G.state.clues.length) pane.append(el("p", { class: "muted" }, "Nothing yet. Talk to people and search the places you visit."));
         for (const id of [...G.state.clues].reverse()) {
