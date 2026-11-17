@@ -34,7 +34,7 @@
       roe: N("Captain Anselm Roe", "Company commander", "Thirties, in a muddy officer's greatcoat and a steel helmet, with a neat moustache, a map case and the stillness of a man who has not slept in three weeks and has stopped noticing.", F(1, 2, "short", 0, "none", { sex: "m" })),
       gill: N("Private Tommy Gill", "A sentry who came back", "Early twenties, in a mud-grey tunic with a blanket round his shoulders, who watches your lips with great attention, and does not hear you.", F(1, 1, "short", 5, "none", { sex: "m" })),
       edith: N("Nurse Edith Marlow", "Dressing-station sister", "Twenties, in a grey nursing uniform under a rubber apron, with a Red Cross band and a very steady pair of hands, who has been teaching the deaf to talk with their fingers.", F(1, 3, "bun", 4, "none", { sex: "f" })),
-      karl: N("Leutnant Karl Brandt", "German officer, across the wire", "Late twenties, in a field-grey greatcoat and a spiked-less helmet, with a pale tired face and a notebook full of numbers, who speaks very good English with a Berlin lilt.", F(1, 2, "short", 0, "none", { sex: "m" })),
+      karl: N("Leutnant Karl Brandt", "German officer, across the wire", "Late twenties, in a field-grey greatcoat and a spiked-less helmet, with a pale tired face and a notebook full of numbers, who speaks very good English with a Berlin lilt.", F(1, 2, "short", 0, "none", { sex: "m" }), "guarded"),
       orme: N("Sapper Orme", "The other who came back", "Thirties, a tunneller in a clay-stained shirt, with a slate and a stub of chalk on a string round his neck, writing very small and very fast.", F(2, 1, "short", 5, "none", { sex: "m" }))
     },
     enemies: {

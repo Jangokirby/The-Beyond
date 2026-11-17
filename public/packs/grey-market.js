@@ -31,7 +31,7 @@
     },
     npcs: {
       wen: N("Handler Wen", "BFV handler", "Fifties, in a plain charcoal jacket, voice only on an encrypted call, a small red dot of light in your ear.", F(1, 3, "short", 6, "none", { sex: "f" })),
-      zhou: N("Dr. Zhou Mei", "Back-alley clinic surgeon", "Forties, in a green surgical gown under a cheap puffer jacket, with a magnifier on a headband, tired hands and a very steady eye.", F(2, 1, "bun", 4, "none", { sex: "f" })),
+      zhou: N("Dr. Zhou Mei", "Back-alley clinic surgeon", "Forties, in a green surgical gown under a cheap puffer jacket, with a magnifier on a headband, tired hands and a very steady eye.", F(2, 1, "bun", 4, "none", { sex: "f" }), "guarded"),
       lan: N("Ma Lan", "Noodle-stall cook, a wearer", "Thirties, in an apron and a rain jacket, with a small silver sheen at the corner of each eye, who has not slept in nine days and keeps cooking anyway.", F(2, 1, "ponytail", 3, "none", { sex: "f" })),
       tao: N("Tao", "Courier", "Early twenties, in a delivery jacket with a lit logo, a cracked phone, and two scooters' worth of roof routes in his legs.", F(3, 1, "short", 5, "none", { sex: "m" })),
       hao: N("Hao Jinyi", "Yunlan Optics security chief", "Fifties, in a grey suit with the company's thin silver pin, a tablet held like a shield, and the smile of a man who has already decided what happens to you.", F(2, 2, "short", 0, "none", { sex: "m" }))

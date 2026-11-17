@@ -215,7 +215,10 @@
            how many questions this person will answer. Medium 10 or better: five. Challenging 14 or better: as many as you like.
            Below that: two. Topics with `cha: N` are the extra things only a persuasive agent in the party can draw out. */
         const lk = `conv:${npcId}:${cv.id || ""}:limit`, useRap = window.RPGX && window.RPGX.on("rapport");
-        if (cv.limit && g.flag(lk) == null && useRap) { g.set(lk, 5); await g.narrate("They will talk, for a while. How much they tell you depends on how you go about it: be patient, and they will tell you more."); }
+        /* Charisma is for persuading, tricking and getting answers out of someone who would rather not give them.
+           A person who is on your side (an officer who called you in, your own handler, a doctor, a priest) answers what they know, no roll. */
+        const att = ADV.attitude((M.npcs || {})[npcId], (cv.attitude || ((M.src && M.src.npcs && M.src.npcs[npcId]) || {}).attitude));
+        if (cv.limit && g.flag(lk) == null && useRap && att === "open") { g.set(lk, 99); await g.narrate("They are glad you came, and will tell you what they know. There is nothing to win here: only the right questions to ask."); }
         else if (cv.limit && g.flag(lk) == null) {
           const r = await G.check({ aspect: "charisma", cr: R.cr("medium"), label: `Win ${(M.npcs[npcId] || {}).name ? M.npcs[npcId].name.split(" ")[0] : "their"} trust`, investigate: true, who: "choose", tags: ["interview"] });
           const tot = r.total || 0;
@@ -274,6 +277,7 @@
   const stem = (w) => w.slice(0, 5);
   const QSTOP = new Set("what who whom whose where when why how does did do you your yours the this that these those about tell me us our can could will would should shall have has had was were are and but for with from into over any some anyone someone know think there their they them his her him she its not just also very more much many than then out get got say said ask asked please want".split(" "));
   const words = (t) => String(t || "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/).filter((w) => w.length > 2 && !QSTOP.has(w));
+  ADV.attitude = (npc, set) => { if (set) return set; const t = `${(npc || {}).tag || ""} ${(npc || {}).name || ""}`.toLowerCase(); return /handler|captain|commander|commodore|officer|police|inspector|sheriff|detective|doctor|dr\.|nurse|matron|sister|chaplain|father|priest|abbot|warden|chief|director|colonel|marshal|prior|brother|clerk|archivist|guide|attendant|stewardess|host|assistant|engineer|operator|acoustician|scientist/.test(t) ? "open" : "guarded"; };
   ADV.askText = (title, ph) => new Promise((resolve) => {
     const U = window.UI, input = U.el("input", { type: "text", maxlength: "140", placeholder: ph, style: "width:100%" });
     U.modal({ title, body: U.el("div", {}, U.el("p", { class: "small muted" }, "Ask in your own words. They answer what they know."), input), buttons: [{ id: "no", label: "Never mind" }, { id: "go", label: "Ask", cls: "primary" }] }).then((r) => resolve(r === "go" ? input.value.trim() : ""));

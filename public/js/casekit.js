@@ -13,7 +13,7 @@
   const A = window.ART;
   const K = (window.CASEKIT = {});
   K.face = (s, hc, h, o, x = "none", more = {}) => ({ skin: A.SKIN[s], hairC: A.HAIRC[hc], hair: h, outfit: A.OUTFIT[o], extra: x, bg: "#2b2f3a", ...more });
-  K.person = (name, tag, look, face) => ({ name, tag, look, face });
+  K.person = (name, tag, look, face, attitude) => ({ name, tag, look, face, ...(attitude ? { attitude } : {}) });   // attitude: "open" (on your side) or "guarded" (needs winning over)
   const arr = (x) => (x == null ? [] : Array.isArray(x) ? x : [x]);
   const say = (t) => (typeof t === "string" ? { say: t } : t);
 

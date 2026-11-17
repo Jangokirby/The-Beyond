@@ -515,3 +515,6 @@ body[data-mode="combat"] #story { min-height: 3.5rem; }
 #scene-dim[data-dark="pitch"][data-lit="1"] { --dk: .78; --r: 280px; --warm: .16; }
 #scene.combat #scene-dim { display: none; }
 @media (prefers-reduced-motion: reduce) { #scene-dim { transition: none; } }
+
+/* ---- walking: the hotspot you stand beside lights up */
+.walking #hotspots .hot.near .mark { outline: 3px solid #f2c14e; outline-offset: 3px; background: rgba(242, 193, 78, .25); }
