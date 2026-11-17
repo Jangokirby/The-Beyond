@@ -72,12 +72,12 @@
   /* only the next part of an arc is offered */
   const advList0 = CAMP.advList;
   CAMP.advList = () => advList0().filter((m) => {
-    const r = ARCS.of(m.id); if (!r) return true;
+    const r = ARCS.of(m.id); if (!r || (window.RPGX && RPGX.on("unlock"))) return true;
     const st = ARCS.state(r.id), i = r.parts.indexOf(m.id);
     return i === st.part || (CAMP.camp.history || []).some((h) => h.adv === m.id);
   });
   const all0 = CAMP.allAdventures;
-  CAMP.allAdventures = () => all0().filter((m) => { const r = ARCS.of(m.id); return !r || r.parts.indexOf(m.id) <= ARCS.state(r.id).part; });
+  CAMP.allAdventures = () => all0().filter((m) => { const r = ARCS.of(m.id); return !r || (window.RPGX && RPGX.on("unlock")) || r.parts.indexOf(m.id) <= ARCS.state(r.id).part; });
 
   /* the debrief moves the arc on and keeps the choices */
   const debrief0 = CAMP.debrief;

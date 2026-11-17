@@ -162,7 +162,7 @@
     },
     start: "office",
     scenes: {
-      office: { name: "The sisters' room, Étaples", theme: "interior", mood: "tense", lighting: "normal", weather: "rain", cast: ["edith"],
+      office: { name: "The sisters' room, Étaples", map: { pack: "lab/maps/qf2-office.beyondmap", start: [6, 7.6], npcs: { edith: [4.8, 3.5] }, spots: { "Talk to Sister Marlow": [4.8, 3.5], "Read the ward's death register": [3, 2.8], "To Dr. Cole's office": [.7, 4.5], "To the night orderly": [3.5, 8.3], "To Corporal Dunn's bed": [8.5, 8.3], "To the chaplain's hut": [11.3, 4.5] } }, theme: "interior", mood: "tense", lighting: "normal", weather: "rain", cast: ["edith"],
         onEnter: [{ once: "in", steps: [
           { say: "Étaples, in October 1918. A camp of grey huts, hospital tents and wooden wards stretched along a long beach of dunes, sixty thousand men in it and one in five of them sick. The rain, the khaki smell of wet wool, the coughing from every door." },
           { if: { arc: "sang" }, then: [{ say: "Sister Marlow wrote on the back of an envelope: 'You made them sing. I have been trying to remember how. Come quickly.'" }] },
@@ -173,7 +173,7 @@
           K.ask("edith", [
             K.t("What is happening?", ["They stop speaking. Between one sentence and the next, as if somebody had taken the sound out of the room. Then they go. It is not painful. It is not even frightening. It is only very, very quiet. And the whole ward knows."], { free: true, clue: "c_stop" }),
             K.t("Do you think it is the same thing?", "I know it is. The same patience. The same head on one side. It followed them from the line to the ward, and this is the first place it has found where a great many people are quiet on purpose.", { free: true, clue: "c_hush" }),
-            K.t("Who can we talk to?", [{ say: "She counts them on her fingers." }, "Dr. Cole, who wants the windows open. Henri, the night orderly. Corporal Dunn, who is dying, and will not mind. And Father Adair, who has been writing them all down."], { cha: 6, set: "contacts_known" }),
+            K.t("Who can we talk to?", [{ say: "She counts them on her fingers." }, "Dr. Cole, who wants the windows open. Henri, the night orderly. Corporal Dunn, who is dying, and will not mind. And Father Adair, who has been writing them all down."], { free: true, set: "contacts_known" }),
             K.t("What would you do?", "Make a noise. All night, every night. I have been trying to get a gramophone. I would take a brass band, if there were one in France.", { cha: 10, clue: "c_loud", set: "edith_plan" })
           ], { label: "Talk to Sister Marlow", name: "Sister Marlow", bye: ["Keep your voice up. Please."] }),
           K.find("Read the ward's death register", "iq", "easy", "Forty-one names in three weeks, each with a time. Beside each, in the sister's hand, a note: 'Quiet from' and a time an hour earlier. The notes are the same length, down the page, like a column of stitches.", "A very long register.", { clue: "c_stop", hint: "Easy" }),
@@ -181,7 +181,7 @@
           K.go("To the night orderly", "henri", { if: "contacts_known" }),
           K.go("To Corporal Dunn's bed", "dunn", { if: "contacts_known" }),
           K.go("To the chaplain's hut", "chaplain", { if: "contacts_known" })] },
-      cole: { name: "Dr. Cole's office", theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["cole"],
+      cole: { name: "Dr. Cole's office", map: { pack: "lab/maps/qf2-cole.beyondmap", start: [7.6, 3.5], npcs: { cole: [5.8, 3.7] }, spots: { "Talk to Dr. Cole": [5.8, 3.7], "Read the doctor's graphs": [4.5, 2.9], "Back to the sisters' room": [8.3, 3.5] } }, theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["cole"],
         onEnter: [{ once: "in", steps: [{ say: "A cramped office in a hut at the end of the lines, with a stove, a very tall pile of forms and a blackboard covered in a doctor's graphs: the death rates of every ward, in coloured chalk, with Ward 9 in a violent red." }] }],
         options: [
           K.ask("cole", [
@@ -191,7 +191,7 @@
           ], { label: "Talk to Dr. Cole", name: "Dr. Cole", bye: ["Air. Tell them: air."] }),
           K.find("Read the doctor's graphs", "iq", "medium", "A bar for every ward, and every bar is shorter with an open window. Ward 9's is not a bar but a stripe, running off the board. In the corner, in a very small hand: 'Not the flu alone. See the sister's notes.'", "Coloured chalk.", { clue: "c_air", hint: "Intelligence, Medium", failClue: "c_air" }),
           K.go("Back to the sisters' room", "office")] },
-      henri: { name: "The orderlies' lamp room", theme: "cellar", mood: "weird", lighting: "normal", weather: "none", cast: ["henri"],
+      henri: { name: "The orderlies' lamp room", map: { pack: "lab/maps/qf2-henri.beyondmap", start: [4.5, 6.0], npcs: { henri: [4.5, 3.2] }, spots: { "Talk to Henri": [4.5, 3.2], "Read the rounds book": [4.5, 1.2], "Back to the sisters' room": [4.5, 6.4] } }, theme: "cellar", mood: "weird", lighting: "normal", weather: "none", cast: ["henri"],
         onEnter: [{ once: "in", steps: [{ say: "A little brick lamp room with a rack of hurricane lanterns, a smell of paraffin, a tin of coffee on a stove, and a limping orderly in a grey apron who turns a lamp very low as you come in." }] }],
         options: [
           K.ask("henri", [
@@ -201,7 +201,7 @@
           ], { label: "Talk to Henri", name: "Henri", bye: ["Bonne nuit. Do not answer anyone you do not see."] }),
           K.find("Read the rounds book", "iq", "easy", "A grubby book of times in a French hand: bed numbers, times, a tally of lamp-oil. The quiet's bed is circled each night, and each circled bed is, a day earlier, marked with a small cross: 'sat with'.", "A book of oil measures.", { clue: "c_bed", obj: "so2", hint: "Easy", tags: ["bed"] }),
           K.go("Back to the sisters' room", "office")] },
-      dunn: { name: "Corporal Dunn's bed", theme: "interior", mood: "dread", lighting: "shadow", weather: "none", cast: ["dunn"],
+      dunn: { name: "Corporal Dunn's bed", map: { pack: "lab/maps/ward.beyondmap", start: [10, 10.4], npcs: { dunn: [6.9, 3.6] }, spots: { "Talk to Corporal Dunn": [6.9, 3.6], "Sit by the bed, and listen": [8.4, 4.1], "Back to the sisters' room": [10, 11.1] } }, theme: "interior", mood: "dread", lighting: "shadow", weather: "none", cast: ["dunn"],
         onEnter: [{ once: "in", steps: [{ say: "Ward 9, at dusk. Forty beds in two rows under hurricane lamps, the coughing at every pillow, a smell of Condy's crystals and boiled linen. At the far end, a corporal in a nightshirt, propped on three pillows, who raises a cigarette in welcome." }] }],
         options: [
           K.ask("dunn", [
@@ -211,7 +211,7 @@
           ], { label: "Talk to Corporal Dunn", name: "Corporal Dunn", bye: ["Make a noise. For me."] }),
           K.find("Sit by the bed, and listen", "awareness", "medium", "The ward has gone very quiet around you, and a small, faint, oddly kind voice, on your left, says your name, and then the name of someone you have lost. It is not coming from anywhere.", "Coughing, and a distant gramophone.", { clue: "c_echo", hint: "Awareness, Medium", tags: ["bed", "voice"] }),
           K.go("Back to the sisters' room", "office")] },
-      chaplain: { name: "The chaplain's hut", theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["adair"],
+      chaplain: { name: "The chaplain's hut", map: { pack: "lab/maps/qf2-chaplain.beyondmap", start: [1.6, 4.4], npcs: { adair: [4, 3.0] }, spots: { "Talk to Father Adair": [4, 3.0], "Read the half-sentences": [5.5, 1.9], "Say the whole office": [4.2, 4.6], "Down to Ward 9": [7.3, 3.5], "Back to the sisters' room": [.7, 3.5] } }, theme: "interior", mood: "calm", lighting: "normal", weather: "none", cast: ["adair"],
         onEnter: [{ once: "in", steps: [{ say: "A hut with a camp bed, a field altar made of two ammunition boxes and a cloth, a candle in a bully-beef tin, and a clergyman in a surplice who is writing, very fast, in a notebook already near full." }] }],
         options: [
           K.ask("adair", [
@@ -224,7 +224,7 @@
             ok: [{ say: "You say it all, to the end, and Father Adair says Amen. He tells you what he has heard it say, at the end of every night." }, { clue: "c_last" }], fail: [{ say: "You lose your place, and cannot find it." }] } }] },
           K.go("Down to Ward 9, tonight", "ward", { if: { all: [{ clue: "c_air" }, { clue: "c_bed" }, { clue: "c_echo" }] } }),
           K.go("Back to the sisters' room", "office")] },
-      ward: { name: "Ward 9, 4 a.m.", theme: "interior", mood: "boss", lighting: "shadow", weather: "none",
+      ward: { name: "Ward 9, 4 a.m.", map: { pack: "lab/maps/ward.beyondmap", start: [10, 10.4], spots: { "Fill the ward with noise": [16.7, 5.2], "Open every window": [9.5, 1.0], "Speak Heal": [10, 7.0], "Face it at the end": [15.0, 4.6] } }, theme: "interior", mood: "boss", lighting: "shadow", weather: "none",
         onEnter: [{ once: "in", steps: [
           { say: "Four in the morning. The ward's lamps burn very small. Every patient lies perfectly still, with their eyes open. At the far end, between the last two beds, a tall quiet shape stands with its head on one side, collecting the last word of a man who is trying very hard to say it. The silence is the same silence, and it has learned to wear a ward like a coat." },
           { objective: "po1" }] }],

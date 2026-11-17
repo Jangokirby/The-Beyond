@@ -120,7 +120,7 @@
           el("div", { class: "etxt" }, el("span", { class: "arctag" }, `Story campaign · ${parts.length} parts · ${parts[0].year}–${parts[parts.length - 1].year}`),
             el("b", {}, r.title), el("small", {}, r.summary || ""),
             r.villain ? el("small", { class: "muted" }, `Behind it: ${r.villain}`) : null,
-            el("ol", { class: "arcparts" }, ...parts.map((a, i) => el("li", { class: i < st.part ? "ok" : i === st.part ? "next" : "" }, `${a.title.replace(/^.*?: /, "")} · ${a.year}${i < st.part ? " ✓" : i === st.part ? " ← next" : ""}`))),
+            el("ol", { class: "arcparts" }, ...parts.map((a, i) => el("li", { class: i < st.part ? "ok" : i === st.part ? "next" : "", style: RPGX.on("unlock") ? "cursor:pointer;text-decoration:underline" : "", onclick: (ev) => { if (!RPGX.on("unlock")) return; ev.stopPropagation(); if (a.year < era.from || a.year > era.to) { c.year = a.year; CAMP.save(); } ui.briefing(a.id); } }, `${a.title.replace(/^.*?: /, "")} · ${a.year}${i < st.part ? " ✓" : i === st.part ? " ← next" : ""}`))),
             el("span", { class: "tag " + (done ? "ok" : "arc") }, done ? "Finished" : st.part ? `Continue: part ${st.part + 1} of ${parts.length}` : "Begin the campaign"))));
       }
       wrap.append(grid);
