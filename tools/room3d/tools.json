@@ -188,6 +188,208 @@
      ]
     }
    }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "list_presets",
+    "description": "List the room presets for furnish{preset}: id, name and style. Grouped by era in MAPS.md.",
+    "parameters": {
+     "type": "object",
+     "properties": {}
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "plan_case",
+    "description": "Dry run: say which preset each scene of a written case would get, without drawing anything. Use before map_case.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "case_id": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "case_id"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "import_model",
+    "description": "Add a .glb/.gltf 3D model file as a piece. Give file path, id, name, tags and height in metres (the size is measured).",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "file": {
+       "type": "string"
+      },
+      "id": {
+       "type": "string"
+      },
+      "name": {
+       "type": "string"
+      },
+      "tags": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "height": {
+       "type": "number"
+      },
+      "block": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "file",
+      "id"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "import_vtt",
+    "description": "Convert a Dungeon Alchemist or Dungeondraft export (.dd2vtt/.uvtt) into a map pack.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "file": {
+       "type": "string"
+      },
+      "name": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "file"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "install_map",
+    "description": "Put a rendered map pack into a scene of a written case, with optional spots {label:[x,z]}, npcs {id:[x,z]} and start [x,z].",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "case_id": {
+       "type": "string"
+      },
+      "scene": {
+       "type": "string"
+      },
+      "pack": {
+       "type": "string",
+       "description": "path to a .beyondmap file"
+      },
+      "spots": {
+       "type": "object"
+      },
+      "npcs": {
+       "type": "object"
+      },
+      "start": {
+       "type": "array",
+       "items": {
+        "type": "number"
+       }
+      }
+     },
+     "required": [
+      "case_id",
+      "scene",
+      "pack"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "list_bust_parts",
+    "description": "List every swappable part for a portrait bust (brows, eyes, mouths, noses, moustaches, beards, hair, hats, glasses, outfits) and the colour fields.",
+    "parameters": {
+     "type": "object",
+     "properties": {}
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "suggest_bust",
+    "description": "Pick a period-right portrait spec from what is known about a person. Same name gives the same face. Returns {spec}; edit it, then render_portrait.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "gender": {
+       "type": "string",
+       "description": "f, m or x"
+      },
+      "age": {
+       "type": "number"
+      },
+      "year": {
+       "type": "number"
+      },
+      "job": {
+       "type": "string"
+      },
+      "origin": {
+       "type": "string",
+       "description": "place or people, e.g. Burgundy, Lagos, Rajasthan"
+      },
+      "mood": {
+       "type": "string",
+       "description": "neutral, worried, stern, happy or shocked"
+      }
+     }
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "render_portrait",
+    "description": "Draw a portrait bust from a spec (see list_bust_parts) to a PNG in public/lab/portraits/. Returns the file paths.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "spec": {
+       "type": "object"
+      },
+      "name": {
+       "type": "string",
+       "description": "file name without extension"
+      },
+      "w": {
+       "type": "number"
+      },
+      "h": {
+       "type": "number"
+      }
+     },
+     "required": [
+      "spec",
+      "name"
+     ]
+    }
+   }
   }
  ],
  "anthropic": [
@@ -353,6 +555,184 @@
     },
     "required": [
      "case_id"
+    ]
+   }
+  },
+  {
+   "name": "list_presets",
+   "description": "List the room presets for furnish{preset}: id, name and style. Grouped by era in MAPS.md.",
+   "input_schema": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "name": "plan_case",
+   "description": "Dry run: say which preset each scene of a written case would get, without drawing anything. Use before map_case.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "case_id": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "case_id"
+    ]
+   }
+  },
+  {
+   "name": "import_model",
+   "description": "Add a .glb/.gltf 3D model file as a piece. Give file path, id, name, tags and height in metres (the size is measured).",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "file": {
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     },
+     "tags": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "height": {
+      "type": "number"
+     },
+     "block": {
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "file",
+     "id"
+    ]
+   }
+  },
+  {
+   "name": "import_vtt",
+   "description": "Convert a Dungeon Alchemist or Dungeondraft export (.dd2vtt/.uvtt) into a map pack.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "file": {
+      "type": "string"
+     },
+     "name": {
+      "type": "string"
+     }
+    },
+    "required": [
+     "file"
+    ]
+   }
+  },
+  {
+   "name": "install_map",
+   "description": "Put a rendered map pack into a scene of a written case, with optional spots {label:[x,z]}, npcs {id:[x,z]} and start [x,z].",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "case_id": {
+      "type": "string"
+     },
+     "scene": {
+      "type": "string"
+     },
+     "pack": {
+      "type": "string",
+      "description": "path to a .beyondmap file"
+     },
+     "spots": {
+      "type": "object"
+     },
+     "npcs": {
+      "type": "object"
+     },
+     "start": {
+      "type": "array",
+      "items": {
+       "type": "number"
+      }
+     }
+    },
+    "required": [
+     "case_id",
+     "scene",
+     "pack"
+    ]
+   }
+  },
+  {
+   "name": "list_bust_parts",
+   "description": "List every swappable part for a portrait bust (brows, eyes, mouths, noses, moustaches, beards, hair, hats, glasses, outfits) and the colour fields.",
+   "input_schema": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "name": "suggest_bust",
+   "description": "Pick a period-right portrait spec from what is known about a person. Same name gives the same face. Returns {spec}; edit it, then render_portrait.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "name": {
+      "type": "string"
+     },
+     "gender": {
+      "type": "string",
+      "description": "f, m or x"
+     },
+     "age": {
+      "type": "number"
+     },
+     "year": {
+      "type": "number"
+     },
+     "job": {
+      "type": "string"
+     },
+     "origin": {
+      "type": "string",
+      "description": "place or people, e.g. Burgundy, Lagos, Rajasthan"
+     },
+     "mood": {
+      "type": "string",
+      "description": "neutral, worried, stern, happy or shocked"
+     }
+    }
+   }
+  },
+  {
+   "name": "render_portrait",
+   "description": "Draw a portrait bust from a spec (see list_bust_parts) to a PNG in public/lab/portraits/. Returns the file paths.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "spec": {
+      "type": "object"
+     },
+     "name": {
+      "type": "string",
+      "description": "file name without extension"
+     },
+     "w": {
+      "type": "number"
+     },
+     "h": {
+      "type": "number"
+     }
+    },
+    "required": [
+     "spec",
+     "name"
     ]
    }
   }

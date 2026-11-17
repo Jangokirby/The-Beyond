@@ -5,9 +5,24 @@ let api, kit; const rd = async (u) => JSON.parse(fs.readFileSync(path.join(lab, 
 async function init() { if (api) return; kit = await import(pathToFileURL(path.join(lab, "kit.js")).href); api = await import(pathToFileURL(path.join(lab, "api.js")).href); await kit.loadPieces(rd); }
 const safe = (n) => String(n || "room").toLowerCase().replace(/[^a-z0-9_-]+/g, "-").slice(0, 60);
 const run = (args) => { const r = spawnSync("node", args, { cwd: root, encoding: "utf8", timeout: 600000 }); return { ok: r.status === 0, out: (r.stdout || "").trim().split("\n").slice(-6).join("\n"), err: (r.stderr || "").trim().slice(-600) }; };
+
+/* open a page of the lab in headless Chromium (own server, CPU rendering) and run fn(page) */
+async function browse(page, fn, port = 8780 + Math.floor(Math.random() * 100)) {
+  const { chromium } = require("playwright"); const srv = require("child_process").spawn("node", ["server.js"], { cwd: root, env: { ...process.env, PORT: String(port) } }); await new Promise((r) => setTimeout(r, 1500));
+  const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+  try { const p = await b.newPage({ viewport: { width: 900, height: 900 } }); await p.goto(`http://localhost:${port}/lab/${page}`); await p.waitForFunction(() => window.READY, null, { timeout: 60000 }); return await fn(p); } finally { await b.close(); srv.kill(); }
+}
 const fns = {
   async list_pieces(a = {}) { await init(); return api.listPieces(a); },
   async presets() { await init(); return api.presets(); },
+  async list_presets() { await init(); return api.presets(); },
+  async plan_case(a) { const r = run(["tools/room3d/automap.js", "--plan", a.case_id]); return { ok: r.ok, plan: r.out, error: r.ok ? undefined : r.err }; },
+  async list_bust_parts() { const m = await import(pathToFileURL(path.join(lab, "figure-bust.js")).href); const k = (o) => Object.keys(o); return { brows: k(m.BROWS), eyes: k(m.EYES), mouths: k(m.MOUTHS), noses: k(m.NOSES), moustaches: k(m.MOUSTACHES), beards: k(m.BEARDS), hair: k(m.HAIR), hats: k(m.HATS), glasses: k(m.GLASSES), outfits: k(m.OUTFITS), colours: "skin, hairColor, clothColor, trimColor, hatColor, lips are #rrggbb", yaw: "head turn in degrees, about -20..20" }; },
+  async suggest_bust(a) { const m = await import(pathToFileURL(path.join(lab, "bust-rules.js")).href); return { spec: m.suggestBust(a) }; },
+  async render_portrait(a) { const n = safe(a.name || (a.spec && a.spec.name) || "portrait"), dir = path.join(lab, "portraits"); fs.mkdirSync(dir, { recursive: true });
+    const url = await browse("bust.html", (p) => p.evaluate(([s, w, h]) => window.DRAW(s, w, h), [a.spec || {}, a.w || 600, a.h || 800]));
+    fs.writeFileSync(path.join(dir, n + ".png"), Buffer.from(url.split(",")[1], "base64")); fs.writeFileSync(path.join(dir, n + ".json"), JSON.stringify(a.spec || {}, null, 1)); return { ok: true, picture: `public/lab/portraits/${n}.png`, spec: `public/lab/portraits/${n}.json` }; },
+
   async new_room(a) { await init(); return { layout: api.newRoom(a.w, a.h, a.name, a.style) }; },
   async apply_ops(a) { await init(); return api.applyOps(a.layout, a.ops); },
   async validate(a) { await init(); return api.validate(a.layout); },

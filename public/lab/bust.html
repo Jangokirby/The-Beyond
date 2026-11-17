@@ -1,0 +1,6 @@
+<!doctype html><meta charset="utf-8"><title>Bust renderer</title><body style="margin:0;background:#000"><canvas id="c" width="600" height="800"></canvas>
+<script type="module">
+import { renderBust } from "./figure-bust.js";
+window.DRAW = (spec, w = 600, h = 800) => { const c = document.getElementById("c"); c.width = w; c.height = h; return renderBust(spec, c); };
+window.READY = true;
+</script>
