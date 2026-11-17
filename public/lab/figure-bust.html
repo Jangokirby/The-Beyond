@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><title>Bust test</title><body style="margin:0;background:#000"><canvas id="c" width="1200" height="800"></canvas>
+<script type="module">
+import { renderBust } from "./figure-bust.js";
+const P = [
+ { skin: "#f0cdb0", hairColor: "#6a4a2e", hair: "bun", hat: "nurse_veil", outfit: "nurse", clothColor: "#7d8794", brows: "worried", eyes: "dot", mouth: "line", nose: "small", yaw: 14 },
+ { skin: "#e6bd9c", hairColor: "#c9c4b8", hair: "short", hat: "top_hat", outfit: "suit", clothColor: "#2a2e38", beard: "full", moustache: "full", brows: "stern", eyes: "slit", mouth: "line", nose: "long", yaw: -12 },
+ { skin: "#a8744e", hairColor: "#1c1410", hair: "none", hat: "helmet", outfit: "uniform", clothColor: "#6b6a48", moustache: "thin", beard: "stubble", brows: "flat", eyes: "dot", mouth: "frown", nose: "small", yaw: 10 },
+ { skin: "#f2d2b6", hairColor: "#2a1c14", hair: "bob", hat: "cloche", hatColor: "#7a4a5a", outfit: "coat", clothColor: "#4a4a58", lips: "#b03a44", brows: "arched", eyes: "wide", mouth: "smile", nose: "button", yaw: -10 },
+ { skin: "#c08a62", hairColor: "#4a3020", hair: "long", hat: "wool_cap", hatColor: "#5a5a50", outfit: "tunic", clothColor: "#7a5a3a", beard: "goatee", brows: "flat", eyes: "dot", mouth: "line", nose: "long", yaw: 12 },
+ { skin: "#8a5a3c", hairColor: "#1c1410", hair: "pony", outfit: "suit", clothColor: "#2f4a8a", glasses: "square", brows: "raised", eyes: "dot", mouth: "smile", nose: "small", yaw: -14 },
+ { skin: "#d8c4b0", hairColor: "#222", hair: "none", outfit: "jumpsuit", clothColor: "#3a4a58", eyes: "visor", brows: "flat", mouth: "line", nose: "small", yaw: 8 },
+ { skin: "#e8c8b0", hairColor: "#b8b4ac", hair: "bun", outfit: "shawl", clothColor: "#6a4a50", glasses: "round", brows: "worried", eyes: "closed", mouth: "open", nose: "button", yaw: -8 }];
+const out = document.getElementById("c").getContext("2d");
+P.forEach((p, i) => { const c = document.createElement("canvas"); c.width = 300; c.height = 400; renderBust(p, c); out.drawImage(c, (i % 4) * 300, Math.floor(i / 4) * 400); });
+window.DONE = true;
+</script>
