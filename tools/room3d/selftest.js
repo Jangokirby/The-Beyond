@@ -48,6 +48,14 @@ const need = (c, m) => { if (!c) throw new Error(m); };
     const { start } = require("../../studio/studio.js"), http = require("http"), srv = await start(47398), get = (m, p, b) => new Promise((ok, no) => { const r = http.request({ host: "127.0.0.1", port: 47398, path: p, method: m }, (res) => { let d = ""; res.on("data", (c) => d += c); res.on("end", () => ok([res.statusCode, d])); }); r.on("error", no); if (b) r.write(b); r.end(); });
     try { need(JSON.parse((await get("GET", "/api/health"))[1]).ok, "health"); need(JSON.parse((await get("GET", "/api/tools"))[1]).length === TOOLS.length, "tool count"); const r = JSON.parse((await get("POST", "/api/tool/new_room", '{"w":9,"h":7}'))[1]); need(r.layout && r.layout.w === 9, "new_room over HTTP"); need((await get("GET", "/lab/..%2f..%2fserver.js"))[0] === 403, "path traversal not blocked"); need((await get("GET", "/"))[0] === 200, "hub page"); } finally { srv.close(); }
   });
+  await t("named rooms: new_room, apply_ops/validate/ascii/render by name", async () => {
+    const r = await fns.new_room({ w: 12, h: 8, name: "selftest-named" }); need(r.room === "selftest-named" && r.saved, "not saved");
+    const a = await fns.apply_ops({ room: "selftest-named", ops: [{ op: "furnish", preset: "study" }] }); need(a.ok && a.props > 3 && !a.layout, "compact reply expected: " + JSON.stringify(a).slice(0, 200));
+    need((await fns.validate({ room: "selftest-named" })), "validate by name"); need(((await fns.ascii({ room: "selftest-named" })).rows || []).length > 5, "ascii by name");
+    need((await fns.list_rooms()).rooms.some((x) => x.room === "selftest-named"), "not listed");
+    let msg = ""; try { await fns.validate({ room: "no-such-room" }); } catch (e) { msg = e.message; } need(/no room called/.test(msg), "unhelpful error: " + msg);
+    const rr = await fns.render({ room: "selftest-named" }); need(rr.ok, rr.error);
+  });
   /* clean up */
   try { fs.rmSync(path.join(lab, "models", "_licensed", "selftestpack"), { recursive: true, force: true }); for (const f of ["pieces/_licensed-selftestpack.json", "kits/_licensed-selftest_kit.json", "layouts/selftest-kit.json", "maps/selftest-kit.beyondmap", "maps/selftest-kit.jpg", "maps/selftest-kit.layout.json"]) try { fs.unlinkSync(path.join(lab, f)); } catch (e) {}
     for (const [f, n] of [["pieces/index.local.json", "_licensed-selftestpack.json"], ["kits/index.local.json", "_licensed-selftest_kit.json"]]) { const p = path.join(lab, f); if (fs.existsSync(p)) { const a = JSON.parse(fs.readFileSync(p, "utf8")).filter((x) => x !== n); if (a.length) fs.writeFileSync(p, JSON.stringify(a)); else fs.unlinkSync(p); } } } catch (e) {}
@@ -55,6 +63,6 @@ const need = (c, m) => { if (!c) throw new Error(m); };
   for (const f of ["selftest_base.glb", "selftest_hat.glb"]) try { fs.unlinkSync(path.join(lab, "characters", "models", f)); } catch (e) {}
   for (const f of ["portraits/selftest-character.png", "portraits/selftest-character.json"]) try { fs.unlinkSync(path.join(lab, f)); } catch (e) {}
   try { const f = path.join(lab, "pieces", "custom.json"); if (fs.existsSync(f)) { const a = JSON.parse(fs.readFileSync(f, "utf8")).filter((x) => x.id !== "selftest_piece"); if (a.length) fs.writeFileSync(f, JSON.stringify(a, null, 1)); else { fs.unlinkSync(f); const ip = path.join(lab, "pieces", "index.json"); fs.writeFileSync(ip, JSON.stringify(JSON.parse(fs.readFileSync(ip, "utf8")).filter((x) => x !== "custom.json"))); } } } catch (e) {}
-  for (const f of ["layouts/selftest-room.json", "maps/selftest-room.beyondmap", "maps/selftest-room.jpg", "maps/selftest-room.layout.json", "portraits/selftest-portrait.png", "portraits/selftest-portrait.json"]) try { fs.unlinkSync(path.join(lab, f)); } catch (e) {}
+  for (const f of ["layouts/selftest-named.json", "maps/selftest-named.beyondmap", "maps/selftest-named.jpg", "maps/selftest-named.layout.json", "layouts/selftest.json", "layouts/selftest-room.json", "maps/selftest-room.beyondmap", "maps/selftest-room.jpg", "maps/selftest-room.layout.json", "portraits/selftest-portrait.png", "portraits/selftest-portrait.json"]) try { fs.unlinkSync(path.join(lab, f)); } catch (e) {}
   console.log(bad ? `\n${bad} FAILED` : "\nall passed"); process.exit(bad ? 1 : 0);
 })();

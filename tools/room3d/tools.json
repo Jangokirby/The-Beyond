@@ -20,7 +20,7 @@
    "type": "function",
    "function": {
     "name": "new_room",
-    "description": "Start a room. Returns the layout. x runs 0..w left to right, z runs 0..h top to bottom.",
+    "description": "Start a room and save it under its name; then use {room:name} in apply_ops, validate, ascii and render. Returns the layout. x runs 0..w left to right, z runs 0..h top to bottom.",
     "parameters": {
      "type": "object",
      "properties": {
@@ -77,8 +77,13 @@
     "parameters": {
      "type": "object",
      "properties": {
+      "room": {
+       "type": "string",
+       "description": "name of a room made with new_room (preferred: you do not need to pass the layout)"
+      },
       "layout": {
-       "type": "object"
+       "type": "object",
+       "description": "or the whole layout, if you have it"
       },
       "ops": {
        "type": "array",
@@ -88,7 +93,6 @@
       }
      },
      "required": [
-      "layout",
       "ops"
      ]
     }
@@ -102,13 +106,16 @@
     "parameters": {
      "type": "object",
      "properties": {
+      "room": {
+       "type": "string",
+       "description": "name of a room made with new_room (preferred: you do not need to pass the layout)"
+      },
       "layout": {
-       "type": "object"
+       "type": "object",
+       "description": "or the whole layout, if you have it"
       }
      },
-     "required": [
-      "layout"
-     ]
+     "required": []
     }
    }
   },
@@ -120,13 +127,16 @@
     "parameters": {
      "type": "object",
      "properties": {
+      "room": {
+       "type": "string",
+       "description": "name of a room made with new_room (preferred: you do not need to pass the layout)"
+      },
       "layout": {
-       "type": "object"
+       "type": "object",
+       "description": "or the whole layout, if you have it"
       }
      },
-     "required": [
-      "layout"
-     ]
+     "required": []
     }
    }
   },
@@ -138,18 +148,20 @@
     "parameters": {
      "type": "object",
      "properties": {
+      "room": {
+       "type": "string",
+       "description": "name of a room made with new_room (preferred: you do not need to pass the layout)"
+      },
       "layout": {
-       "type": "object"
+       "type": "object",
+       "description": "or the whole layout, if you have it"
       },
       "name": {
        "type": "string",
        "description": "file name without extension"
       }
      },
-     "required": [
-      "layout",
-      "name"
-     ]
+     "required": []
     }
    }
   },
@@ -592,6 +604,32 @@
      ]
     }
    }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "list_maps",
+    "description": "List maps that already exist: with no case_id, the cases that have maps and standalone rooms; with a case_id, each scene's map file, spot and people counts and last-modified time. Check this before map_case, which overwrites.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "case_id": {
+       "type": "string"
+      }
+     }
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "list_rooms",
+    "description": "List the named rooms you have saved (made with new_room), with last-modified times.",
+    "parameters": {
+     "type": "object",
+     "properties": {}
+    }
+   }
   }
  ],
  "anthropic": [
@@ -610,7 +648,7 @@
   },
   {
    "name": "new_room",
-   "description": "Start a room. Returns the layout. x runs 0..w left to right, z runs 0..h top to bottom.",
+   "description": "Start a room and save it under its name; then use {room:name} in apply_ops, validate, ascii and render. Returns the layout. x runs 0..w left to right, z runs 0..h top to bottom.",
    "input_schema": {
     "type": "object",
     "properties": {
@@ -664,8 +702,13 @@
    "input_schema": {
     "type": "object",
     "properties": {
+     "room": {
+      "type": "string",
+      "description": "name of a room made with new_room (preferred: you do not need to pass the layout)"
+     },
      "layout": {
-      "type": "object"
+      "type": "object",
+      "description": "or the whole layout, if you have it"
      },
      "ops": {
       "type": "array",
@@ -675,7 +718,6 @@
      }
     },
     "required": [
-     "layout",
      "ops"
     ]
    }
@@ -686,13 +728,16 @@
    "input_schema": {
     "type": "object",
     "properties": {
+     "room": {
+      "type": "string",
+      "description": "name of a room made with new_room (preferred: you do not need to pass the layout)"
+     },
      "layout": {
-      "type": "object"
+      "type": "object",
+      "description": "or the whole layout, if you have it"
      }
     },
-    "required": [
-     "layout"
-    ]
+    "required": []
    }
   },
   {
@@ -701,13 +746,16 @@
    "input_schema": {
     "type": "object",
     "properties": {
+     "room": {
+      "type": "string",
+      "description": "name of a room made with new_room (preferred: you do not need to pass the layout)"
+     },
      "layout": {
-      "type": "object"
+      "type": "object",
+      "description": "or the whole layout, if you have it"
      }
     },
-    "required": [
-     "layout"
-    ]
+    "required": []
    }
   },
   {
@@ -716,18 +764,20 @@
    "input_schema": {
     "type": "object",
     "properties": {
+     "room": {
+      "type": "string",
+      "description": "name of a room made with new_room (preferred: you do not need to pass the layout)"
+     },
      "layout": {
-      "type": "object"
+      "type": "object",
+      "description": "or the whole layout, if you have it"
      },
      "name": {
       "type": "string",
       "description": "file name without extension"
      }
     },
-    "required": [
-     "layout",
-     "name"
-    ]
+    "required": []
    }
   },
   {
@@ -1117,6 +1167,26 @@
     "required": [
      "kit"
     ]
+   }
+  },
+  {
+   "name": "list_maps",
+   "description": "List maps that already exist: with no case_id, the cases that have maps and standalone rooms; with a case_id, each scene's map file, spot and people counts and last-modified time. Check this before map_case, which overwrites.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "case_id": {
+      "type": "string"
+     }
+    }
+   }
+  },
+  {
+   "name": "list_rooms",
+   "description": "List the named rooms you have saved (made with new_room), with last-modified times.",
+   "input_schema": {
+    "type": "object",
+    "properties": {}
    }
   }
  ]
