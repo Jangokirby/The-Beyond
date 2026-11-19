@@ -1,0 +1,20 @@
+{
+  "name": "afterglow",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Afterglow: a pretend dating app with local-AI women who swipe, match and text first",
+  "scripts": {
+    "serve": "npx --yes http-server www -p 5173 -c-1",
+    "android:add": "npx cap add android",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/local-notifications": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  }
+}
