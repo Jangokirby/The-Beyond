@@ -9,10 +9,10 @@
      POST /api/tool/<name>    body: JSON arguments; reply: JSON result.  e.g. POST /api/tool/new_room {"w":12,"h":9}
      PUT  /api/upload/<file>  raw bytes -> saved in studio/inbox/, reply { path } (for agents on another machine; give that path to import_models etc.)
      POST /api/selftest       runs tools/room3d/selftest.js and returns its report
-   Safety: it listens on 127.0.0.1 only unless you set STUDIO_HOST. If you expose it on a network, set STUDIO_TOKEN and send "Authorization: Bearer <token>". */
+   Safety: it listens on 127.0.0.1 only unless you set STUDIO_HOST. If you expose it on a network, set STUDIO_TOKEN (or GOBLIN_TOKEN) and send "X-Token: <token>" or "Authorization: Bearer <token>". */
 const http = require("http"), fs = require("fs"), path = require("path"), { spawn } = require("child_process");
 const ROOT = path.join(__dirname, ".."), LAB = path.join(ROOT, "public", "lab"), INBOX = path.join(__dirname, "inbox"), HUB = path.join(__dirname, "index.html");
-const PORT = +process.env.STUDIO_PORT || 47330, HOST = process.env.STUDIO_HOST || "127.0.0.1", TOKEN = process.env.STUDIO_TOKEN || "";
+const PORT = +process.env.STUDIO_PORT || 47330, HOST = process.env.STUDIO_HOST || "127.0.0.1", TOKEN = process.env.STUDIO_TOKEN || process.env.GOBLIN_TOKEN || "";   // same token the Den uses (X-Token) works here
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json", ".css": "text/css", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".glb": "model/gltf-binary", ".gltf": "model/gltf+json", ".beyondmap": "application/json", ".svg": "image/svg+xml" };
 let fns = null, TOOLS = null; const loadTools = async () => { if (!fns) { fns = require("../tools/room3d/lib.js").fns; TOOLS = (await import(require("url").pathToFileURL(path.join(LAB, "api.js")).href)).TOOLS; } };
 const json = (res, code, o) => { res.writeHead(code, { "Content-Type": "application/json" }); res.end(JSON.stringify(o)); };
@@ -24,11 +24,11 @@ function start(port = PORT) {
   const srv = http.createServer(async (req, res) => {
     const u = new URL(req.url, "http://x"), p = decodeURIComponent(u.pathname), origin = req.headers.origin;
     if (!okOrigin(origin) && !TOKEN) { res.writeHead(403); return res.end("origin not allowed"); }
-    if (origin) { res.setHeader("Access-Control-Allow-Origin", origin); res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization"); res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS"); }
+    if (origin) { res.setHeader("Access-Control-Allow-Origin", origin); res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Token"); res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS"); }
     if (req.method === "OPTIONS") { res.writeHead(204); return res.end(); }
     try {
       if (p.startsWith("/api/")) {
-        if (TOKEN && req.headers.authorization !== "Bearer " + TOKEN) return json(res, 401, { ok: false, error: "missing or wrong token" });
+        if (TOKEN && req.headers.authorization !== "Bearer " + TOKEN && req.headers["x-token"] !== TOKEN) return json(res, 401, { ok: false, error: "missing or wrong token" });
         await loadTools();
         if (p === "/api/health") return json(res, 200, { ok: true, app: "map-studio", version: require("./package.json").version, tools: TOOLS.length });
         if (p === "/api/tools") return json(res, 200, TOOLS);

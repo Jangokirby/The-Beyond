@@ -9,7 +9,7 @@ const run = (args) => { const r = spawnSync("node", args, { cwd: root, encoding:
 /* open a page of the lab in headless Chromium (own server, CPU rendering) and run fn(page) */
 async function browse(page, fn, port = 8780 + Math.floor(Math.random() * 100)) {
   const { chromium } = require("playwright"); const srv = require("child_process").spawn("node", ["server.js"], { cwd: root, env: { ...process.env, PORT: String(port) } }); await new Promise((r) => setTimeout(r, 1500));
-  const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
+  const b = await chromium.launch({ args: require("./gpu.js")() });
   try { const p = await b.newPage({ viewport: { width: 900, height: 900 } }); await p.goto(`http://localhost:${port}/lab/${page}`); await p.waitForFunction(() => window.READY, null, { timeout: 60000 }); return await fn(p); } finally { await b.close(); srv.kill(); }
 }
 const fns = {
@@ -77,7 +77,7 @@ const fns = {
   async install_map(a) { const dir = path.join(lab, "maps", a.case_id); fs.mkdirSync(dir, { recursive: true }); const src = path.resolve(a.pack), dst = path.join(dir, safe(a.scene) + ".beyondmap"); fs.copyFileSync(src, dst); const ip = path.join(dir, "index.json"), idx = fs.existsSync(ip) ? JSON.parse(fs.readFileSync(ip, "utf8")) : {}; const pk = JSON.parse(fs.readFileSync(dst, "utf8")); idx[a.scene] = { pack: `lab/maps/${a.case_id}/${safe(a.scene)}.beyondmap`, start: a.start || pk.layout.start, npcs: a.npcs || {}, spots: a.spots || {} }; fs.writeFileSync(ip, JSON.stringify(idx)); const gp = path.join(lab, "maps", "index.json"), all = fs.existsSync(gp) ? JSON.parse(fs.readFileSync(gp, "utf8")) : []; if (!all.includes(a.case_id)) { all.push(a.case_id); fs.writeFileSync(gp, JSON.stringify(all)); } return { ok: true, installed: `public/lab/maps/${a.case_id}/${safe(a.scene)}.beyondmap`, note: "spots: { 'option label': [x, z] } and npcs: { npcId: [x, z] } put the options and people on the map; without them the game places them for you" }; },
   async import_model(a) { const src = path.resolve(a.file), id = safe(a.id).replace(/-/g, "_"), dst = path.join(lab, "models", path.basename(src)); fs.mkdirSync(path.dirname(dst), { recursive: true }); fs.copyFileSync(src, dst);
     const { chromium } = require("playwright"); const srv = require("child_process").spawn("node", ["server.js"], { cwd: root, env: { ...process.env, PORT: "8768" } }); await new Promise((r) => setTimeout(r, 1500));
-    const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader"] }); const p = await b.newPage(); await p.goto("http://localhost:8768/lab/measure.html"); const m = await p.evaluate((f) => window.MEASURE(f), "models/" + path.basename(src)); await b.close(); srv.kill();
+    const b = await chromium.launch({ args: require("./gpu.js")() }); const p = await b.newPage(); await p.goto("http://localhost:8768/lab/measure.html"); const m = await p.evaluate((f) => window.MEASURE(f), "models/" + path.basename(src)); await b.close(); srv.kill();
     const scale = a.height ? a.height / m.h : (a.scale || 1), spec = { id, name: a.name || id, tags: a.tags || ["any"], size: [Math.round(m.w * scale * 100) / 100, Math.round(m.d * scale * 100) / 100], block: a.block !== false, model: { file: "models/" + path.basename(src), scale: Math.round(scale * 1000) / 1000, rotY: a.rotY || 0, yOffset: 0 } };
     await init(); const r = await fns.add_piece_type({ spec: { ...spec, parts: undefined, model: spec.model } }); return { ...r, spec, measured: m }; }
 };

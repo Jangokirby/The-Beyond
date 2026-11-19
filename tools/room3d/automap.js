@@ -19,7 +19,7 @@ const spec = (a, id) => { const sc = a.scenes[id], opts = (sc.options || []).map
     await b0.close(); srv0.kill(); return;
   }
   const srv = spawn("node", ["server.js"], { cwd: root, env: { ...process.env, PORT: "8767" } }); await new Promise((r) => setTimeout(r, 1500));
-  const b = await chromium.launch({ args: ["--use-gl=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] }), p = await b.newPage({ viewport: { width: 1700, height: 1300 } });
+  const b = await chromium.launch({ args: require("./gpu.js")() }), p = await b.newPage({ viewport: { width: 1700, height: 1300 } });
   await p.goto("http://localhost:8767/lab/auto.html"); await p.waitForFunction(() => window.READY);
   for (const cid of want) {
     const a = lib[cid]; if (!a) { console.log("no such case:", cid); continue; }
