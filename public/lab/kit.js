@@ -110,14 +110,20 @@ export function registerPiece(s) {
 }
 /* read the spec files (from the web in the browser, from disk in Node) and register them */
 export async function loadPieces(read) {
-  const get = read || (async (u) => (await fetch(new URL(u, import.meta.url))).json());
+  const get = read || (async (u) => { const r = await fetch(new URL(u, import.meta.url)); if (!r.ok) throw new Error(u + " " + r.status); return r.json(); });
   let idx = []; try { idx = await get("./pieces/index.json"); } catch (e) { return 0; }
+  try { idx = [...idx, ...(await get("./pieces/index.local.json"))]; } catch (e) { /* no local pieces: normal */ }   // index.local.json lists licensed packs kept out of git
   let n = 0; for (const f of idx) { try { const spec = await get("./pieces/" + f); for (const s of Array.isArray(spec) ? spec : [spec]) { registerPiece(s); n++; } } catch (e) { console.warn("piece", f, e.message); } }
+  try { let ks = []; try { ks = await get("./kits/index.json"); } catch (e) {} try { ks = [...ks, ...(await get("./kits/index.local.json"))]; } catch (e) {} for (const f of ks) { try { const k = await get("./kits/" + f); KITS[k.id] = k; } catch (e) { console.warn("kit", f, e.message); } } } catch (e) {}
   return n;
 }
+/* MODULAR KITS: a kit names the pieces that make walls, doors, windows, corners and floor tiles, all on a grid.
+   kit = { id, name, grid (metres a wall piece spans), wall, corner?, door?, window?, floor?, floorGrid?, rot? (degrees to turn wall/door/window pieces), offset? ([x,y,z] metres to slide them) }.  Wall pieces face +z (toward the room when on the north wall), centred on x, standing on y=0.
+   A room uses a kit with style.kit = "<id>". Files: kits/<id>.json, listed in kits/index.json (or kits/index.local.json, which is not committed). */
+export const KITS = {};
 /* models used by a layout must be loaded before it is built */
 export async function prepare(L) {
-  const need = new Set(); for (const p of L.props || []) { const d = CATALOG[p.t]; if (d && d.spec && d.spec.model && !MODELS[d.spec.model.file]) need.add(d.spec.model.file); }
+  const need = new Set(); const kitIds = []; { const kt = L.style && L.style.kit && KITS[L.style.kit]; if (kt) for (const k of ["wall", "corner", "door", "window", "floor"]) if (kt[k]) kitIds.push({ t: kt[k] }); } for (const p of [...(L.props || []), ...kitIds]) { const d = CATALOG[p.t]; if (d && d.spec && d.spec.model && !MODELS[d.spec.model.file]) need.add(d.spec.model.file); }
   await Promise.all([...need].map((f) => new Promise((res) => new GLTFLoader().load(new URL("./" + f, import.meta.url).href, (g) => { MODELS[f] = g.scene; res(); }, undefined, () => { console.warn("model failed", f); res(); }))));
 }
 /* the size of a model file, for the importer */
@@ -127,7 +133,7 @@ export function measureModel(file) { return new Promise((res, rej) => new GLTFLo
 export function build(L, opt = {}) {
   const S = new THREE.Scene(), mood = (L.style && L.style.mood) || "day", Wm = L.w, Hm = L.h, T = .3, WH = 2.6;
   S.background = new THREE.Color(0x0b0d10);
-  const out = !!(L.style && L.style.outdoor), draw = !out;   // outdoors: no walls are drawn, the ground runs on past the edges
+  const out = !!(L.style && L.style.outdoor), KIT = !out && L.style && L.style.kit && KITS[L.style.kit], draw = !out && !KIT, kitJobs = [];   // outdoors: no walls are drawn, the ground runs on past the edges
   const floorMap = FLOORS[(L.style && L.style.floor) || "wood"](); floorMap.repeat.set((Wm + (out ? 20 : 2)) / 4, (Hm + (out ? 20 : 2)) / 4);
   const wallMap = WALLS[(L.style && L.style.wall) || "plaster"]();
   const m = { floor: M(0xffffff, { map: floorMap, roughness: .9 }), wall: M(0xffffff, { map: wallMap }), trim: M(0x5a4636), iron: M(0x59606b, { roughness: .55, metalness: .35 }), sheet: M(0xe9e4d6), blanket: M(0x6b7b5e), wood: M(0x9a6f46), dark: M(0x6a4c34), glass: M(0xffe9b0, { emissive: 0xffd48a, emissiveIntensity: 1.6 }), win: M(0x9bb4cf, { emissive: 0x6f8fb8, emissiveIntensity: .9 }), brass: M(0xb18b3a, { metalness: .7, roughness: .4 }), crate: M(0xa98250), canvas: M(0xb8ad8c), brick: M(0x7a4332), stone: M(0x8a8780), fire: M(0xff9a40, { emissive: 0xff7a20, emissiveIntensity: 2 }), rug: M(0x7a2f2f), rug2: M(0xb59a5a), metalBlue: M(0x4a6a86), red: M(0xb0302a), neon: M(0x66f0ff, { emissive: 0x33d8ff, emissiveIntensity: 2.2 }), neonp: M(0xff66cc, { emissive: 0xff2fa8, emissiveIntensity: 2.2 }), neong: M(0x7dff9a, { emissive: 0x2fe070, emissiveIntensity: 2 }), screen: M(0x9fe8ff, { emissive: 0x4ab8e0, emissiveIntensity: 1.4 }), holo: M(0x7fd8ff, { emissive: 0x3aa8e8, emissiveIntensity: 1.8, transparent: true, opacity: .65 }), torch: M(0xffb050, { emissive: 0xff8a20, emissiveIntensity: 2.4 }), steel: M(0x8a929a, { metalness: .6, roughness: .4 }), white: M(0xe8e8e4), black: M(0x1c1d20), gold: M(0xc9a23a, { metalness: .7, roughness: .35 }), rust: M(0x8a4a2a), leather: M(0x5a3a28), cloth: M(0x9a3a3a), cloth2: M(0x2f4f7a), straw: M(0xc8aa5a), thatch: M(0x9a8040), ice: M(0xbfe0ef, { transparent: true, opacity: .8 }), water: M(0x3a6f86, { transparent: true, opacity: .85 }), bone: M(0xd8d2bc), leaf: M(0x3e7a3a), yellow: M(0xd8b030), greenm: M(0x4a6a4a) };
@@ -143,6 +149,12 @@ export function build(L, opt = {}) {
     const near = horiz && fix > Hm / 2 + .01;   // walls on the near side are cut down so the camera can see over them
     const hh = (horiz && fix > .01) ? (near ? .5 : 1.2) : WH;
     const ops = [...(L.doors || []).map((d) => ({ ...d, door: true })), ...(L.windows || []).map((d) => ({ ...d }))].filter((o) => (horiz ? o.axis === "h" && Math.abs(o.z - fix) < .2 && o.x >= c0 - .01 && o.x <= c0 + len + .01 : o.axis === "v" && Math.abs(o.x - fix) < .2 && o.z >= c0 - .01 && o.z <= c0 + len + .01)).sort((p, q) => (horiz ? p.x - q.x : p.z - q.z));
+    if (KIT && !near) { /* modular wall: pieces along this wall, door and window pieces in their openings */
+      const rot = horiz ? (fix < Hm / 2 ? 0 : 180) : (fix < Wm / 2 ? 270 : 90), grid = KIT.grid || 2; let q0 = c0;
+      const fillWall = (a, b, id) => { const n = Math.max(1, Math.round((b - a) / grid)), sx = (b - a) / (n * grid); if (b - a < .05) return; for (let i = 0; i < n; i++) { const c = a + (i + .5) * (b - a) / n; kitJobs.push([id, horiz ? c : fix, horiz ? fix : c, rot, sx]); } };
+      for (const o of ops) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; fillWall(q0, a, KIT.wall); const id = o.door ? (KIT.door || null) : (KIT.window || KIT.wall); if (id) kitJobs.push([id, horiz ? c : fix, horiz ? fix : c, rot, (b - a) / grid]); q0 = b; }
+      fillWall(q0, c0 + len, KIT.wall);
+    }
     let p = c0;
     const solid = (a, b, h, y0, mat = m.wall) => { if (b - a < .02 || !draw) return; if (horiz) box(b - a, h, T, mat, (a + b) / 2, y0 + h / 2, fix); else box(T, h, b - a, mat, fix, y0 + h / 2, (a + b) / 2); };
     for (const o of ops) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; solid(p, a, hh, 0); if (o.door) { solid(a, b, Math.max(0, hh - 2.1), 2.1); exits.push({ x: horiz ? o.x : fix, z: horiz ? fix : o.z, w: o.w || 1.4, axis: o.axis }); cuts.push([a, b, horiz, fix]); } else { solid(a, b, Math.min(.9, hh), 0); if (hh > 1.1) solid(a, b, Math.max(0, hh - 1.9), 1.9); if (hh > 1.1 && draw) { if (horiz) box(b - a - .1, 1.0, .06, m.win, (a + b) / 2, 1.4, fix); else box(.06, 1.0, b - a - .1, m.win, fix, 1.4, (a + b) / 2); } } p = b; }
@@ -165,6 +177,12 @@ export function build(L, opt = {}) {
     const sw = (p.rot || 0) % 180 ? def.size[1] : def.size[0], sd = (p.rot || 0) % 180 ? def.size[0] : def.size[1];
     if (def.block) foot.push({ x: p.x - sw / 2, z: p.z - sd / 2, w: sw, h: sd, t: p.t });
     if (def.light) { const l = new THREE.PointLight(def.light.c, def.light.i * (mood === "night" ? 1.3 : 1), def.light.r, 1.5); l.position.set(p.x, def.light.y, p.z + (def.light.dz || 0)); l.castShadow = true; l.shadow.mapSize.set(512, 512); l.shadow.bias = -.002; S.add(l); lights.push({ x: p.x, z: p.z, r: def.light.r, c: def.light.c }); }
+  }
+  if (KIT) {
+    const put = (id, x, z, rot, sx = 1, fix = true) => { const def = CATALOG[id]; if (!def) return; const inner = def.make(k); if (fix) { inner.position.set(...(KIT.offset || [0, 0, 0])); inner.rotation.y = -(KIT.rot || 0) * Math.PI / 180; } const g = new THREE.Group(); g.add(inner); g.position.set(x, 0, z); g.rotation.y = -(rot || 0) * Math.PI / 180; g.scale.x = sx; S.add(g); };   // kit.rot / kit.offset line a pack's pivots up with the convention
+    for (const j of kitJobs) put(...j);
+    if (KIT.corner) for (const [x, z] of [[0, 0], [Wm, 0], [0, Hm], [Wm, Hm]]) if (z < Hm / 2) put(KIT.corner, x, z, x < Wm / 2 ? 0 : 90);
+    if (KIT.floor) { const g2 = KIT.floorGrid || KIT.grid || 2; for (let x = g2 / 2; x < Wm; x += g2) for (let z = g2 / 2; z < Hm; z += g2) put(KIT.floor, x, z, 0, 1, false); }
   }
   /* daylight */
   const day = (out ? { day: [1.7, 2.4], dim: [1.0, 1.1], night: [.3, .35] } : { day: [1.4, 2.0], dim: [1.0, 1.0], night: [.35, .25] })[mood] || [1.2, 1.5];

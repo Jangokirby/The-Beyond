@@ -515,6 +515,83 @@
      ]
     }
    }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "import_models",
+    "description": "Import a whole FOLDER of .glb models as pieces in one go (one measuring pass). Tags come from sub-folder names and `tags`; ids from file names. Set licensed:true for bought packs so models and piece files go to git-ignored places. FBX/OBJ/Unreal exports must be converted to .glb first.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "dir": {
+       "type": "string"
+      },
+      "pack": {
+       "type": "string",
+       "description": "short pack name, used in ids and tags"
+      },
+      "prefix": {
+       "type": "string"
+      },
+      "tags": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      },
+      "height": {
+       "type": "number",
+       "description": "scale every model so it is this tall (metres); omit if models are already in metres"
+      },
+      "scale": {
+       "type": "number"
+      },
+      "block": {
+       "type": "boolean",
+       "description": "force blocking on or off; default guessed from the name"
+      },
+      "licensed": {
+       "type": "boolean"
+      },
+      "recursive": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "dir"
+     ]
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "list_kits",
+    "description": "List modular kits (wall, corner, door, window, floor pieces on a grid) a room can use with style.kit.",
+    "parameters": {
+     "type": "object",
+     "properties": {}
+    }
+   }
+  },
+  {
+   "type": "function",
+   "function": {
+    "name": "register_kit",
+    "description": "Define a modular kit from imported piece ids: { id, name, grid (metres one wall piece spans), wall, corner?, door?, window?, floor?, floorGrid?, licensed? }. Wall pieces face +z, centred on x, standing on y=0. Use it with apply_ops set_style { style: { kit: id } }.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "kit": {
+       "type": "object"
+      }
+     },
+     "required": [
+      "kit"
+     ]
+    }
+   }
   }
  ],
  "anthropic": [
@@ -971,6 +1048,74 @@
     "required": [
      "spec",
      "name"
+    ]
+   }
+  },
+  {
+   "name": "import_models",
+   "description": "Import a whole FOLDER of .glb models as pieces in one go (one measuring pass). Tags come from sub-folder names and `tags`; ids from file names. Set licensed:true for bought packs so models and piece files go to git-ignored places. FBX/OBJ/Unreal exports must be converted to .glb first.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "dir": {
+      "type": "string"
+     },
+     "pack": {
+      "type": "string",
+      "description": "short pack name, used in ids and tags"
+     },
+     "prefix": {
+      "type": "string"
+     },
+     "tags": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "height": {
+      "type": "number",
+      "description": "scale every model so it is this tall (metres); omit if models are already in metres"
+     },
+     "scale": {
+      "type": "number"
+     },
+     "block": {
+      "type": "boolean",
+      "description": "force blocking on or off; default guessed from the name"
+     },
+     "licensed": {
+      "type": "boolean"
+     },
+     "recursive": {
+      "type": "boolean"
+     }
+    },
+    "required": [
+     "dir"
+    ]
+   }
+  },
+  {
+   "name": "list_kits",
+   "description": "List modular kits (wall, corner, door, window, floor pieces on a grid) a room can use with style.kit.",
+   "input_schema": {
+    "type": "object",
+    "properties": {}
+   }
+  },
+  {
+   "name": "register_kit",
+   "description": "Define a modular kit from imported piece ids: { id, name, grid (metres one wall piece spans), wall, corner?, door?, window?, floor?, floorGrid?, licensed? }. Wall pieces face +z, centred on x, standing on y=0. Use it with apply_ops set_style { style: { kit: id } }.",
+   "input_schema": {
+    "type": "object",
+    "properties": {
+     "kit": {
+      "type": "object"
+     }
+    },
+    "required": [
+     "kit"
     ]
    }
   }

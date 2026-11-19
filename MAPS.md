@@ -39,7 +39,7 @@ To change which preset a word picks, edit `ERA_RULES` / `GENERIC` in `public/lab
 
 ## For agents (Overlord and other local AIs): the contract
 **Stable contract.** The tool list `TOOLS` in `public/lab/api.js` (also `tools/room3d/tools.json`, the MCP server `tools/room3d/mcp.js` and the CLI `tools/room3d/cli.js`) is what outside agents depend on.
-Tools (16, defined once in `TOOLS` in `public/lab/api.js`; the MCP server reads that list and `node tools/room3d/build-tools-json.js` regenerates `tools.json`): `list_pieces, list_presets, new_room, apply_ops, validate, ascii, render, add_piece_type, import_model, import_vtt, install_map, plan_case, map_case, list_bust_parts, suggest_bust, render_portrait`.
+Tools (23, defined once in `TOOLS` in `public/lab/api.js`; the MCP server reads that list and `node tools/room3d/build-tools-json.js` regenerates `tools.json`): `list_pieces, list_presets, new_room, apply_ops, validate, ascii, render, add_piece_type, import_model, import_vtt, install_map, plan_case, map_case, list_bust_parts, suggest_bust, render_portrait`.
 Check a machine or a change with `node tools/room3d/selftest.js` (runs every tool once, cleans up after itself).
 Ops for `apply_ops`: `set_style, furnish, clear_props, add_piece, move_piece, remove_piece, add_door, add_window, add_wall, add_thing, set_npc, set_start`.
 Rule: **adding** tools, ops, presets or pieces is fine. **Renaming or removing** any of the above needs a note here first. Layout fields (`w,h,style{floor,wall,mood,outdoor},walls,doors,windows,props{t,x,z,rot},things,npcs,start`) follow the same rule.
@@ -63,5 +63,10 @@ indoor or outdoor from the scene's theme and name. Outdoor pieces are data files
 Each place in each case gets a layout. Places repeat as types (a ward, a cellar, a street), so a preset gets most of the way and the examine spots and people come from the case text.
 
 ## Characters
-**Real characters come from 3D models** made by another tool (Overlord, Blender, a 3D generator): see `CHARACTER-IMPORT.md` for the exact model rules. Tools: `inspect_character_model`, `import_character`, `list_character_kit`, `render_character` (base body + swappable parts, tinted by material name, rendered as portraits or full body). Kit file: `public/lab/characters/kit.json`.
+**Real characters come from 3D models** made by another tool (Overlord, Blender, a 3D generator): see `CHARACTER-IMPORT.md` for the exact model rules. Tools: `inspect_character_model`, `import_character`, `list_character_kit`, `render_character`, `import_models`, `list_kits`, `register_kit` (base body + swappable parts, tinted by material name, rendered as portraits or full body). Kit file: `public/lab/characters/kit.json`.
 **Prototype busts** (smooth mannequin heads built from code) are kept as a stand-in until real models exist: `/lab/characters.html`, `list_bust_parts`, `suggest_bust`, `render_portrait`. Rules in `public/lab/bust-rules.js` (period-right clothes and facial hair from era, job, age, origin).
+
+## Map Studio (the local app) and bought 3D packs
+`studio/` packages everything as a program that runs on your computer: a hub page, the Map Builder, Map Lab and Character Builder, and an HTTP API so other apps (Overlord) can call every tool. See `studio/README.md` (setup, run, API, desktop window).
+Bought Unity/Unreal packs: convert to `.glb` (`studio/convert/fbx_to_glb.py`), then `import_models` with `licensed: true` (models and piece files stay out of git), and `register_kit` for modular wall/door/floor sets, used with `style.kit`. Commit rendered maps only.
+Tools added: `import_models` (a whole folder, one measuring pass), `list_kits`, `register_kit`. Contract unchanged: only additions.

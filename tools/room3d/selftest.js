@@ -30,7 +30,27 @@ const need = (c, m) => { if (!c) throw new Error(m); };
     const kit = await fns.list_character_kit(); need(kit.bases.some((x) => x.id === "selftest_base") && kit.parts.some((x) => x.id === "selftest_hat"), "not in kit");
     const r = await fns.render_character({ name: "selftest-character", spec: { base: "selftest_base", parts: { hat: "selftest_hat" }, colors: { skin: "#8a5a3c", cloth: "#2f4a8a" } } }); need(r.ok, r.error); need(fs.statSync(path.join(__dirname, "..", "..", r.picture)).size > 6000, "picture too small");
   });
+  await t("modular kit: import a folder (licensed), register a kit, build a room from it", async () => {
+    const makeGlb = require("./glb.js"), os = require("os"), d = fs.mkdtempSync(path.join(os.tmpdir(), "kit-")), dir = path.join(d, "structure"); fs.mkdirSync(dir);
+    fs.writeFileSync(path.join(dir, "wall_2m.glb"), makeGlb([{ name: "w", pos: [0, 1.3, -.1], box: [2, 2.6, .2], material: "stone", color: "#8a8478" }]));
+    fs.writeFileSync(path.join(dir, "door_2m.glb"), makeGlb([{ name: "lintel", pos: [0, 2.35, -.1], box: [2, .5, .2], material: "stone", color: "#6a6458" }, { name: "l", pos: [-.9, 1.05, -.1], box: [.2, 2.1, .2], material: "stone", color: "#6a6458" }, { name: "r", pos: [.9, 1.05, -.1], box: [.2, 2.1, .2], material: "stone", color: "#6a6458" }]));
+    fs.writeFileSync(path.join(dir, "floor_tile.glb"), makeGlb([{ name: "t", pos: [0, .02, 0], box: [2, .04, 2], material: "stone", color: "#9a948a" }]));
+    fs.writeFileSync(path.join(dir, "crate_a.glb"), makeGlb([{ name: "c", pos: [0, .4, 0], box: [.8, .8, .8], material: "wood", color: "#8a6a3a" }]));
+    const r = await fns.import_models({ dir: d, pack: "selftestpack", licensed: true }); need(r.ok && r.imported === 4, "import_models: " + JSON.stringify(r).slice(0, 300));
+    need(r.pieces.some((p) => p.id === "selftestpack_crate_a" && p.block) && r.pieces.some((p) => p.id === "selftestpack_floor_tile" && !p.block), "block guess wrong");
+    const k = await fns.register_kit({ kit: { id: "selftest_kit", name: "Selftest", grid: 2, wall: "selftestpack_wall_2m", door: "selftestpack_door_2m", floor: "selftestpack_floor_tile", licensed: true } }); need(k.ok, k.error);
+    need((await fns.list_kits()).some((x) => x.id === "selftest_kit"), "kit not listed");
+    let room = (await fns.new_room({ w: 10, h: 8, name: "selftest-kit" })).layout; room = (await fns.apply_ops({ layout: room, ops: [{ op: "set_style", style: { kit: "selftest_kit", mood: "day" } }, { op: "add_door", x: 5, z: 0, w: 2, axis: "h" }, { op: "add_piece", t: "selftestpack_crate_a", x: 4, z: 4, rot: 0 }] })).layout;
+    const rr = await fns.render({ layout: room, name: "selftest-kit" }); need(rr.ok, rr.error); need(fs.statSync(path.join(__dirname, "..", "..", rr.pack)).size > 15000, "kit render too small");
+    fs.copyFileSync(path.join(lab, "maps", "selftest-kit.jpg"), path.join(require("os").tmpdir(), "selftest-kit.jpg"));
+  });
+  await t("Map Studio server: health, tools, a tool call, refuses path tricks", async () => {
+    const { start } = require("../../studio/studio.js"), http = require("http"), srv = await start(47398), get = (m, p, b) => new Promise((ok, no) => { const r = http.request({ host: "127.0.0.1", port: 47398, path: p, method: m }, (res) => { let d = ""; res.on("data", (c) => d += c); res.on("end", () => ok([res.statusCode, d])); }); r.on("error", no); if (b) r.write(b); r.end(); });
+    try { need(JSON.parse((await get("GET", "/api/health"))[1]).ok, "health"); need(JSON.parse((await get("GET", "/api/tools"))[1]).length === TOOLS.length, "tool count"); const r = JSON.parse((await get("POST", "/api/tool/new_room", '{"w":9,"h":7}'))[1]); need(r.layout && r.layout.w === 9, "new_room over HTTP"); need((await get("GET", "/lab/..%2f..%2fserver.js"))[0] === 403, "path traversal not blocked"); need((await get("GET", "/"))[0] === 200, "hub page"); } finally { srv.close(); }
+  });
   /* clean up */
+  try { fs.rmSync(path.join(lab, "models", "_licensed", "selftestpack"), { recursive: true, force: true }); for (const f of ["pieces/_licensed-selftestpack.json", "kits/_licensed-selftest_kit.json", "layouts/selftest-kit.json", "maps/selftest-kit.beyondmap", "maps/selftest-kit.jpg", "maps/selftest-kit.layout.json"]) try { fs.unlinkSync(path.join(lab, f)); } catch (e) {}
+    for (const [f, n] of [["pieces/index.local.json", "_licensed-selftestpack.json"], ["kits/index.local.json", "_licensed-selftest_kit.json"]]) { const p = path.join(lab, f); if (fs.existsSync(p)) { const a = JSON.parse(fs.readFileSync(p, "utf8")).filter((x) => x !== n); if (a.length) fs.writeFileSync(p, JSON.stringify(a)); else fs.unlinkSync(p); } } } catch (e) {}
   try { const kf = path.join(lab, "characters", "kit.json"), k = JSON.parse(fs.readFileSync(kf, "utf8")); k.bases = k.bases.filter((x) => !/^selftest/.test(x.id)); k.parts = k.parts.filter((x) => !/^selftest/.test(x.id)); fs.writeFileSync(kf, JSON.stringify(k, null, 1)); } catch (e) {}
   for (const f of ["selftest_base.glb", "selftest_hat.glb"]) try { fs.unlinkSync(path.join(lab, "characters", "models", f)); } catch (e) {}
   for (const f of ["portraits/selftest-character.png", "portraits/selftest-character.json"]) try { fs.unlinkSync(path.join(lab, f)); } catch (e) {}

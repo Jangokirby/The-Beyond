@@ -17,6 +17,27 @@ const fns = {
   async presets() { await init(); return api.presets(); },
   async list_presets() { await init(); return api.presets(); },
   async plan_case(a) { const r = run(["tools/room3d/automap.js", "--plan", a.case_id]); return { ok: r.ok, plan: r.out, error: r.ok ? undefined : r.err }; },
+  /* ---- batch import of a whole folder of models, and modular kits ---- */
+  async import_models(a) {
+    const src = path.resolve(a.dir); if (!fs.existsSync(src)) return { ok: false, error: "no such folder: " + a.dir };
+    const pack = safe(a.pack || path.basename(src)), lic = !!a.licensed, prefix = a.prefix === undefined ? pack.replace(/-/g, "_") + "_" : a.prefix;
+    const files = []; (function walk(d, rel) { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const f = path.join(d, e.name); if (e.isDirectory()) { if (a.recursive !== false) walk(f, [...rel, e.name]); } else if (/\.glb$/i.test(e.name)) files.push({ f, rel }); } })(src, []);
+    if (!files.length) return { ok: false, error: "no .glb files in " + a.dir + " (convert FBX/OBJ/Unreal exports to .glb first; see MAPS.md)" };
+    const sub = lic ? path.join("models", "_licensed", pack) : path.join("models", pack), outDir = path.join(lab, sub); fs.mkdirSync(outDir, { recursive: true });
+    const names = files.map((x) => { const base = safe(path.basename(x.f, ".glb")).replace(/-/g, "_"); fs.copyFileSync(x.f, path.join(outDir, path.basename(x.f))); return base; });
+    let meas; try { meas = await browse("measure.html", (pg) => pg.evaluate(async (list) => { const o = []; for (const f of list) { try { o.push(await window.MEASURE(f)); } catch (e) { o.push({ error: String(e.message || e) }); } } return o; }, files.map((x) => sub.split(path.sep).join("/") + "/" + path.basename(x.f)))); } catch (e) { return { ok: false, error: e.message }; }
+    const noBlock = /(rug|carpet|floor|tile|decal|flower|grass|plant|puddle|crack|cobweb|web|paper|note|rubble|debris|candle|bone)/i, specs = [], skipped = [];
+    files.forEach((x, i) => { const m = meas[i]; if (!m || m.error) { skipped.push({ file: path.basename(x.f), error: m && m.error }); return; }
+      const scale = a.height ? a.height / m.h : (a.scale || 1), id = (prefix + names[i]).slice(0, 60); const tags = [...new Set([...(a.tags || []), ...x.rel.map((r) => safe(r)), pack])];
+      specs.push({ id, name: path.basename(x.f, ".glb").replace(/[_-]+/g, " "), tags, size: [Math.max(.2, Math.round(m.w * scale * 100) / 100), Math.max(.2, Math.round(m.d * scale * 100) / 100)], block: a.block !== undefined ? !!a.block : !noBlock.test(path.basename(x.f)), model: { file: sub.split(path.sep).join("/") + "/" + path.basename(x.f), scale: Math.round(scale * 1000) / 1000, rotY: a.rotY || 0, yOffset: 0 } }); });
+    const pf = lic ? `_licensed-${pack}.json` : `imported-${pack}.json`, idxName = lic ? "index.local.json" : "index.json", pdir = path.join(lab, "pieces"); fs.writeFileSync(path.join(pdir, pf), JSON.stringify(specs, null, 1));
+    const ip = path.join(pdir, idxName), idx = fs.existsSync(ip) ? JSON.parse(fs.readFileSync(ip, "utf8")) : []; if (!idx.includes(pf)) idx.push(pf); fs.writeFileSync(ip, JSON.stringify(idx));
+    return { ok: true, pack, licensed: lic, imported: specs.length, skipped, pieces: specs.map((s) => ({ id: s.id, size: s.size, block: s.block, tags: s.tags })).slice(0, 300), note: lic ? "licensed: models and piece files are in git-ignored places (public/lab/models/_licensed, pieces/_licensed-*.json, pieces/index.local.json); commit only rendered maps" : undefined };
+  },
+  async list_kits() { const out = []; for (const idx of ["index.json", "index.local.json"]) { const f = path.join(lab, "kits", idx); if (fs.existsSync(f)) for (const n of JSON.parse(fs.readFileSync(f, "utf8"))) { try { out.push(JSON.parse(fs.readFileSync(path.join(lab, "kits", n), "utf8"))); } catch (e) {} } } return out; },
+  async register_kit(a) { const k = a.kit || {}; if (!k.id || !k.wall) return { ok: false, error: "kit needs id and wall (a piece id); optional: name, grid, corner, door, window, floor, floorGrid, licensed" }; await init(); await kit.loadPieces(rd); const missing = ["wall", "corner", "door", "window", "floor"].filter((r) => k[r] && !kit.CATALOG[k[r]]); if (missing.length) return { ok: false, error: "unknown piece ids for: " + missing.map((r) => `${r}=${k[r]}`).join(", ") + ". Import the models first (import_models)." };
+    const id = safe(k.id).replace(/-/g, "_"), lic = !!k.licensed, fn = (lic ? "_licensed-" : "") + id + ".json", dir = path.join(lab, "kits"); fs.mkdirSync(dir, { recursive: true }); const clean = { ...k, id }; delete clean.licensed; fs.writeFileSync(path.join(dir, fn), JSON.stringify(clean, null, 1));
+    const ip = path.join(dir, lic ? "index.local.json" : "index.json"), idx = fs.existsSync(ip) ? JSON.parse(fs.readFileSync(ip, "utf8")) : []; if (!idx.includes(fn)) idx.push(fn); fs.writeFileSync(ip, JSON.stringify(idx)); return { ok: true, kit: clean, use: `set_style { style: { kit: "${id}" } } on a room, then render` }; },
   /* ---- character models (.glb): see CHARACTER-IMPORT.md ---- */
   async inspect_character_model(a) { const src = path.resolve(a.file), name = path.basename(src), dst = path.join(lab, "characters", "models", name); fs.mkdirSync(path.dirname(dst), { recursive: true }); if (src !== dst) fs.copyFileSync(src, dst);
     try { return { ok: true, file: name, ...(await browse("character.html", (p) => p.evaluate((f) => window.INSPECT(f), name))) }; } catch (e) { return { ok: false, error: e.message }; } },
