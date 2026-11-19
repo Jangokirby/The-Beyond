@@ -1,3 +1,5 @@
+> **Short version: `studio/START-HERE.md`.** This file is the long reference.
+
 # Maps: how they are made, and what to reuse
 
 **Everything lives in `public/lab/`.** Nothing here touches the game itself.
