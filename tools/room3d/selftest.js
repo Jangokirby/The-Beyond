@@ -56,6 +56,9 @@ const need = (c, m) => { if (!c) throw new Error(m); };
     let msg = ""; try { await fns.validate({ room: "no-such-room" }); } catch (e) { msg = e.message; } need(/no room called/.test(msg), "unhelpful error: " + msg);
     const rr = await fns.render({ room: "selftest-named" }); need(rr.ok, rr.error);
   });
+  await t("Map Studio survives --open with no browser opener (servers)", async () => {
+    const { spawn } = require("child_process"), c = spawn("node", [path.join(__dirname, "..", "..", "mapstudio", "studio.js"), "--open"], { env: { ...process.env, MAPSTUDIO_PORT: "47397", PATH: "/nonexistent-dir:" + path.dirname(process.execPath) } });
+    await new Promise((r) => setTimeout(r, 2500)); const alive = c.exitCode === null; c.kill(); need(alive, "the server died after starting (a missing xdg-open must not crash it)"); });
   /* clean up */
   try { fs.rmSync(path.join(lab, "models", "_licensed", "selftestpack"), { recursive: true, force: true }); for (const f of ["pieces/_licensed-selftestpack.json", "kits/_licensed-selftest_kit.json", "layouts/selftest-kit.json", "maps/selftest-kit.beyondmap", "maps/selftest-kit.jpg", "maps/selftest-kit.layout.json"]) try { fs.unlinkSync(path.join(lab, f)); } catch (e) {}
     for (const [f, n] of [["pieces/index.local.json", "_licensed-selftestpack.json"], ["kits/index.local.json", "_licensed-selftest_kit.json"]]) { const p = path.join(lab, f); if (fs.existsSync(p)) { const a = JSON.parse(fs.readFileSync(p, "utf8")).filter((x) => x !== n); if (a.length) fs.writeFileSync(p, JSON.stringify(a)); else fs.unlinkSync(p); } } } catch (e) {}
