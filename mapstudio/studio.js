@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 /* MAP STUDIO: the map and character tools as a local app.
-   Run:  node studio/studio.js [--open]        (or studio/start.sh, studio/start.bat, or the desktop window: studio/README.md)
+   Run:  node mapstudio/studio.js [--open]        (or mapstudio/start.sh, mapstudio/start.bat, or the desktop window: mapstudio/README.md)
    What it gives you:
      /                  the hub: links to the Map Builder, Map Lab and Character Builder, plus a console that runs any tool
      /lab/...           the lab pages and files (maps, pieces, kits, portraits)
      GET  /api/health   { ok, version, tools }
      GET  /api/tools    the tool list (name, description, JSON schema), same as tools/room3d/tools.json
      POST /api/tool/<name>    body: JSON arguments; reply: JSON result.  e.g. POST /api/tool/new_room {"w":12,"h":9}
-     PUT  /api/upload/<file>  raw bytes -> saved in studio/inbox/, reply { path } (for agents on another machine; give that path to import_models etc.)
+     PUT  /api/upload/<file>  raw bytes -> saved in mapstudio/inbox/, reply { path } (for agents on another machine; give that path to import_models etc.)
      POST /api/selftest       runs tools/room3d/selftest.js and returns its report
-   Safety: it listens on 127.0.0.1 only unless you set STUDIO_HOST. If you expose it on a network, set STUDIO_TOKEN (or GOBLIN_TOKEN) and send "X-Token: <token>" or "Authorization: Bearer <token>". */
+   Safety: it listens on 127.0.0.1 only unless you set MAPSTUDIO_HOST. If you expose it on a network, set MAPSTUDIO_TOKEN (or GOBLIN_TOKEN) and send "X-Token: <token>" or "Authorization: Bearer <token>". */
 const http = require("http"), fs = require("fs"), path = require("path"), { spawn } = require("child_process");
 const ROOT = path.join(__dirname, ".."), LAB = path.join(ROOT, "public", "lab"), INBOX = path.join(__dirname, "inbox"), HUB = path.join(__dirname, "index.html");
-const PORT = +process.env.STUDIO_PORT || 47330, HOST = process.env.STUDIO_HOST || "127.0.0.1", TOKEN = process.env.STUDIO_TOKEN || process.env.GOBLIN_TOKEN || "";   // same token the Den uses (X-Token) works here
+const PORT = +process.env.MAPSTUDIO_PORT || 47330, HOST = process.env.MAPSTUDIO_HOST || "127.0.0.1", TOKEN = process.env.MAPSTUDIO_TOKEN || process.env.GOBLIN_TOKEN || "";   // same token the Den uses (X-Token) works here
 const MIME = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".json": "application/json", ".css": "text/css", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".glb": "model/gltf-binary", ".gltf": "model/gltf+json", ".beyondmap": "application/json", ".svg": "image/svg+xml" };
 let fns = null, TOOLS = null; const loadTools = async () => { if (!fns) { fns = require("../tools/room3d/lib.js").fns; TOOLS = (await import(require("url").pathToFileURL(path.join(LAB, "api.js")).href)).TOOLS; } };
 const json = (res, code, o) => { res.writeHead(code, { "Content-Type": "application/json" }); res.end(JSON.stringify(o)); };
@@ -51,4 +51,4 @@ function start(port = PORT) {
   return new Promise((ok, no) => { srv.on("error", no); srv.listen(port, HOST, () => ok(srv)); });
 }
 module.exports = { start, PORT, HOST };
-if (require.main === module) start().then(() => { const url = `http://${HOST === "0.0.0.0" ? "localhost" : HOST}:${PORT}/`; console.log(`Map Studio running at ${url}${TOKEN ? "  (token required for /api)" : ""}`); if (process.argv.includes("--open")) { const o = process.platform === "win32" ? ["cmd", ["/c", "start", url]] : process.platform === "darwin" ? ["open", [url]] : ["xdg-open", [url]]; try { spawn(o[0], o[1], { stdio: "ignore", detached: true }).unref(); } catch (e) {} } }).catch((e) => { console.error(e.code === "EADDRINUSE" ? `Port ${PORT} is already in use: Map Studio may already be running (set STUDIO_PORT to use another).` : e.message); process.exit(1); });
+if (require.main === module) start().then(() => { const url = `http://${HOST === "0.0.0.0" ? "localhost" : HOST}:${PORT}/`; console.log(`Map Studio running at ${url}${TOKEN ? "  (token required for /api)" : ""}`); if (process.argv.includes("--open")) { const o = process.platform === "win32" ? ["cmd", ["/c", "start", url]] : process.platform === "darwin" ? ["open", [url]] : ["xdg-open", [url]]; try { spawn(o[0], o[1], { stdio: "ignore", detached: true }).unref(); } catch (e) {} } }).catch((e) => { console.error(e.code === "EADDRINUSE" ? `Port ${PORT} is already in use: Map Studio may already be running (set MAPSTUDIO_PORT to use another).` : e.message); process.exit(1); });

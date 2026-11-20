@@ -45,7 +45,7 @@ const need = (c, m) => { if (!c) throw new Error(m); };
     fs.copyFileSync(path.join(lab, "maps", "selftest-kit.jpg"), path.join(require("os").tmpdir(), "selftest-kit.jpg"));
   });
   await t("Map Studio server: health, tools, a tool call, refuses path tricks", async () => {
-    const { start } = require("../../studio/studio.js"), http = require("http"), srv = await start(47398), get = (m, p, b) => new Promise((ok, no) => { const r = http.request({ host: "127.0.0.1", port: 47398, path: p, method: m }, (res) => { let d = ""; res.on("data", (c) => d += c); res.on("end", () => ok([res.statusCode, d])); }); r.on("error", no); if (b) r.write(b); r.end(); });
+    const { start } = require("../../mapstudio/studio.js"), http = require("http"), srv = await start(47398), get = (m, p, b) => new Promise((ok, no) => { const r = http.request({ host: "127.0.0.1", port: 47398, path: p, method: m }, (res) => { let d = ""; res.on("data", (c) => d += c); res.on("end", () => ok([res.statusCode, d])); }); r.on("error", no); if (b) r.write(b); r.end(); });
     try { need(JSON.parse((await get("GET", "/api/health"))[1]).ok, "health"); need(JSON.parse((await get("GET", "/api/tools"))[1]).length === TOOLS.length, "tool count"); const r = JSON.parse((await get("POST", "/api/tool/new_room", '{"w":9,"h":7}'))[1]); need(r.layout && r.layout.w === 9, "new_room over HTTP"); need((await get("GET", "/lab/..%2f..%2fserver.js"))[0] === 403, "path traversal not blocked"); need((await get("GET", "/"))[0] === 200, "hub page"); } finally { srv.close(); }
   });
   await t("named rooms: new_room, apply_ops/validate/ascii/render by name", async () => {

@@ -1,4 +1,4 @@
-> **Short version: `studio/START-HERE.md`.** This file is the long reference.
+> **Short version: `mapstudio/START-HERE.md`.** This file is the long reference.
 
 # Maps: how they are made, and what to reuse
 
@@ -69,6 +69,6 @@ Each place in each case gets a layout. Places repeat as types (a ward, a cellar,
 **Prototype busts** (smooth mannequin heads built from code) are kept as a stand-in until real models exist: `/lab/characters.html`, `list_bust_parts`, `suggest_bust`, `render_portrait`. Rules in `public/lab/bust-rules.js` (period-right clothes and facial hair from era, job, age, origin).
 
 ## Map Studio (the local app) and bought 3D packs
-`studio/` packages everything as a program that runs on your computer: a hub page, the Map Builder, Map Lab and Character Builder, and an HTTP API so other apps (Overlord) can call every tool. See `studio/README.md` (setup, run, API, desktop window).
-Bought Unity/Unreal packs: convert to `.glb` (`studio/convert/fbx_to_glb.py`), then `import_models` with `licensed: true` (models and piece files stay out of git), and `register_kit` for modular wall/door/floor sets, used with `style.kit`. Commit rendered maps only.
+`mapstudio/` packages everything as a program that runs on your computer: a hub page, the Map Builder, Map Lab and Character Builder, and an HTTP API so other apps (Overlord) can call every tool. See `mapstudio/README.md` (setup, run, API, desktop window).
+Bought Unity/Unreal packs: convert to `.glb` (`mapstudio/convert/fbx_to_glb.py`), then `import_models` with `licensed: true` (models and piece files stay out of git), and `register_kit` for modular wall/door/floor sets, used with `style.kit`. Commit rendered maps only.
 Tools added: `import_models` (a whole folder, one measuring pass), `list_kits`, `register_kit`. Contract unchanged: only additions.

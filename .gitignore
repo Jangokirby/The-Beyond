@@ -11,5 +11,5 @@ public/lab/pieces/_licensed-*.json
 public/lab/pieces/index.local.json
 public/lab/kits/_licensed-*.json
 public/lab/kits/index.local.json
-studio/node_modules
-studio/dist
+mapstudio/node_modules
+mapstudio/dist

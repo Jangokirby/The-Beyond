@@ -1,5 +1,5 @@
 // Map Studio for the goblins. Copy this file and mapstudio-tools.json into Overlord's src/main/, then see INSTALL.md (three small edits).
-// Each Map Studio tool becomes a goblin tool named studio_<tool>. The goblin only sends small arguments (a room name, a list of changes);
+// Each Map Studio tool becomes a goblin tool named mapstudio_<tool>. The goblin only sends small arguments (a room name, a list of changes);
 // Map Studio keeps the rooms and does the drawing. Paths a goblin gives (a folder of models, a .glb) must be inside the project, like every other tool.
 // Map Studio is started from the project folder if it is not already running, so its files land inside the project. Or point it at one that is
 // already running with MAPSTUDIO_URL (and MAPSTUDIO_TOKEN): then files are wherever that Studio runs.
@@ -21,12 +21,12 @@ async function healthy() { try { const r = await fetch(baseUrl() + '/api/health'
 
 async function ensureRunning(ctx) {
   if (await healthy()) return;
-  const entry = path.join(ctx.root, 'studio', 'studio.js');
-  if (process.env.MAPSTUDIO_URL || !fs.existsSync(entry)) throw new Error(`Map Studio is not running at ${baseUrl()} and this project has no studio/studio.js to start. Open the project folder that holds The Beyond, or start Map Studio yourself (node studio/studio.js).`);
+  const entry = path.join(ctx.root, 'mapstudio', 'studio.js');
+  if (process.env.MAPSTUDIO_URL || !fs.existsSync(entry)) throw new Error(`Map Studio is not running at ${baseUrl()} and this project has no mapstudio/studio.js to start. Open the project folder that holds The Beyond, or start Map Studio yourself (node mapstudio/studio.js).`);
   const u = new URL(baseUrl());
-  if (!child || child.exitCode !== null) { child = spawn(process.execPath, [entry], { cwd: ctx.root, env: { ...process.env, STUDIO_PORT: u.port || '47330', STUDIO_HOST: '127.0.0.1' }, stdio: 'ignore', windowsHide: true }); startedAt = Date.now(); child.unref(); }
+  if (!child || child.exitCode !== null) { child = spawn(process.execPath, [entry], { cwd: ctx.root, env: { ...process.env, MAPSTUDIO_PORT: u.port || '47330', MAPSTUDIO_HOST: '127.0.0.1' }, stdio: 'ignore', windowsHide: true }); startedAt = Date.now(); child.unref(); }
   for (let i = 0; i < 40; i++) { if (await healthy()) return; await new Promise(r => setTimeout(r, 500)); }
-  throw new Error('Map Studio did not start in 20 seconds. Run "node studio/setup.js" once in the project folder, then try again.');
+  throw new Error('Map Studio did not start in 20 seconds. Run "node mapstudio/setup.js" once in the project folder, then try again.');
 }
 
 // big strings (map packs, pictures) never go back to the model
@@ -44,7 +44,7 @@ async function runTool(spec, a, ctx) {
   let seen = 0;
   for (const f of files) { const abs = path.join(ctx.root, f); if (fs.existsSync(abs)) { ctx.changed && ctx.changed(f); if (/\.(png|jpg)$/i.test(f) && ctx.image) { ctx.image(abs, f); seen++; } } }
   if (spec.studio === 'render' && !seen) { const jpg = files.map(f => f.replace(/\.beyondmap$|\.layout\.json$|\.json$/, '.jpg')).find(f => fs.existsSync(path.join(ctx.root, f))); if (jpg && ctx.image) { ctx.image(path.join(ctx.root, jpg), jpg); seen++; } }
-  return shrink(r) + (seen ? '\n\n' + (ctx.vision ? 'The picture follows in the next message: LOOK at it and check it.' : 'The picture was shown to the Overlord (your model cannot see images).') : '');
+  return shrink(r) + (seen ? '\n\n' + (ctx.vision ? 'The picture follows in the next message: LOOK at it and check it.' : ctx.eyes ? 'The Eyes will describe the picture in the next message: check it against what was asked.' : 'The picture was shown to the Overlord (your model cannot see images).') : '');
 }
 
 const tools = SPEC.tools.map(s => ({ name: s.name, risk: s.risk, description: s.description, parameters: s.parameters, run: (a, ctx) => runTool(s, a || {}, ctx) }));

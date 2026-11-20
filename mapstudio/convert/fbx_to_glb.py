@@ -1,6 +1,6 @@
 # Convert a folder of .fbx files (for example from a Unity asset pack) to .glb, ready for import_models.
 # Needs Blender (free). Run:
-#   blender -b -P studio/convert/fbx_to_glb.py -- <folder with fbx files> <output folder>
+#   blender -b -P mapstudio/convert/fbx_to_glb.py -- <folder with fbx files> <output folder>
 # Not tested by the author (no Blender where this was written): if a model comes out the wrong size or sideways,
 # check the unit scale in Blender, then use import_models height=..., or kit rot/offset.
 import bpy, sys, os, glob

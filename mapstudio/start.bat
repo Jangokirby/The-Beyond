@@ -1,4 +1,4 @@
 @echo off
 cd /d "%~dp0\.."
-node studio\studio.js --open
+node mapstudio\studio.js --open
 pause

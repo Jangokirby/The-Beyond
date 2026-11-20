@@ -19,7 +19,7 @@ textarea{width:100%;min-height:150px;font:12px ui-monospace,monospace}pre{backgr
 GET  http://127.0.0.1:47330/api/tools                     tool names, descriptions and JSON schemas
 POST http://127.0.0.1:47330/api/tool/new_room             body: {"w":12,"h":9,"name":"cellar"}
 PUT  http://127.0.0.1:47330/api/upload/wall_2m.glb        raw file bytes -> returns {path} to pass to import_models / import_character
-Set STUDIO_TOKEN to require "Authorization: Bearer &lt;token&gt;"; STUDIO_HOST=0.0.0.0 to allow other machines (use a token).</pre></section>
+Set MAPSTUDIO_TOKEN to require "Authorization: Bearer &lt;token&gt;"; MAPSTUDIO_HOST=0.0.0.0 to allow other machines (use a token).</pre></section>
 </main>
 <script>
 const $ = (s) => document.querySelector(s); let tools = [];
