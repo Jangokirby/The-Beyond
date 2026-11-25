@@ -331,7 +331,7 @@
         onEnter: [{ once: "in", steps: [{ say: "A dim service corridor, a wall of old drawings, and a faded diagram of the tower's power: every rack on levels -9 to -11 fed through a single switchroom, with one red handle." }] }],
         options: [
           K.find("Read the tower's power plan", "iq", "easy", "Three corporations, three feeds, one switchroom on level -11. A note in pencil: 'All three on a single main. Never fixed.' A red handle, a safety cover and a padlock.", "A diagram of cable.", { clue: "c_cut", hint: "Easy", failClue: "c_cut" }),
-          K.find("Find the old auditor's schedule", "awareness", "medium", "A schedule of when the racks 'sing': three in the morning, every night. Along the margin, a tally of Kang's hums: the racks, three minutes later, hum a note back, a fraction higher, and the pitch is a little different each night.", "A page of times.", { clue: "c_want", hint: "Awareness, Medium" }),
+          K.find("Find the old auditor's schedule", "awareness", "medium", "A schedule of when the racks 'sing': three in the morning, every night. Along the margin, a tally of Kang's hums: the racks, three minutes later, hum a note back, a fraction higher, and the pitch is a little different each night.", "A page of times. It takes far longer than it should, and it costs you something, but you find it.", { failClue: "c_want", failDamage: ["stability", 1], clue: "c_want", hint: "Awareness, Medium" }),
           K.go("Down to the vault", "vault", { if: { all: [{ clue: "c_door" }, { clue: "c_want" }] } }),
           K.go("Back to the lobby", "lobby")] },
       vault: { name: "The vault, level -11", theme: "future", mood: "boss", lighting: "dark", weather: "none", cast: ["voice"],

@@ -19,3 +19,9 @@ nothing to click or no way to win. A search that gates progress gives its clue o
 Writing helpers are in `public/js/casekit.js` (`K.find`, `K.ask`, `K.t`, `K.go`). The engine supports: hidden secondary objectives with
 benefits, Charisma-limited interviews, local agents who travel with the team (`companions`, `{join}`), allies and civilians in fights,
 counters (`{inc}`, `{ge}`), and an opt-in conversation approach.
+
+## Three more checks (added after play-testing)
+- **A team with nobody persuasive must still be able to win.** A question the case needs to progress is `free`, never `cha`. A one-shot search whose clue is needed gives it on a failed roll too (`failClue`, with a small `failDamage`).
+  Check: `SL_NOCHA=1 node tools/softlock.js <case>` (assumes no Charisma-only answer ever comes) must say `ok`; `node tools/gate-check.js` lists Charisma-gated questions that open a way forward (a case may keep one if another route exists).
+- **No dead ends in the real game.** `node tools/fuzzplay.js <case> --steps 600 --runs 2` plays the case in a browser with a bot and reports crashes and screens with nothing to click.
+- **Read it.** `node tools/case-digest.js <case>` prints the story on one page: a place, a wrongness, a rule the clues let you learn, people with their own voices, several ways to end it.
