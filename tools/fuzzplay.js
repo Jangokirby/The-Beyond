@@ -28,7 +28,7 @@ if (!ids.length) { console.error("give one or more case ids"); process.exit(1); 
         GAME.show && GAME.show("screen-game"); GAME.enterGame && GAME.enterGame(); await sleep(2500);
       } catch (e) { out.problems.push("could not start: " + e.message); return { ...out, scenes: [] }; }
       const visible = (el) => !!(el && el.offsetParent !== null && !el.disabled);
-      let idle = 0, last = "", lastSig = "";
+      let idle = 0, last = "", lastSig = ""; const clicked = new Set();
       for (let i = 0; i < steps; i++) {
         const loc = GAME.state && GAME.state.loc; if (loc) out.scenes.add(loc);
         if (out.ending || (GAME.state && GAME.state.ending)) { out.ending = out.ending || GAME.state.ending; break; }
@@ -41,7 +41,16 @@ if (!ids.length) { console.error("give one or more case ids"); process.exit(1); 
         if (modalBtns.length) { const pref = modalBtns.filter((b) => /roll|continue|ok|begin|go|accept|yes|close|next|done|rest|start|attack|guess|submit|try/i.test(b.textContent)); el = pickR(pref.length ? pref : modalBtns); why = "modal"; }
         else if (target.length) { el = pickR(target); why = "target"; }
         else if (zpick.length) { el = pickR(zpick); why = "zone"; }
-        else if (choices.length) { const fresh = choices.filter((b) => !/^(back|leave|end turn)/i.test(b.textContent.trim())); el = pickR(fresh.length && Math.random() < .85 ? fresh : choices); why = "choice"; }
+        else if (choices.length) {
+          /* play like someone trying to get somewhere: options not tried yet come first, forward moves are preferred, "back" is the last resort */
+          const label = (b) => (loc + "|" + b.textContent.trim().replace(/\s+/g, " ").slice(0, 50)), forward = /(face|fight|confront|enter|go (down|up|to|on|in|east|west|north|south)|follow|climb|descend|open|cut|take the|accept|refuse|walk|ride|wait|speak the|call|say:|pull|light|read|search|look|talk)/i;
+          const meta = /^(\d+)?(walk around|stop walking|speak a string|try something else|field work|regroup|take stock|scavenge|look at the map|take a moment|ask about something else)/i;   // always-available menu entries: not story progress
+          const notBack0 = choices.filter((b) => !/^(back|leave|end turn|never mind|no\b)/i.test(b.textContent.trim().replace(/^\d+/, "")));
+          const story = notBack0.filter((b) => !meta.test(b.textContent.trim()));
+          const leaving = choices.filter((b) => /^(\d+)?(back|leave|return|go (back|on|to))/i.test(b.textContent.trim()) && !meta.test(b.textContent.trim()));
+          const notBack = story.length && Math.random() > 0.06 ? story : leaving.length ? leaving : notBack0;   // story options used up: do what a person does, move on
+          const fresh = notBack.filter((b) => !clicked.has(label(b))); const fwd = fresh.filter((b) => forward.test(b.textContent));
+          el = pickR(fwd.length && Math.random() < .7 ? fwd : fresh.length ? fresh : notBack.length ? notBack : choices); clicked.add(label(el)); why = "choice"; }
         if (!el) { const sig = ((document.querySelector("#log") || {}).innerText || "").length + ":" + ((document.querySelector("#board") || {}).innerText || "").length + ":" + (document.querySelector("#hotspots") ? document.querySelector("#hotspots").children.length : 0); if (sig !== lastSig) { lastSig = sig; idle = 0; } /* text is still changing: an animation or a long enemy turn, not a dead end */
           idle++; if (idle > 24) { out.problems.push(`stuck in "${loc}": nothing to click for ${Math.round(idle * .25)}s. Last action: ${last}`); out.dom = ((document.querySelector("#choices") || {}).outerHTML || "(no #choices)").replace(/\s+/g, " ").slice(0, 500); out.modal = !!document.querySelector(".modal"); break; } await sleep(250); continue; }
         idle = 0; last = (why + ": " + (el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 60)); if (out.trail.length < 400) out.trail.push(`${loc}: ${last}`); el.click(); out.steps++; await sleep(why === "modal" ? 220 : 140);
@@ -52,6 +61,7 @@ if (!ids.length) { console.error("give one or more case ids"); process.exit(1); 
     const probs = [...r.problems, ...errs]; if (probs.length) bad++;
     console.log(`${probs.length ? "PROBLEM" : "ok     "} ${id} (seed ${seed}): ${r.steps} clicks, ${r.scenes.length}/${total} scenes${r.ending ? ", ended: " + (typeof r.ending === "string" ? r.ending : JSON.stringify(r.ending).slice(0, 40)) : ""}`);
     for (const p of probs) console.log("        - " + p);
+    if (process.argv.includes("--trace")) console.log(r.trail.map((x, i) => `   ${String(i).padStart(3)} ${x}`).join("\n"));
     if (probs.length) { console.log("        last clicks: " + r.trail.slice(-5).join(" | ")); if (r.dom) console.log("        choices area: " + r.dom + (r.modal ? " [a modal is open]" : "")); const f = `/tmp/fuzz-${id}-${seed}.png`; await page.screenshot({ path: f }).catch(() => {}); console.log("        screenshot: " + f); }
     await page.close();
   }
