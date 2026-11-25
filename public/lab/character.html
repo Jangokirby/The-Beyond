@@ -1,0 +1,7 @@
+<!doctype html><meta charset="utf-8"><title>Character renderer</title><body style="margin:0;background:#000"><canvas id="c" width="600" height="800"></canvas>
+<script type="module">
+import { renderCharacter, inspectModel, loadKit } from "./figure-glb.js";
+window.DRAWC = async (spec, w = 600, h = 800, view = "portrait") => { const c = document.getElementById("c"); c.width = w; c.height = h; return renderCharacter(spec, await loadKit(), c, { view }); };
+window.INSPECT = (file) => inspectModel(file);
+window.READY = true;
+</script>

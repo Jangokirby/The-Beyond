@@ -129,5 +129,7 @@ const world = [
 const out = { "era-medieval.json": medieval, "era-urban.json": urban, "era-modern.json": modern, "era-scifi.json": scifi, "era-world.json": world };
 const dir = path.join(__dirname, "..", "..", "public", "lab", "pieces"); let n = 0;
 for (const [f, a] of Object.entries(out)) { fs.writeFileSync(path.join(dir, f), JSON.stringify(a, null, 1)); n += a.length; }
-fs.writeFileSync(path.join(dir, "index.json"), JSON.stringify(["more.json", "outdoor.json", ...Object.keys(out)]));
+/* keep any other piece files already listed (custom.json from add_piece_type, .glb pieces, ...) */
+const ip = path.join(dir, "index.json"), had = fs.existsSync(ip) ? JSON.parse(fs.readFileSync(ip, "utf8")) : [];
+fs.writeFileSync(ip, JSON.stringify([...new Set([...had, "more.json", "outdoor.json", ...Object.keys(out)])]));
 console.log(n + " pieces written");

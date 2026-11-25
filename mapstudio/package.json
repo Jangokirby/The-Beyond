@@ -1,0 +1,16 @@
+{
+  "name": "map-studio",
+  "productName": "Map Studio",
+  "version": "0.1.0",
+  "description": "Local map and character tools for The Beyond: web pages, an HTTP API for agents, and an optional desktop window.",
+  "private": true,
+  "main": "electron.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "start": "node studio.js --open",
+    "app": "electron ."
+  },
+  "devDependencies": {
+    "electron": "33.2.1"
+  }
+}

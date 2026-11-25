@@ -282,7 +282,9 @@
     const order = c.order || [];
     const init = el("div", { class: "initbar", "aria-label": "Turn order" }, el("span", { class: "rnd" }, `Round ${c.round || 1}`),
       ...order.filter(alive).map((u) => el("span", { class: "ini" + (u === c.active ? " now" : "") + (u.kind === "enemy" ? " foe" : "") }, u.name)));
-    const grid = el("div", { class: "zones", style: { gridTemplateColumns: `repeat(${c.cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${c.rows}, 1fr)` } });
+    /* if this scene has a map, the fight plays on the map picture: the zone grid is laid over it */
+    const mm = window.MAPMODE && MAPMODE.cur && (!window.RPGX || RPGX.on("zonemap")) ? MAPMODE.cur() : null;
+    const grid = el("div", { class: "zones" + (mm ? " onmap" : ""), style: { gridTemplateColumns: `repeat(${c.cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${c.rows}, 1fr)`, ...(mm ? { backgroundImage: `url(${mm.pk.image})`, "--ar": String(mm.pk.view.W / mm.pk.view.H), aspectRatio: String(mm.pk.view.W / mm.pk.view.H) } : {}) } });
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("class", "edges");

@@ -1,0 +1,33 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Map Studio</title>
+<style>:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#12151a;color:#d8dde4;font:14px/1.45 system-ui,sans-serif}
+header{padding:14px 22px;background:#0c0e12;border-bottom:1px solid #2a313b;display:flex;gap:14px;align-items:baseline}header b{font-size:1.25rem}header span{color:#78869a}
+main{max-width:1180px;margin:0 auto;padding:18px 22px;display:grid;gap:18px}h2{margin:6px 0;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:#8fa0b4}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}.card{display:block;padding:14px 16px;background:#1b212a;border:1px solid #2f3947;border-radius:10px;color:inherit;text-decoration:none}.card:hover{border-color:#6a8ab0}.card b{display:block;font-size:1.05rem;margin-bottom:3px}.card small{color:#8896a8}
+select,textarea,button,input{background:#1b212a;color:#d8dde4;border:1px solid #333c49;border-radius:6px;padding:6px 9px;font:inherit}button{cursor:pointer}button:hover{border-color:#6a8ab0}button.go{background:#2a4a6a;border-color:#4a7aa8;font-weight:600}
+textarea{width:100%;min-height:150px;font:12px ui-monospace,monospace}pre{background:#0c0e12;border:1px solid #2a313b;border-radius:8px;padding:10px;overflow:auto;max-height:420px;font-size:12px;margin:6px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:860px){.cols{grid-template-columns:1fr}}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}img.res{max-width:100%;border-radius:8px;border:1px solid #2a313b;margin-top:6px}.dim{color:#8896a8}.ok{color:#7ad28a}.bad{color:#e07a6a}code{background:#0c0e12;padding:1px 5px;border-radius:4px}</style></head><body>
+<header><b>Map Studio</b><span>maps, assets and characters for The Beyond. Runs on this computer.</span><span id="status" style="margin-left:auto"></span></header>
+<main>
+ <section><h2>Make things by hand</h2><div class="cards">
+  <a class="card" href="/lab/editor.html"><b>Map Builder</b><small>Generate a room in one click, place pieces, add doors and examine spots, save map packs.</small></a>
+  <a class="card" href="/lab/"><b>Map Lab</b><small>View and walk map packs, open .dd2vtt exports.</small></a>
+  <a class="card" href="/lab/characters.html"><b>Character Builder (prototype)</b><small>Swap parts on a placeholder bust. Real characters come from imported 3D models.</small></a></div></section>
+ <section class="cols"><div><h2>Tools (what agents can call)</h2><div class="row"><select id="tool" style="flex:1"></select></div><div class="dim" id="desc"></div>
+  <textarea id="args" spellcheck="false">{}</textarea><div class="row"><button class="go" id="run">Run tool</button><button id="selftest">Run self-test</button><span class="dim" id="busy"></span></div></div>
+  <div><h2>Result</h2><div id="img"></div><pre id="out">(nothing run yet)</pre></div></section>
+ <section><h2>For other apps (Overlord, scripts)</h2><pre>GET  http://127.0.0.1:47330/api/health
+GET  http://127.0.0.1:47330/api/tools                     tool names, descriptions and JSON schemas
+POST http://127.0.0.1:47330/api/tool/new_room             body: {"w":12,"h":9,"name":"cellar"}
+PUT  http://127.0.0.1:47330/api/upload/wall_2m.glb        raw file bytes -> returns {path} to pass to import_models / import_character
+Set MAPSTUDIO_TOKEN to require "Authorization: Bearer &lt;token&gt;"; MAPSTUDIO_HOST=0.0.0.0 to allow other machines (use a token).</pre></section>
+</main>
+<script>
+const $ = (s) => document.querySelector(s); let tools = [];
+const sample = (t) => { const o = {}, pr = (t.parameters && t.parameters.properties) || {}; for (const [k, v] of Object.entries(pr)) if ((t.parameters.required || []).includes(k)) o[k] = v.type === "number" ? 0 : v.type === "array" ? [] : v.type === "object" ? {} : v.type === "boolean" ? false : ""; return JSON.stringify(o, null, 1); };
+const show = (r) => { $("#out").textContent = JSON.stringify(r, null, 1); const f = r && (r.picture || (r.pack && r.pack.replace(/\.beyondmap$/, ".jpg"))); $("#img").innerHTML = f && /\.(png|jpg)$/.test(f) ? `<img class="res" src="/lab/${f.replace(/^public\/lab\//, "")}?t=${Date.now()}">` : ""; };
+fetch("/api/health").then((r) => r.json()).then((h) => { $("#status").innerHTML = `<span class="ok">● running</span> · ${h.tools} tools`; }).catch(() => { $("#status").innerHTML = '<span class="bad">● not connected</span>'; });
+fetch("/api/tools").then((r) => r.json()).then((t) => { tools = t; for (const x of t) $("#tool").append(new Option(x.name, x.name)); pick(); });
+const pick = () => { const t = tools.find((x) => x.name === $("#tool").value); if (!t) return; $("#desc").textContent = t.description; $("#args").value = sample(t); }; $("#tool").onchange = pick;
+$("#run").onclick = async () => { let a; try { a = JSON.parse($("#args").value || "{}"); } catch (e) { return alert("Arguments must be JSON: " + e.message); } $("#busy").textContent = "running…"; try { show(await (await fetch("/api/tool/" + $("#tool").value, { method: "POST", body: JSON.stringify(a) })).json()); } catch (e) { show({ ok: false, error: e.message }); } $("#busy").textContent = ""; };
+$("#selftest").onclick = async () => { $("#busy").textContent = "self-test running (about a minute)…"; try { const r = await (await fetch("/api/selftest", { method: "POST" })).json(); $("#out").textContent = r.report; $("#img").innerHTML = ""; } catch (e) { $("#out").textContent = e.message; } $("#busy").textContent = ""; };
+</script></body></html>

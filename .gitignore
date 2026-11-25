@@ -4,3 +4,12 @@ desktop/node_modules
 desktop/dist
 desktop/game
 *.whl
+# bought / licensed 3D packs stay on the machine; commit only the maps rendered from them
+public/lab/models/_licensed/
+public/lab/characters/models/_licensed/
+public/lab/pieces/_licensed-*.json
+public/lab/pieces/index.local.json
+public/lab/kits/_licensed-*.json
+public/lab/kits/index.local.json
+mapstudio/node_modules
+mapstudio/dist

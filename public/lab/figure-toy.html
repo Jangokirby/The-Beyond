@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>Toy figure test</title><body style="margin:0;background:#000"><canvas id="c" width="1200" height="830"></canvas>
+<script type="module">
+import { renderToy } from "./figure-toy.js";
+const nurse = { outfit: "nurse_ww1", skin: "#f0c9a8", hair: "bun", hairColor: "#7a4a2a", hat: "nurse_veil", eyes: "#4a8ac0", h: 1.6 };
+const man = { outfit: "coat_1920s", skin: "#c68e64", hair: "short", hairColor: "#241a14", hat: "flat_cap", eyes: "#3a2a1a", h: 1.74, w: 1.05 };
+const exec = { outfit: "suit_modern", skin: "#8a5a3c", hair: "pony", hairColor: "#1c1410", hat: "none", eyes: "#3a2a1a", h: 1.66 };
+const out = document.getElementById("c").getContext("2d"); const draw = (spec, x, y, w, h, cam, yaw = 0) => { const c = document.createElement("canvas"); c.width = w; c.height = h; renderToy(spec, c, [{ x: 0, y: 0, w, h, cam, yaw }]); out.drawImage(c, x, y); };
+draw(nurse, 0, 0, 400, 580, "full", 20); draw(man, 400, 0, 400, 580, "full", -20); draw(exec, 800, 0, 400, 580, "full", 15);
+["neutral", "worried", "stern", "happy", "shocked"].forEach((e, i) => draw({ ...nurse, expr: e }, i * 240, 590, 240, 240, "head"));
+window.DONE = true;
+</script>

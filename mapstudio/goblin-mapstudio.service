@@ -1,0 +1,24 @@
+# Map Studio as a system service (starts at boot, no desktop login needed). Template: edit the three paths/user, then:
+#   sudo cp mapstudio/goblin-mapstudio.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now goblin-mapstudio
+# Check:  curl http://127.0.0.1:47330/api/health      Logs: journalctl -u goblin-mapstudio -f
+[Unit]
+Description=Map Studio (maps, assets and characters for The Beyond)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# the user that owns the checkout (the desktop user, UID 1000, is fine); not root
+User=CHANGE_ME
+WorkingDirectory=/opt/goblinden/apps/the-beyond
+ExecStart=/usr/bin/node mapstudio/studio.js
+Restart=on-failure
+RestartSec=5
+Environment=MAPSTUDIO_PORT=47330
+# local only. If Overlord runs inside a Docker container, use 0.0.0.0 AND set a token below (and keep the port off the network with the firewall).
+Environment=MAPSTUDIO_HOST=127.0.0.1
+# Environment=GOBLIN_TOKEN=put-the-Den-token-here
+# CPU drawing by default (no VRAM). 1 = let Chromium use the GPU.
+Environment=MAPSTUDIO_GPU=0
+
+[Install]
+WantedBy=multi-user.target

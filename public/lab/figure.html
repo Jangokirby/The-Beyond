@@ -1,0 +1,12 @@
+<!doctype html><meta charset="utf-8"><title>Figure test</title><body style="margin:0;background:#000"><canvas id="c" width="1400" height="700"></canvas>
+<script type="module">
+import { renderFigure } from "./figure.js";
+const base = { outfit: "nurse_ww1", skin: "#e8c4a4", hair: "bun", hairColor: "#6a4a2e", hat: "nurse_veil", eyes: "dot", brows: "flat", mouth: "line", h: 1.64 };
+const E = [{}, { brows: "worried", mouth: "frown", eyes: "wide" }, { brows: "stern", mouth: "line", eyes: "narrow" }, { brows: "raised", mouth: "smile" }, { brows: "worried", mouth: "open", eyes: "wide" }, { hat: "none", hair: "long", hairColor: "#2a1c14", brows: "stern", mouth: "frown", yaw: 30 }];
+const c = document.getElementById("c"), ctx2 = document.createElement("canvas"); ctx2.width = c.width; ctx2.height = c.height;
+const out = c.getContext("2d");
+const pos = [[430, 0], [760, 0], [1090, 0], [430, 350], [760, 350], [1090, 350]];
+for (let i = 0; i < 6; i++) { const w = document.createElement("canvas"); w.width = 330; w.height = 350; renderFigure({ ...base, ...E[i] }, w, [{ x: 0, y: 0, w: 330, h: 350, cam: "head", yaw: E[i].yaw || 0 }]); out.drawImage(w, pos[i][0], pos[i][1]); }
+const f = document.createElement("canvas"); f.width = 420; f.height = 700; renderFigure(base, f, [{ x: 0, y: 0, w: 420, h: 700, cam: "full", yaw: 28 }]); out.drawImage(f, 0, 0);
+window.DONE = true;
+</script>
