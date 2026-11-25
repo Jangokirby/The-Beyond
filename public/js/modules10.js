@@ -51,7 +51,7 @@
             K.t("What happened?", ["We drilled into a layer at 2,911 metres. It hummed. Mateo logged it. Nine days later the first of us had heard themselves, in the lab, on a recording, talking about their own death. They went out of the airlock that night. In the order they heard."], { free: true, clue: "c_walkers" }),
             K.t("What does the recording say?", "That's the thing. It's ahead. Nine days ahead of our clock. It plays us talking. Not in our past. In our future.", { free: true, clue: "c_recording" }),
             K.t("Have you heard yours?", [{ say: "He looks at the airlock door." }, "Yes. Three days ahead. It ends with my hand on the outer door. I have not told anyone how I intend to refuse it."], { cha: 7, clue: "c_aoki", set: "aoki_confided" }),
-            K.t("Who has not heard theirs?", "Dr. Solheim. She wears ear defenders in the lab, from habit. She's kept a notebook of everything the others heard. You should speak to her. And to Mateo.", { cha: 9, set: "solheim_known" })
+            K.t("Who has not heard theirs?", "Dr. Solheim. She wears ear defenders in the lab, from habit. She's kept a notebook of everything the others heard. You should speak to her. And to Mateo.", { free: true, set: "solheim_known" })
           ], { label: "Talk to Captain Aoki", name: "the Captain", bye: ["Keep away from the airlock."] }),
           K.find("Read the airlock log", "iq", "easy", "Four exits, in the last nine days, each at 02:14: Okafor, Reyes, Lindqvist, Bhatt. Each in a thermal shirt, no gloves, no mask. Each log says: 'Authorised by self.'", "A log, dull and tidy.", { clue: "c_walkers", hint: "Easy" }),
           K.go("To the lab", "lab", { if: "solheim_known" }),

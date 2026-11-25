@@ -79,7 +79,8 @@ function check(a, opts = {}) {
           /* assume players ask about everything they can, then also the path where they leave at once */
           next.push(clone(x));
           let all = [x];
-          for (const t of st.converse.topics || []) all = all.flatMap((y) => (cond(t.if, y) ? run(t.then, y, depth + 1) : [y]));
+          for (const t of st.converse.topics || []) { if ((opts.noCha || process.env.SL_NOCHA) && t.cha && !t.free) continue;   /* SL_NOCHA=1: the team has nobody persuasive, so the Charisma-only answers never come */
+            all = all.flatMap((y) => (cond(t.if, y) ? run(t.then, y, depth + 1) : [y])); }
           next.push(...all);
         }
         else if (st.inc) { x.f.add(st.inc + "+"); next.push(x); }

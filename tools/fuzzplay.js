@@ -7,7 +7,7 @@
 const { chromium } = require("playwright"); const { spawn } = require("child_process");
 const arg = (n, d) => { const i = process.argv.indexOf("--" + n); return i > 0 ? process.argv[i + 1] : d; };
 const ids = process.argv.slice(2).filter((x, i, a) => !x.startsWith("--") && !(i > 0 && /^--(steps|seed|runs)$/.test(a[i - 1])));
-const STEPS = +arg("steps", 250), SEED = +arg("seed", 1), RUNS = +arg("runs", 2), MAPS = process.argv.includes("--map"), PORT = 8790 + Math.floor(Math.random() * 50);
+const STEPS = +arg("steps", 250), SEED = +arg("seed", 1), RUNS = +arg("runs", 2), MAPS = process.argv.includes("--map"), PORT = 9000 + (process.pid % 900);   // one port per process, so parallel runs never share a server
 if (!ids.length) { console.error("give one or more case ids"); process.exit(1); }
 (async () => {
   const srv = spawn("node", ["server.js"], { cwd: require("path").join(__dirname, ".."), env: { ...process.env, PORT: String(PORT) } }); await new Promise((r) => setTimeout(r, 1500));

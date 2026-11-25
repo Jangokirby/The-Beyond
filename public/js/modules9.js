@@ -53,7 +53,7 @@
             K.t("Tell us what you know.", ["Ajo. It's an app. It pays you for sleeping: eight hours, logged on the band. Every child in this building has one. Forty thousand people in Lagos do. Two hundred have not woken in nine days."], { free: true, clue: "c_app" }),
             K.t("What does the band say?", "A number. 41. Every sleeper's band says the same one. It counts down in hours. When it reaches zero, the app says, the credit is released.", { free: true, clue: "c_counter" }),
             K.t("What does he dream?", [{ say: "She looks at the boy." }, "He's moving his lips. I put my ear to him at four in the morning. He's saying numbers. In a clerk's voice. Not his."], { cha: 7, clue: "c_dreams" }),
-            K.t("Who is awake who should be asleep?", "Mama Ngozi, at the Ikeja market. She stopped sleeping in March, she says, and she has not lost a customer since. People have started to ask her how.", { cha: 10, set: "ngozi_known" }),
+            K.t("Who is awake who should be asleep?", "Mama Ngozi, at the Ikeja market. She stopped sleeping in March, she says, and she has not lost a customer since. People have started to ask her how.", { free: true, set: "ngozi_known" }),
             K.t("Where is Ajo's office?", "Yaba. The tech district. Ask for Tunde Bakare, the engineer who built the first racks. He's the only one who still answers a phone.", { free: true, set: "tunde_known" })
           ], { label: "Talk to Funmi", name: "Funmi", bye: ["Please. Forty-one hours."] }),
           K.find("Read the app's terms on the boy's phone", "iq", "easy", "A single long page: Ajo buys 'sleep data' and 'derivative data' and promises that no raw sleep is stored. There is a clause, in a smaller font, that says: 'Derivative data includes, without limitation, dreams.'", "A great many clauses.", { clue: "c_app", hint: "Easy" }),
@@ -78,7 +78,7 @@
           K.ask("ngozi", [
             K.t("You haven't slept?", ["Not since March. I started counting, in the dark, when I could not sleep, and I did not stop. In the morning I was not tired. It does not touch me when I count."], { free: true, clue: "c_insomnia", obj: "so2" }),
             K.t("What does it feel like?", "Like a very polite man standing at the foot of my bed, with a pen. When I count, he cannot start. When I stop, he clears his throat.", { clue: "c_insomnia", free: true }),
-            K.t("Where is it?", [{ say: "She does not stop counting, but she lowers her voice." }, "Lekki. The big building by the water with the green lights that never go out. My nephew works the gate. He says no one goes in. They only take things out."], { cha: 7, clue: "c_lekki", set: "lekki_known" }),
+            K.t("Where is it?", [{ say: "She does not stop counting, but she lowers her voice." }, "Lekki. The big building by the water with the green lights that never go out. My nephew works the gate. He says no one goes in. They only take things out."], { free: true, clue: "c_lekki", set: "lekki_known" }),
             K.t("Will you come with us?", "I will count for you. I will count as long as you need.", { cha: 10, set: "ngozi_help" })
           ], { label: "Talk to Mama Ngozi", name: "Mama Ngozi", bye: ["Don't sleep. Count."] }),
           K.go("Back to the flat", "flat")] },
@@ -88,7 +88,7 @@
           K.ask("tunde", [
             K.t("What does Ajo really do?", ["It buys sleep. That's what it says. What it actually buys is the dreams. The data comes through us and goes to a facility we don't run. I put a hardware kill key into the first racks. My managers called it an insult."], { free: true, clue: "c_key", obj: "so1" }),
             K.t("Who are the buyers?", "I thought a pharma firm. An account called TALLY pays in a currency I can't convert. I looked once, in the logs. It has been buying for three years. It doesn't buy a night. It buys them all.", { clue: "c_ledger", free: true, obj: "so3" }),
-            K.t("Where does the data go?", [{ say: "He looks toward the window." }, "To Lekki. A shell building on the water that Ajo has paid rent on for three years and never entered."], { cha: 7, clue: "c_lekki", set: "lekki_known" }),
+            K.t("Where does the data go?", [{ say: "He looks toward the window." }, "To Lekki. A shell building on the water that Ajo has paid rent on for three years and never entered."], { free: true, clue: "c_lekki", set: "lekki_known" }),
             K.t("Why did you not shut it down?", "Because every time I touched it, my own number went down. And I have a son.", { cha: 11, set: "tunde_help" })
           ], { label: "Talk to Tunde", name: "Tunde", bye: ["Don't take the app at face value."] }),
           K.find("Read the dream ledger in the backup", "iq", "medium", "A table: every night's dreams, itemised by user, priced to the second decimal, billed to an account called TALLY. The column headed 'owed' has been rising for three years, and a column headed 'remaining' is going down.", "The table is too large.", { clue: "c_ledger", obj: "so3", hint: "Intelligence, Medium", tags: ["kill"], failClue: "c_ledger" }),
@@ -160,7 +160,7 @@
           K.ask("kiri", [
             K.t("What happened to the divers?", ["Three went down to the new plantings, the last bay, for a routine check. They came up in four minutes with their regulators in their hands. They'd stopped breathing from the tanks. They don't need to. They speak in other voices. And they won't go back to their bunks."], { free: true, clue: "c_divers" }),
             K.t("What do they say?", "Old things. Things about the 2038 dive crew. Names. A pump that failed. Things none of them could know. They know every one of the eleven who drowned.", { clue: "c_names", free: true }),
-            K.t("What is under the platform?", [{ say: "She looks at the water." }, "The new coral. Dr. Rao's project. It grows in the dark, in the tanks, heat-proof. It's the only living reef for two hundred kilometres. And it's... pleased with itself."], { cha: 7, set: "rao_known" }),
+            K.t("What is under the platform?", [{ say: "She looks at the water." }, "The new coral. Dr. Rao's project. It grows in the dark, in the tanks, heat-proof. It's the only living reef for two hundred kilometres. And it's... pleased with itself."], { free: true, set: "rao_known" }),
             K.t("Will you dive again?", "I'd go with you. I won't go alone.", { cha: 10, set: "kiri_help" })
           ], { label: "Talk to Kiri", name: "Kiri", bye: ["Don't touch it."] }),
           K.find("Look at one of the returned divers", "awareness", "medium", "A diver sits on a bunk, very still, speaking in a child's voice. Under her sleeve, on her forearm, a fine pink lattice has pushed up through the skin like a frost.", "A diver. Wet. Silent.", { clue: "c_growth", hint: "Awareness, Medium", failDamage: ["sanity", 1] }),
