@@ -529,3 +529,10 @@ body[data-mode="combat"] #story { min-height: 3.5rem; }
 .zones.onmap .zone.ctl-agent { background: rgba(80,150,100,.18); }
 .zones.onmap .zone.pick { background: rgba(227,164,71,.22); }
 .zones.onmap .edges { display: none; }
+
+/* zones pinned to places on the map */
+.zones.onmap.pinned { display: block; position: relative; overflow: visible; }
+.zones.onmap.pinned .edges { display: block; }
+.zones.onmap.pinned .edges line { stroke: rgba(239,234,219,.55); stroke-width: 2; }
+.zones.onmap.pinned .zone { position: absolute; transform: translate(-50%, -50%); width: min(25%, 230px); min-height: 0; border: 1px solid rgba(239,234,219,.55); border-radius: 8px; background: rgba(8,12,18,.55); }
+.zones.onmap.pinned .zone .tokens { flex-wrap: wrap; justify-content: center; }

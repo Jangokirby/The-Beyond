@@ -284,17 +284,20 @@
       ...order.filter(alive).map((u) => el("span", { class: "ini" + (u === c.active ? " now" : "") + (u.kind === "enemy" ? " foe" : "") }, u.name)));
     /* if this scene has a map, the fight plays on the map picture: the zone grid is laid over it */
     const mm = window.MAPMODE && MAPMODE.cur && (!window.RPGX || RPGX.on("zonemap")) ? MAPMODE.cur() : null;
-    const grid = el("div", { class: "zones" + (mm ? " onmap" : ""), style: { gridTemplateColumns: `repeat(${c.cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${c.rows}, 1fr)`, ...(mm ? { backgroundImage: `url(${mm.pk.image})`, "--ar": String(mm.pk.view.W / mm.pk.view.H), aspectRatio: String(mm.pk.view.W / mm.pk.view.H) } : {}) } });
+    /* zones pinned to places on the map: when every zone has a spot (zone.at in the encounter, or the case's zones.json), each card stands where its place is */
+    let pins = null;
+    if (mm) { const enc = ((window.MAPZONES || {})[(window.MODULE || {}).id] || {})[c.id]; const out = {}; let all = true; for (const z of Object.values(c.zones)) { const at = z.at || (enc && enc[z.id]); if (!at || !window.MAPMODE || !MAPMODE.project) { all = false; break; } const [px, py] = MAPMODE.project(mm.pk, at[0], at[1]); out[z.id] = [Math.max(15, Math.min(85, px / mm.pk.view.W * 100)), Math.max(24, Math.min(76, py / mm.pk.view.H * 100))]; } if (all) pins = out; }
+    const grid = el("div", { class: "zones" + (mm ? " onmap" : "") + (pins ? " pinned" : ""), style: { ...(pins ? {} : { gridTemplateColumns: `repeat(${c.cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${c.rows}, 1fr)` }), ...(mm ? { backgroundImage: `url(${mm.pk.image})`, "--ar": String(mm.pk.view.W / mm.pk.view.H), aspectRatio: String(mm.pk.view.W / mm.pk.view.H) } : {}) } });
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
     svg.setAttribute("class", "edges");
-    svg.setAttribute("viewBox", `0 0 ${c.cols * 100} ${c.rows * 100}`);
+    svg.setAttribute("viewBox", pins ? "0 0 100 100" : `0 0 ${c.cols * 100} ${c.rows * 100}`);
     svg.setAttribute("preserveAspectRatio", "none");
     for (const [a, b] of c.enc.edges) {
       const za = c.zones[a], zb = c.zones[b];
       const ln = document.createElementNS(svgNS, "line");
-      ln.setAttribute("x1", za.col * 100 + 50); ln.setAttribute("y1", za.row * 100 + 50);
-      ln.setAttribute("x2", zb.col * 100 + 50); ln.setAttribute("y2", zb.row * 100 + 50);
+      if (pins) { ln.setAttribute("x1", pins[a][0]); ln.setAttribute("y1", pins[a][1]); ln.setAttribute("x2", pins[b][0]); ln.setAttribute("y2", pins[b][1]); }
+      else { ln.setAttribute("x1", za.col * 100 + 50); ln.setAttribute("y1", za.row * 100 + 50); ln.setAttribute("x2", zb.col * 100 + 50); ln.setAttribute("y2", zb.row * 100 + 50); }
       svg.append(ln);
     }
     grid.append(svg);
@@ -302,7 +305,7 @@
       const ctl = controlOf(z.id);
       const picking = c.pick && c.pick.type === "zone" && c.pick.set.includes(z.id);
       const card = el("div", { class: "zone" + (glowIn(z.id) ? " glow" : "") + (ctl ? " ctl-" + ctl : "") + (picking ? " pick" : ""),
-        style: { gridColumn: z.col + 1, gridRow: z.row + 1 }, "data-z": z.id },
+        style: pins ? { left: pins[z.id][0] + "%", top: pins[z.id][1] + "%" } : { gridColumn: z.col + 1, gridRow: z.row + 1 }, "data-z": z.id },
         el("div", { class: "zname" }, z.name, z.knife && !c.knifeTaken ? el("span", { class: "zicon", title: "The bleeding knife" }, "🗡") : null),
         el("div", { class: "ztags" }, el("span", { class: "light" }, glowIn(z.id) ? "Glow" : "Shadow"), ctl ? el("span", { class: "ctl" }, ctl === "enemy" ? "enemy-held" : "held") : null,
           replicaIn(z.id) ? el("span", { class: "aura" }, "aura −2") : null));

@@ -43,7 +43,8 @@
   const style = document.createElement("style"); style.textContent = "#scene.mapmode #cast:not(.solo){display:none} #scene.mapmode #bg{image-rendering:auto} #scene.mapmode .hot .mark{opacity:.85}"; document.head.append(style);
   /* maps made by the auto-map tool: lab/maps/<case>/index.json, read once at the start */
   window.MAPDATA = {};
-  fetch("lab/maps/index.json").then((r) => (r.ok ? r.json() : [])).then((ids) => Promise.all(ids.map((id) => fetch(`lab/maps/${id}/index.json`).then((r) => r.json()).then((j) => { window.MAPDATA[id] = j; }).catch(() => {})))).catch(() => {});
+  window.MAPZONES = {};   // per case: { encounterId: { zoneId: [x, z] } }, where each combat zone sits on the map (made by tools/room3d/pin-zones.js)
+  fetch("lab/maps/index.json").then((r) => (r.ok ? r.json() : [])).then((ids) => Promise.all(ids.map((id) => fetch(`lab/maps/${id}/index.json`).then((r) => r.json()).then((j) => { window.MAPDATA[id] = j; }).catch(() => {}).then(() => fetch(`lab/maps/${id}/zones.json`).then((r) => (r.ok ? r.json() : null)).then((z) => { if (z) window.MAPZONES[id] = z; }).catch(() => {}))))).catch(() => {});
   /* data cases: pass the scene's map through */
   const c0 = window.ADV && ADV.compile;
   if (c0) ADV.compile = function (a) { const M = c0.apply(this, arguments); const md = (window.MAPDATA || {})[a.id] || {}; if (window.RPGX && !RPGX.on("maps")) return M; for (const [id, sc] of Object.entries(a.scenes || {})) { const mp = sc.map || md[id]; if (mp && M.locations[id]) M.locations[id].map = mp; } return M; };
