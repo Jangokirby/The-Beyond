@@ -14,7 +14,8 @@
     objectives: [
       { id: "po1", kind: "primary", t: "Find out what knocks in the coal store", done: "A coal-heaver called Ned Pike, who went in for a sack in 1911 and never came out." },
       { id: "po2", kind: "primary", t: "Put it to rest", done: "The knocking has stopped. The house is very quiet." },
-      { id: "so1", kind: "secondary", t: "Hear Mrs. Hobb's story", done: "She's kept the house for forty years. She'd like to be thanked, once." }],
+      { id: "so1", kind: "secondary", t: "Hear Mrs. Hobb's story", done: "She's kept the house for forty years. She'd like to be thanked, once." },
+      { id: "so2", kind: "secondary", t: "Open Ned's padlock", done: "Ned set it to the year he started the job. Nobody had thought to try it in forty years." }],
     clues: {
       c_letter: { t: "A letter in the desk", s: "The study desk", doc: "letter", x: "Dear Agency. The knocking began the night Ned went into the coal store and has not stopped since. Three knocks, then a pause, then three. I leave the key in the desk for your trainees. Yours, R. Ashcombe, 1912." },
       c_hobb: { t: "Ned liked a song", s: "Mrs. Hobb", x: "Ned Pike whistled 'Keep the Home Fires Burning' every time he went down. She says if you whistle it at the door, the knocking answers." },
@@ -29,10 +30,12 @@
     },
     start: "hall",
     scenes: {
-      hall: { name: "The front hall, Ashcombe Lane", theme: "interior", mood: "calm", lighting: "lit", cast: ["hobb"], onEnter: [{ once: "intro", steps: [
+      hall: { name: "The front hall, Ashcombe Lane", theme: "interior", mood: "calm", lighting: "lit", mapPreset: "study", cast: ["hobb"], onEnter: [{ once: "intro", steps: [
         { say: "A tall, cold house at the end of a quiet lane. Gas lamps turned low, a grandfather clock, a smell of polish and old coal. Somewhere below your feet: three knocks, a pause, three more." },
         tip("The picture is the place you're in. The marks on it are things you can do: look at something, talk to someone, or go somewhere. Hover one to see what it is, whether it needs a roll, and what it costs."),
-        tip("Looking and talking cost <b>Focus</b>, a few points per agent per case (a house rule; change it in the hideout). Choose who does what: the right agent for the job matters.")] }],
+        tip("Looking and talking cost <b>Focus</b>, a few points per agent per case (a house rule; change it in the hideout). Choose who does what: the right agent for the job matters."),
+        tip("You can <b>walk</b> the picture too: arrow keys or WASD (or click the ground) move your team, and <b>E</b> acts on the mark you are standing by. Clicking a mark works just as well."),
+        tip("Below the marks: <b>Try something else…</b> lets you type what you do, in your own words (be specific and there may be nothing to roll), and <b>Field work…</b> uses an item, a skill, or asking around.")] }],
         options: [
           { label: "Talk to Mrs. Hobb", hint: "The housekeeper", steps: [
             { once: "tip_talk", steps: [tip("Before you talk to someone for the first time, you choose how to come at them. Kindness opens some people and closes others; leaning on a frightened person rarely works. A lie is always a <b>Charisma</b> roll.")] },
@@ -53,7 +56,8 @@
           { label: "Go down to the cellar", if: { not: "key" }, hint: "The door is locked", steps: [{ say: "The cellar door is locked. Mrs. Hobb says the key is 'where it always is', which is no help at all." }] }] },
       cellar: { name: "The cellar", theme: "cellar", mood: "tense", lighting: "shadow", onEnter: [{ once: "cel", steps: [
         { say: "Twelve steps down (the third one loose). Brick, damp, a single bulb on a string. Across the cellar, the coal-store door, and behind it: three knocks, a pause, three more." },
-        tip("In <b>Shadow</b> some rolls are harder (−2). A lamp or a light-giving power makes a place <b>Lit</b>.")] }],
+        tip("In <b>Shadow</b> some rolls are harder (−2). A lamp or a light-giving power makes a place <b>Lit</b>."),
+        tip("<b>Time presses:</b> the night deepens as you act, and lamps burn down, so carry spares and don't dawdle. (Both can be switched off in Settings.)")] }],
         options: [
           { label: "Look at the floor", hint: "The coal dust", once: true, steps: [{ say: "The coal dust lies in a wide, smooth circle, as if something has been walking round and round for years." }, { clue: "c_cellar" }, { objective: "po1" }] },
           { label: "Steady yourselves before the door", once: true, hint: "Everyone rolls", steps: [
@@ -62,6 +66,11 @@
               tip("Sanity damage. If an agent's Sanity would break, a <b>Bond</b> (someone they love) can take the hit instead, and the relationship suffers. Visit your Bonds between cases to keep them strong.")] } }] },
           { label: "Whistle Ned's tune at the door", if: { clue: "c_hobb" }, once: true, steps: [{ say: "You whistle the first bar of 'Keep the Home Fires Burning'. The knocking stops. Then, very softly, someone on the other side whistles the second bar." }, { set: "tune" },
             tip("Learning about a monster pays: knowing what it wants can open a way that doesn't need a fight. Here, it makes the fight shorter.")] },
+          { label: "Try the brass padlock on the coal-store door", once: true, hint: "A puzzle", steps: [
+            tip("Not everything is a roll. A <b>puzzle</b> you solve with your own head, and the dice still matter: a good roll gives you a head start (a revealed digit, more tries), a bad one makes it harder."),
+            { puzzle: { kind: "code", digits: "1911", aspect: "iq", cr: "easy", label: "Study the padlock", prompt: "A brass combination padlock, four digits, hangs on the coal-store door. The housekeeper's letter says Ned went in during the winter of 1911.",
+              ok: [{ say: "The padlock drops open. It was Ned's own: he set it to the year he started the job." }, { objective: "so2" }],
+              fail: [{ say: "The padlock holds. You can still open the door the hard way." }] } }] },
           { label: "Open the coal store", steps: [
             tip("A fight happens in <b>zones</b>. On your turn you have two actions: move, attack, use a power or an item. Attacks are <b>2d6 + your attack</b> against the enemy's <b>Evasion (ER)</b>; damage is reduced by its <b>Resistance</b>. Click an enemy to see its numbers."),
             { combat: "coal", win: [

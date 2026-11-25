@@ -9,7 +9,7 @@ const want = all ? Object.keys(lib).filter((k) => !fs.existsSync(path.join(root,
 const spec = (a, id) => { const sc = a.scenes[id], opts = (sc.options || []).map((o) => { const js = JSON.stringify(o.steps || []); const conv = js.match(/"converse":\{"npc":"(\w+)"/), go = Array.isArray(o.steps) && o.steps.length === 1 && o.steps[0].goto ? o.steps[0].goto : (o.steps || []).filter((s) => s.goto).length && !js.includes('"check"') && !js.includes('"combat"') ? (o.steps.find((s) => s.goto) || {}).goto : null;
   return { label: o.label, kind: conv ? "talk" : go ? "go" : js.includes('"check"') ? "find" : "other", npc: conv && conv[1], goto: go || undefined }; });
   const txt = JSON.stringify(sc.onEnter || []).replace(/"(say|text)":"([^"]*)"/g, " $2 ").replace(/[{}\[\]"]/g, " ").slice(0, 500);
-  return { id, name: sc.name, theme: sc.theme, year: a.year, setting: a.setting || "", text: txt, cast: sc.cast || [], npcs: Object.fromEntries(Object.entries(a.npcs || {}).map(([k, v]) => [k, v.name])), options: opts }; };
+  return { id, name: sc.name, preset: sc.mapPreset, theme: sc.theme, year: a.year, setting: a.setting || "", text: txt, cast: sc.cast || [], npcs: Object.fromEntries(Object.entries(a.npcs || {}).map(([k, v]) => [k, v.name])), options: opts }; };
 (async () => {
   if (!want.length && !process.argv.includes("--plan")) return console.log("Nothing to do.");
   if (process.argv.includes("--plan")) { /* dry run: which preset each scene would get, nothing is drawn */

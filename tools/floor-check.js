@@ -14,6 +14,7 @@ const ids = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(L
 let bad = 0;
 for (const id of ids) {
   const a = LIB[id]; if (!a) { console.log("missing", id); continue; }
+  if (a.tutorial) { console.log(`exempt ${id.padEnd(24)} (a short training case: it teaches the rules, so it is not held to the full-case floor)`); continue; }
   const n = { search: 0, interview: 0, limited: 0, cha: 0, combat: 0, ends: new Set(), res: new Set(), size: JSON.stringify(a).length, groups: 0 };
   walk(a.scenes, (o) => {
     if (o.check && o.check.investigate) n.search++;

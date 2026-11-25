@@ -60,7 +60,8 @@ export function planScene(spec, seed = 1) {
     const byName = OUTRULES.find(([re]) => re.test(nm)); const strongIn = STRONG_IN.test(nm);
     if (byName && !(strongIn && !/\b(cemetery|graveyard|churchyard|harbou?r|dock|trench|camp|quay|deck|schooner)\b/.test(nm))) key = byName[1];
     else if (outT && !strongIn) key = (OUTRULES.find(([re]) => re.test(text.slice(0, 160))) || [0, outT])[1]; }
-  key = eraKey(spec, key); if (!PRESETS[key]) key = "study";
+  key = eraKey(spec, key); if (spec.preset && PRESETS[spec.preset]) key = spec.preset;   // a scene can force its look: scene.mapPreset
+  if (!PRESETS[key]) key = "study";
   if (key === "chapel" && !PRESETS.chapel) key = "study";
   const nOpt = (spec.options || []).length, gotos = [...new Set((spec.options || []).filter((o) => o.goto).map((o) => o.goto))];
   let [w, h] = SIZE[key] || [12, 9]; if (nOpt > 7) { w += 3; h += 2; } if (gotos.length > 3) w += 2;
