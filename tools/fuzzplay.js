@@ -28,7 +28,7 @@ if (!ids.length) { console.error("give one or more case ids"); process.exit(1); 
         GAME.show && GAME.show("screen-game"); GAME.enterGame && GAME.enterGame(); await sleep(2500);
       } catch (e) { out.problems.push("could not start: " + e.message); return { ...out, scenes: [] }; }
       const visible = (el) => !!(el && el.offsetParent !== null && !el.disabled);
-      let idle = 0, last = "";
+      let idle = 0, last = "", lastSig = "";
       for (let i = 0; i < steps; i++) {
         const loc = GAME.state && GAME.state.loc; if (loc) out.scenes.add(loc);
         if (out.ending || (GAME.state && GAME.state.ending)) { out.ending = out.ending || GAME.state.ending; break; }
@@ -42,7 +42,8 @@ if (!ids.length) { console.error("give one or more case ids"); process.exit(1); 
         else if (target.length) { el = pickR(target); why = "target"; }
         else if (zpick.length) { el = pickR(zpick); why = "zone"; }
         else if (choices.length) { const fresh = choices.filter((b) => !/^(back|leave|end turn)/i.test(b.textContent.trim())); el = pickR(fresh.length && Math.random() < .85 ? fresh : choices); why = "choice"; }
-        if (!el) { idle++; if (idle > 24) { out.problems.push(`stuck in "${loc}": nothing to click for ${Math.round(idle * .25)}s. Last action: ${last}`); out.dom = ((document.querySelector("#choices") || {}).outerHTML || "(no #choices)").replace(/\s+/g, " ").slice(0, 500); out.modal = !!document.querySelector(".modal"); break; } await sleep(250); continue; }
+        if (!el) { const sig = ((document.querySelector("#log") || {}).innerText || "").length + ":" + ((document.querySelector("#board") || {}).innerText || "").length + ":" + (document.querySelector("#hotspots") ? document.querySelector("#hotspots").children.length : 0); if (sig !== lastSig) { lastSig = sig; idle = 0; } /* text is still changing: an animation or a long enemy turn, not a dead end */
+          idle++; if (idle > 24) { out.problems.push(`stuck in "${loc}": nothing to click for ${Math.round(idle * .25)}s. Last action: ${last}`); out.dom = ((document.querySelector("#choices") || {}).outerHTML || "(no #choices)").replace(/\s+/g, " ").slice(0, 500); out.modal = !!document.querySelector(".modal"); break; } await sleep(250); continue; }
         idle = 0; last = (why + ": " + (el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 60)); if (out.trail.length < 400) out.trail.push(`${loc}: ${last}`); el.click(); out.steps++; await sleep(why === "modal" ? 220 : 140);
       }
       return { ...out, scenes: [...out.scenes] };

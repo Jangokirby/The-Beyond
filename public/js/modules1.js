@@ -33,7 +33,7 @@
       c_church: { t: "The church was left alone", s: "The parish", x: "The church is untouched. Whatever did this feared it, or was not permitted to enter." },
       c_desc: { t: "Grey skin, long teeth, human in shape", s: "The villagers", x: "Grey skin, unnaturally long teeth, human in shape: seen only in the dark and the chaos." },
       c_book: { t: "The pastor's father's book", s: "Pastor Kennith", x: "He read from it all night and the creatures did not come in. It is called Liber Expugnationis." },
-      c_horn: { t: "A horn from the east", s: "The church", x: "Lord Dunberth's barony is under attack, due east. The horn is still sounding." },
+      c_horn: { t: "A horn from the east", s: "The church", x: "Lord Danberth's barony is under attack, due east. The horn is still sounding." },
       c_gold: { t: "A man in a golden mask", s: "The ruins", x: "He called them. He says the dark is for his children, and that he can offer brotherhood, immortality and an end to suffering." }
     },
     npcs: {
@@ -129,7 +129,7 @@
               { ask: "What did they look like?", lines: ["Wicked things. Grey skin, unnaturally long teeth, but human in nature. It was dark and hard to see, with all the chaos."], then: [{ clue: "c_desc" }] },
               { ask: "How did you stay safe?", free: true, lines: ["By God's grace, of course! I read passages from my father's old book all night. If you plan to go after those devils, take it with you!"], then: [{ clue: "c_book" }, { set: "book_known" }] },
               { ask: "Did any of the dead look odd to you?", cha: 7, lines: ["They were not bitten and they were not bled. They were opened and emptied. The Lord forgive me, I thought: these things are thirsty."] },
-              { ask: "Where are they now?", free: true, lines: [{ say: "As you speak, the sound of a horn carries from the east." }, "That is the horn of Lord Dunberth's estate! There is a barony due east. Go, my children, with God's speed, and save those people from our fate before it is too late!"], then: [{ clue: "c_horn" }, { set: "horn" }] }],
+              { ask: "Where are they now?", free: true, lines: [{ say: "As you speak, the sound of a horn carries from the east." }, "That is the horn of Lord Danberth's estate! There is a barony due east. Go, my children, with God's speed, and save those people from our fate before it is too late!"], then: [{ clue: "c_horn" }, { set: "horn" }] }],
             bye: ["God be with you."] } }] },
           { label: "Take the book and try to read it", if: "book_known", once: true, steps: [
             { say: "The cover reads Liber Expugnationis. If anyone knows Latin, it is the Book of Vanquishing." },
