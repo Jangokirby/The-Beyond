@@ -29,7 +29,7 @@
   /* ---------------------------------------------------------------- the map */
   const gotos = (o, out = new Set()) => { if (Array.isArray(o)) o.forEach((x) => gotos(x, out)); else if (o && typeof o === "object") { if (typeof o.goto === "string") out.add(o.goto); for (const v of Object.values(o)) if (v && typeof v === "object") gotos(v, out); } return out; };
   FW.map = async () => {
-    const src = (window.MODULE || {}).src; if (!src || !src.scenes) return U.toast("There is no map for this place.");
+    const src = (window.MODULE || {}).src; if (!src || !src.scenes) { U.toast("There is no map for this place."); G.showIdle(); return; }
     const ids = Object.keys(src.scenes), seen = (G.state._seen = G.state._seen || {}); seen[here()] = 1;
     const edges = ids.map((id) => [id, [...gotos(src.scenes[id].options || [])].filter((t) => src.scenes[t])]);
     const depth = { [src.start]: 0 }, q = [src.start];
@@ -44,6 +44,7 @@
     }
     const r = await U.modal({ title: "The case so far", body: el("div", {}, el("p", { class: "small muted" }, "Places you have been, and the ones you know how to reach. Going somewhere takes time."), box), buttons: [{ id: "no", label: "Close" }] });
     if (typeof r === "string" && r.startsWith("go:") && r.slice(3) !== here()) { const to = r.slice(3); G.run(async () => { G.state._press = (G.state._press || 0) + 1; await G.goto(to); }); }
+    else G.showIdle();   // closed the map without going anywhere: back to the scene's buttons
   };
   const mark = G.paintLight; G.paintLight = function () { try { (G.state._seen = G.state._seen || {})[here()] = 1; } catch (e) {} return mark.apply(this, arguments); };
 
@@ -81,7 +82,10 @@
     if (RPGX.on("moments")) o.push({ id: "moment", label: "Take a moment, in character", hint: "Steady yourself, speak, or say it your own way" });
     o.push({ id: "stock", label: "Take stock", hint: "What you have, and what is open" }, { id: "x", label: "Never mind" });
     const c = await U.choose("Field work", o);
-    ({ item: FW.useItem, skill: FW.skill, ask: FW.ask, scav: FW.scavenge, map: FW.map, stock: FW.stock, moment: FW.moment }[c] || (() => {}))();
+    if (c === "x") { G.showIdle(); return; }   // "Never mind" must give the scene's buttons back
+    const h = { item: FW.useItem, skill: FW.skill, ask: FW.ask, scav: FW.scavenge, map: FW.map, stock: FW.stock, moment: FW.moment }[c];
+    if (!h) { G.showIdle(); return; }
+    try { await h(); } finally { if (!G.busy && G.state && G.state.phase === "explore") G.showIdle(); }   // any action that ends early ("Already done here", nothing to use...) must give the scene's buttons back
   };
 
   /* ---------------------------------------------------------------- loud ways have a price */

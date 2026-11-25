@@ -128,7 +128,7 @@
       } else if (st.combat) {
         const out = await window.COMBAT.start(st.combat, { surprise: !!st.surprise || !!(st.surpriseIf && g.flag(st.surpriseIf)), canFlee: true });
         if (out === "wiped") { await window.CAMP.endAdventure("wiped"); return true; }
-        if (out === "fled") { await g.narrate("You get out alive. Whatever it was stays where it was, and you can try again, or try something else."); await g.goto(window.GAME.state.loc); return true; }
+        if (out === "fled") { window.GAME.state.phase = "explore"; await g.narrate("You get out alive. Whatever it was stays where it was, and you can try again, or try something else."); await g.goto(window.GAME.state.loc); return true; }
         if (await ADV.exec(st.win, g, M)) return true;
       } else if (st.goto) { await g.goto(st.goto); return true; }
       else if (st.if) {

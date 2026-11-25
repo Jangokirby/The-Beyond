@@ -1681,10 +1681,10 @@
     U.$("#board").hidden = true;
     U.$("#scene").classList.remove("combat");
     delete document.body.dataset.mode;
-    G.state.phase = c.outcome === "victory" ? "explore" : G.state.phase;
+    G.state.phase = (c.outcome === "victory" || c.outcome === "fled") ? "explore" : G.state.phase;   // fleeing must also return to exploring, or the scene is left with no buttons
     const out = c.outcome;
     c.resolve(out);
-    if (out === "victory") { G.renderLocation(); }
+    if (out === "victory" || out === "fled") { G.renderLocation(); }
   }
 
   window.COMBAT = C;

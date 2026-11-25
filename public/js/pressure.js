@@ -30,7 +30,7 @@
       if (window.RPGX.on("clock")) {
         G.state._press = P.val() + 1;
         const now = P.stage();
-        if (now > before) { G.busy = true; document.body.classList.add("busy"); try { await G.api.narrate(`<b>${P.name()}.</b> ${WORDS[now]}`); } finally { G.busy = false; document.body.classList.remove("busy"); } }
+        if (now > before) { G.busy = true; document.body.classList.add("busy"); try { await G.api.narrate(`<b>${P.name()}.</b> ${WORDS[now]}`); } finally { G.busy = false; document.body.classList.remove("busy"); G.showIdle(); } }   // the message clears the buttons: put the scene's options back
       }
       if (window.RPGX.on("fuel") && ["shadow", "dark", "pitch"].includes(G.lightOf())) {
         const L = lightItem();
