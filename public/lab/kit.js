@@ -115,8 +115,23 @@ export async function loadPieces(read) {
   let n = 0; for (const f of idx) { try { const spec = await get("./pieces/" + f); for (const s of Array.isArray(spec) ? spec : [spec]) { registerPiece(s); n++; } } catch (e) { console.warn("piece", f, e.message); } }
   return n;
 }
+/* terrain: a height map and a map picture made by Overlord's Forge (public/lab/terrain/<id>/). Optional;
+   a layout with  terrain: { heightmap, map, relief }  gets rolling ground instead of a flat floor. */
+const TERRAIN = {};
+function loadHeights(file) {
+  return new Promise((res) => { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = im.width; c.height = im.height; const g = c.getContext("2d"); g.drawImage(im, 0, 0); const d = g.getImageData(0, 0, im.width, im.height).data; const h = new Float32Array(im.width * im.height); for (let i = 0; i < h.length; i++) h[i] = d[i * 4] / 255; res({ h, cols: im.width, rows: im.height }); }; im.onerror = () => { console.warn("terrain failed", file); res(null); }; im.src = new URL("./" + file, import.meta.url).href; });
+}
+/* the ground's height (m) at x, z on a layout, for standing props on hills */
+export function groundAt(L, x, z) {
+  const t = L.terrain && TERRAIN[L.terrain.heightmap]; if (!t) return 0;
+  const u = Math.min(1, Math.max(0, x / L.w)) * (t.cols - 1), v = Math.min(1, Math.max(0, z / L.h)) * (t.rows - 1);
+  const i = Math.floor(u), j = Math.floor(v), fu = u - i, fv = v - j, at = (a, b) => t.h[Math.min(t.rows - 1, b) * t.cols + Math.min(t.cols - 1, a)];
+  return ((at(i, j) * (1 - fu) + at(i + 1, j) * fu) * (1 - fv) + (at(i, j + 1) * (1 - fu) + at(i + 1, j + 1) * fu) * fv) * (L.terrain.relief ?? 1.5);
+}
 /* models used by a layout must be loaded before it is built */
 export async function prepare(L) {
+  if (L.terrain && L.terrain.heightmap && !TERRAIN[L.terrain.heightmap]) { const t = await loadHeights(L.terrain.heightmap); if (t) TERRAIN[L.terrain.heightmap] = t; }
+  if (L.terrain && L.terrain.map && !TERRAIN[L.terrain.map]) { try { const tx = await new THREE.TextureLoader().loadAsync(new URL("./" + L.terrain.map, import.meta.url).href); tx.colorSpace = THREE.SRGBColorSpace; TERRAIN[L.terrain.map] = tx; } catch (e) { console.warn("terrain picture failed", L.terrain.map); } }
   const need = new Set(); for (const p of L.props || []) { const d = CATALOG[p.t]; if (d && d.spec && d.spec.model && !MODELS[d.spec.model.file]) need.add(d.spec.model.file); }
   await Promise.all([...need].map((f) => new Promise((res) => new GLTFLoader().load(new URL("./" + f, import.meta.url).href, (g) => { MODELS[f] = g.scene; res(); }, undefined, () => { console.warn("model failed", f); res(); }))));
 }
@@ -133,7 +148,14 @@ export function build(L, opt = {}) {
   const m = { floor: M(0xffffff, { map: floorMap, roughness: .9 }), wall: M(0xffffff, { map: wallMap }), trim: M(0x5a4636), iron: M(0x59606b, { roughness: .55, metalness: .35 }), sheet: M(0xe9e4d6), blanket: M(0x6b7b5e), wood: M(0x9a6f46), dark: M(0x6a4c34), glass: M(0xffe9b0, { emissive: 0xffd48a, emissiveIntensity: 1.6 }), win: M(0x9bb4cf, { emissive: 0x6f8fb8, emissiveIntensity: .9 }), brass: M(0xb18b3a, { metalness: .7, roughness: .4 }), crate: M(0xa98250), canvas: M(0xb8ad8c), brick: M(0x7a4332), stone: M(0x8a8780), fire: M(0xff9a40, { emissive: 0xff7a20, emissiveIntensity: 2 }), rug: M(0x7a2f2f), rug2: M(0xb59a5a), metalBlue: M(0x4a6a86), red: M(0xb0302a), neon: M(0x66f0ff, { emissive: 0x33d8ff, emissiveIntensity: 2.2 }), neonp: M(0xff66cc, { emissive: 0xff2fa8, emissiveIntensity: 2.2 }), neong: M(0x7dff9a, { emissive: 0x2fe070, emissiveIntensity: 2 }), screen: M(0x9fe8ff, { emissive: 0x4ab8e0, emissiveIntensity: 1.4 }), holo: M(0x7fd8ff, { emissive: 0x3aa8e8, emissiveIntensity: 1.8, transparent: true, opacity: .65 }), torch: M(0xffb050, { emissive: 0xff8a20, emissiveIntensity: 2.4 }), steel: M(0x8a929a, { metalness: .6, roughness: .4 }), white: M(0xe8e8e4), black: M(0x1c1d20), gold: M(0xc9a23a, { metalness: .7, roughness: .35 }), rust: M(0x8a4a2a), leather: M(0x5a3a28), cloth: M(0x9a3a3a), cloth2: M(0x2f4f7a), straw: M(0xc8aa5a), thatch: M(0x9a8040), ice: M(0xbfe0ef, { transparent: true, opacity: .8 }), water: M(0x3a6f86, { transparent: true, opacity: .85 }), bone: M(0xd8d2bc), leaf: M(0x3e7a3a), yellow: M(0xd8b030), greenm: M(0x4a6a4a) };
   const add = (o, cast = true) => { o.castShadow = cast; o.receiveShadow = true; S.add(o); return o; };
   const box = (w, h, d, mat, x, y, z, cast = true) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat); o.position.set(x, y, z); return add(o, cast); };
+  const ter = L.terrain && TERRAIN[L.terrain.heightmap];
   box(Wm + (out ? 20 : 2), .1, Hm + (out ? 20 : 2), m.floor, Wm / 2, -.05, Hm / 2, false);
+  if (ter) {   /* rolling ground over the floor, coloured by its own map picture */
+    const geo = new THREE.PlaneGeometry(Wm, Hm, ter.cols - 1, ter.rows - 1); geo.rotateX(-Math.PI / 2); geo.translate(Wm / 2, 0, Hm / 2);
+    const pos = geo.attributes.position; for (let i = 0; i < pos.count; i++) pos.setY(i, ter.h[i] * (L.terrain.relief ?? 1.5) + .01); geo.computeVertexNormals();
+    const map = (L.terrain.map && TERRAIN[L.terrain.map]) || null;
+    const o = new THREE.Mesh(geo, M(map ? 0xffffff : 0x55704a, map ? { map, roughness: .95 } : { roughness: .95 })); add(o, false);
+  }
   if (out) S.background = new THREE.Color({ day: 0x6f8f6a, dim: 0x3a4a44, night: 0x0a0e14 }[mood] || 0x3a4a44);
   /* walls: default is the room's outline */
   const walls = (L.walls && L.walls.length) ? L.walls : [{ a: [0, 0], b: [Wm, 0] }, { a: [Wm, 0], b: [Wm, Hm] }, { a: [0, Hm], b: [Wm, Hm] }, { a: [0, 0], b: [0, Hm] }];
@@ -161,7 +183,7 @@ export function build(L, opt = {}) {
     cyl: (g, r, h, mat, x, y, z) => { const o = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 16), mat); o.position.set(x, y, z || 0); o.castShadow = o.receiveShadow = true; g.add(o); return o; } };
   for (const p of L.props || []) {
     const def = CATALOG[p.t]; if (!def) continue;
-    const g = def.make(k); g.position.set(p.x, 0, p.z); g.rotation.y = -(p.rot || 0) * Math.PI / 180; S.add(g);
+    const g = def.make(k); g.position.set(p.x, ter ? groundAt(L, p.x, p.z) : 0, p.z); g.rotation.y = -(p.rot || 0) * Math.PI / 180; S.add(g);
     const sw = (p.rot || 0) % 180 ? def.size[1] : def.size[0], sd = (p.rot || 0) % 180 ? def.size[0] : def.size[1];
     if (def.block) foot.push({ x: p.x - sw / 2, z: p.z - sd / 2, w: sw, h: sd, t: p.t });
     if (def.light) { const l = new THREE.PointLight(def.light.c, def.light.i * (mood === "night" ? 1.3 : 1), def.light.r, 1.5); l.position.set(p.x, def.light.y, p.z + (def.light.dz || 0)); l.castShadow = true; l.shadow.mapSize.set(512, 512); l.shadow.bias = -.002; S.add(l); lights.push({ x: p.x, z: p.z, r: def.light.r, c: def.light.c }); }

@@ -18,6 +18,7 @@
  <h4>Room</h4>
  <div class="row">Size <input id="W" type="number" value="20" min="4" max="60"> × <input id="H" type="number" value="12" min="4" max="60"> m <button id="new">New</button></div>
  <div class="row">Floor <select id="floor"><option>wood</option><option>stone</option><option>tile</option><option>dirt</option><option>grass</option><option>snow</option><option>cobble</option><option>sand</option><option>asphalt</option><option>carpet</option><option>marble</option><option>metal</option><option>flag</option><option>water</option><option>gravel</option></select> Walls <select id="wall"><option>plaster</option><option>brick</option><option>wood</option><option>concrete</option><option>stone</option><option>metal</option><option>adobe</option><option>tin</option><option>whitewash</option></select> Light <select id="mood"><option>day</option><option selected>dim</option><option>night</option></select> <label><input type="checkbox" id="out"> Outdoors</label></div>
+ <div class="row">Terrain <select id="terrain"><option value="">flat floor</option></select> Relief <input id="relief" type="number" step="0.5" min="0" max="10" value="1.5" style="width:56px" title="how tall the hills look on the map, in metres"></div>
  <h4>Fill with a preset</h4><div class="row"><select id="preset2" style="max-width:100%"></select><button id="fill">Fill</button></div>
  <h4>Pieces <input id="q" placeholder="filter: medical, tavern…" style="width:140px"></h4><div id="cat"></div></aside>
 <main style="position:relative"><canvas id="c"></canvas></main>
@@ -78,8 +79,10 @@ cv.onmousedown = (e) => { const [x, z] = toW(e), sx = snap(x), sz = snap(z);
   if (tool === "npc") { const n = { x: sx, z: sz, label: "Someone", portrait: "../assets/painted/a/wars-f-05.jpg" }; L.npcs = [n]; sel = n; panel(); return; }
   if (tool === "start") { L.start = [sx, sz]; } };
 cv.onmousemove = (e) => { if (!drag || !sel) return; const [x, z] = toW(e); sel.x = snap(x + drag.dx); sel.z = snap(z + drag.dz); }; addEventListener("mouseup", () => { drag = null; });
-function sync() { L.style = { ...L.style, floor: $("#floor").value, wall: $("#wall").value, mood: $("#mood").value, outdoor: $("#out").checked }; } for (const id of ["floor", "wall", "mood", "out"]) $("#" + id).onchange = sync;
-const show = () => { $("#floor").value = L.style.floor; $("#wall").value = L.style.wall; $("#mood").value = L.style.mood; $("#out").checked = !!L.style.outdoor; };
+function sync() { L.style = { ...L.style, floor: $("#floor").value, wall: $("#wall").value, mood: $("#mood").value, outdoor: $("#out").checked }; const t = TERRAINS.find((x) => x.id === $("#terrain").value); if (t) L.terrain = { id: t.id, heightmap: t.heightmap, map: t.map, relief: +$("#relief").value || 0 }; else delete L.terrain; } for (const id of ["floor", "wall", "mood", "out", "terrain", "relief"]) $("#" + id).onchange = sync;
+/* terrains made in Overlord's Forge (Terrain maker → Send to Map Builder) are listed in terrain/index.json */
+let TERRAINS = []; try { TERRAINS = await (await fetch("./terrain/index.json")).json(); } catch (e) {} for (const t of TERRAINS) $("#terrain").add(new Option(t.name, t.id));
+const show = () => { $("#floor").value = L.style.floor; $("#wall").value = L.style.wall; $("#mood").value = L.style.mood; $("#out").checked = !!L.style.outdoor; $("#terrain").value = (L.terrain && L.terrain.id) || ""; if (L.terrain) $("#relief").value = L.terrain.relief ?? 1.5; };
 $("#new").onclick = () => { L = blank(+$("#W").value, +$("#H").value); sync(); sel = null; fit(); panel(); };
 $("#fill").onclick = () => { sync(); furnish(L, $("#preset2").value, Date.now() % 997); show(); sel = null; panel(); };
 let seed = 1; const gen = async (reseed) => { const k = $("#preset").value, P = PRESETS[k]; if (reseed) seed = 1 + Math.floor(Math.random() * 990); const [w, h] = SIZE[k] || [14, 10]; $("#W").value = w; $("#H").value = h; L = blank(w, h, P.name); furnish(L, k, seed); show(); sel = null; fit(); panel(); $("#genst").textContent = "Rendering…"; await $("#render").onclick(); $("#genst").textContent = "Done. Shuffle for another, or edit it."; };

@@ -1,0 +1,74 @@
+[
+ {
+  "id": "rolling_hills",
+  "name": "Rolling hills",
+  "landform": "hills",
+  "palette": "temperate",
+  "tiles": [
+   16,
+   16
+  ],
+  "heightmap": "terrain/rolling_hills/height.png",
+  "map": "terrain/rolling_hills/map.png"
+ },
+ {
+  "id": "lake_shore",
+  "name": "Lake shore",
+  "landform": "hills",
+  "palette": "temperate",
+  "tiles": [
+   16,
+   16
+  ],
+  "heightmap": "terrain/lake_shore/height.png",
+  "map": "terrain/lake_shore/map.png"
+ },
+ {
+  "id": "desert_dunes",
+  "name": "Desert dunes",
+  "landform": "dunes",
+  "palette": "desert",
+  "tiles": [
+   16,
+   16
+  ],
+  "heightmap": "terrain/desert_dunes/height.png",
+  "map": "terrain/desert_dunes/map.png"
+ },
+ {
+  "id": "frozen_waste",
+  "name": "Frozen waste",
+  "landform": "hills",
+  "palette": "snow",
+  "tiles": [
+   16,
+   16
+  ],
+  "heightmap": "terrain/frozen_waste/height.png",
+  "map": "terrain/frozen_waste/map.png"
+ },
+ {
+  "id": "alien_world",
+  "name": "Alien world",
+  "landform": "mountains",
+  "palette": "alien",
+  "tiles": [
+   16,
+   16
+  ],
+  "heightmap": "terrain/alien_world/height.png",
+  "map": "terrain/alien_world/map.png"
+ },
+ {
+  "id": "blasted_wasteland",
+  "name": "Blasted wasteland",
+  "landform": "flat",
+  "palette": "wasteland",
+  "tiles": [
+   16,
+   16
+  ],
+  "heightmap": "terrain/blasted_wasteland/height.png",
+  "map": "terrain/blasted_wasteland/map.png"
+ }
+]
