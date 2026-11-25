@@ -9,6 +9,8 @@
   const MM = (window.MAPMODE = {}), cache = {};
   const load = (url) => cache[url] ? Promise.resolve(cache[url]) : fetch(url).then((r) => r.json()).then((j) => (cache[url] = j));
   MM.cur = () => { const l = G.loc && G.loc(); return l && l.map && cache[l.map.pack] ? { loc: l, map: l.map, pk: cache[l.map.pack] } : null; };
+  /* a character is about one grid square (1.1 m) wide, whatever the room: the same size next to a bed or a house in every map (never smaller than readable, never huge) */
+  MM.tokenPct = (pk) => Math.max(3.2, Math.min(8.5, 1.1 * pk.view.k / pk.view.W * 100));
   MM.project = (pk, x, z) => [pk.view.W / 2 + (x - pk.view.cx) * pk.view.k, pk.view.H / 2 + (z - pk.view.cz) * pk.view.sin * pk.view.k];
   MM.unproject = (pk, px, py) => [(px - pk.view.W / 2) / pk.view.k + pk.view.cx, (py - pk.view.H / 2) / (pk.view.sin * pk.view.k) + pk.view.cz];
   const spotFor = (map, label) => { const s = map.spots || {}; if (s[label]) return s[label]; const k = Object.keys(s).find((x) => label.toLowerCase().startsWith(x.toLowerCase()) || x.toLowerCase().startsWith(label.toLowerCase().slice(0, 18))); return k ? s[k] : null; };
@@ -28,7 +30,7 @@
       h.mapPos = p;
       const b = document.querySelector(`#hotspots .hot[data-id="${h.id}"]`); if (!b) continue;
       const [px, py] = MM.project(pk, p[0], p[1]);
-      Object.assign(b.style, { left: `${(px / pk.view.W) * 100 - 3}%`, top: `${(py / pk.view.H) * 100 - 5}%`, width: "6%", height: "8%" });
+      const w = MM.tokenPct(pk) * 1.15, hh = w * pk.view.W / pk.view.H; Object.assign(b.style, { left: `${(px / pk.view.W) * 100 - w / 2}%`, top: `${(py / pk.view.H) * 100 - hh / 2}%`, width: `${w}%`, height: `${hh}%` });
     }
   };
   const rl0 = G.renderLocation;

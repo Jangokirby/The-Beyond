@@ -534,5 +534,7 @@ body[data-mode="combat"] #story { min-height: 3.5rem; }
 .zones.onmap.pinned { display: block; position: relative; overflow: visible; }
 .zones.onmap.pinned .edges { display: block; }
 .zones.onmap.pinned .edges line { stroke: rgba(239,234,219,.55); stroke-width: 2; }
-.zones.onmap.pinned .zone { position: absolute; transform: translate(-50%, -50%); width: min(25%, 230px); min-height: 0; border: 1px solid rgba(239,234,219,.55); border-radius: 8px; background: rgba(8,12,18,.55); }
+.zones.onmap.pinned .zone { position: absolute; transform: translate(-50%, -50%); min-width: 118px; box-sizing: border-box; border: 1.5px solid rgba(239,234,219,.6); border-radius: 46% / 50%; background: rgba(8,12,18,.34); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: .25rem .4rem; }   /* a zone is a stretch of real ground, drawn at the map's scale */
+.zones.onmap.pinned .zone .zname { margin: 0 auto; }
+.zones.onmap.pinned .zone .ztags { justify-content: center; }
 .zones.onmap.pinned .zone .tokens { flex-wrap: wrap; justify-content: center; }

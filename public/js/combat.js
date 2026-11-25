@@ -286,7 +286,7 @@
     const mm = window.MAPMODE && MAPMODE.cur && (!window.RPGX || RPGX.on("zonemap")) ? MAPMODE.cur() : null;
     /* zones pinned to places on the map: when every zone has a spot (zone.at in the encounter, or the case's zones.json), each card stands where its place is */
     let pins = null;
-    if (mm) { const enc = ((window.MAPZONES || {})[(window.MODULE || {}).id] || {})[c.id]; const out = {}; let all = true; for (const z of Object.values(c.zones)) { const at = z.at || (enc && enc[z.id]); if (!at || !window.MAPMODE || !MAPMODE.project) { all = false; break; } const [px, py] = MAPMODE.project(mm.pk, at[0], at[1]); out[z.id] = [Math.max(15, Math.min(85, px / mm.pk.view.W * 100)), Math.max(24, Math.min(76, py / mm.pk.view.H * 100))]; } if (all) pins = out; }
+    if (mm) { const enc = ((window.MAPZONES || {})[(window.MODULE || {}).id] || {})[c.id]; const out = {}; let all = true; for (const z of Object.values(c.zones)) { const at = z.at || (enc && enc[z.id]); if (!at || !window.MAPMODE || !MAPMODE.project) { all = false; break; } const [px, py] = MAPMODE.project(mm.pk, at[0], at[1]), r = at[2] || 3, V = mm.pk.view; out[z.id] = [px / V.W * 100, py / V.H * 100, Math.max(11, 2 * r * V.k / V.W * 100), Math.max(15, 2 * r * V.sin * V.k / V.H * 100)]; }   /* the region is r metres round its centre, at the map's own scale */ if (all) pins = out; }
     const grid = el("div", { class: "zones" + (mm ? " onmap" : "") + (pins ? " pinned" : ""), style: { ...(pins ? {} : { gridTemplateColumns: `repeat(${c.cols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${c.rows}, 1fr)` }), ...(mm ? { backgroundImage: `url(${mm.pk.image})`, "--ar": String(mm.pk.view.W / mm.pk.view.H), aspectRatio: String(mm.pk.view.W / mm.pk.view.H) } : {}) } });
     const svgNS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(svgNS, "svg");
@@ -305,7 +305,7 @@
       const ctl = controlOf(z.id);
       const picking = c.pick && c.pick.type === "zone" && c.pick.set.includes(z.id);
       const card = el("div", { class: "zone" + (glowIn(z.id) ? " glow" : "") + (ctl ? " ctl-" + ctl : "") + (picking ? " pick" : ""),
-        style: pins ? { left: pins[z.id][0] + "%", top: pins[z.id][1] + "%" } : { gridColumn: z.col + 1, gridRow: z.row + 1 }, "data-z": z.id },
+        style: pins ? { left: pins[z.id][0] + "%", top: pins[z.id][1] + "%", width: pins[z.id][2] + "%", minHeight: pins[z.id][3] + "%" } : { gridColumn: z.col + 1, gridRow: z.row + 1 }, "data-z": z.id },
         el("div", { class: "zname" }, z.name, z.knife && !c.knifeTaken ? el("span", { class: "zicon", title: "The bleeding knife" }, "🗡") : null),
         el("div", { class: "ztags" }, el("span", { class: "light" }, glowIn(z.id) ? "Glow" : "Shadow"), ctl ? el("span", { class: "ctl" }, ctl === "enemy" ? "enemy-held" : "held") : null,
           replicaIn(z.id) ? el("span", { class: "aura" }, "aura −2") : null));

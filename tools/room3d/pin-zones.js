@@ -39,9 +39,11 @@ for (const cid of ids) {
       pos[z.id] = p;
     }
     /* spread: push apart zones that are too close, keep them inside the room */
-    const D = Math.max(2.6, Math.max(L.w, L.h) * 0.2), keys = Object.keys(pos);
-    for (let it = 0; it < 60; it++) { let moved = false; for (let i = 0; i < keys.length; i++) for (let j = i + 1; j < keys.length; j++) { const A = pos[keys[i]], B = pos[keys[j]], dx = B[0] - A[0], dz = B[1] - A[1], d = Math.hypot(dx, dz) || 0.01; if (d < D) { const push = (D - d) / 2, ux = d < .02 ? 1 : dx / d, uz = d < .02 ? 0 : dz / d; A[0] -= ux * push; A[1] -= uz * push; B[0] += ux * push; B[1] += uz * push; moved = true; } } for (const k of keys) { pos[k][0] = Math.max(1.2, Math.min(L.w - 1.2, pos[k][0])); pos[k][1] = Math.max(1.2, Math.min(L.h - 1.2, pos[k][1])); } if (!moved) break; }
-    out[eid] = Object.fromEntries(keys.map((k) => [k, [Math.round(pos[k][0] * 100) / 100, Math.round(pos[k][1] * 100) / 100]]));
+    const D = 5.4, keys = Object.keys(pos);   // a zone is the ground a person can cross in one quick move: about 6 m across, so neighbours sit about 5 m apart
+    for (let it = 0; it < 60; it++) { let moved = false; for (let i = 0; i < keys.length; i++) for (let j = i + 1; j < keys.length; j++) { const A = pos[keys[i]], B = pos[keys[j]], dx = B[0] - A[0], dz = B[1] - A[1], d = Math.hypot(dx, dz) || 0.01; if (d < D) { const push = (D - d) / 2, ux = d < .02 ? 1 : dx / d, uz = d < .02 ? 0 : dz / d; A[0] -= ux * push; A[1] -= uz * push; B[0] += ux * push; B[1] += uz * push; moved = true; } } for (const k of keys) { pos[k][0] = Math.max(2.6, Math.min(L.w - 2.6, pos[k][0])); pos[k][1] = Math.max(2.2, Math.min(L.h - 2.2, pos[k][1])); } if (!moved) break; }
+    /* each zone's radius: about 3 m (6 m across), smaller if its nearest neighbour is closer, so regions meet instead of piling up */
+    const rad = (k) => { let m = 1e9; for (const o of keys) if (o !== k) m = Math.min(m, Math.hypot(pos[k][0] - pos[o][0], pos[k][1] - pos[o][1])); return Math.round(Math.max(1.7, Math.min(3.2, m * 0.54)) * 100) / 100; };
+    out[eid] = Object.fromEntries(keys.map((k) => [k, [Math.round(pos[k][0] * 100) / 100, Math.round(pos[k][1] * 100) / 100, rad(k)]]));
     console.log(`${cid}/${eid} (scene ${scene}): ${keys.length} zones placed`);
   }
   if (Object.keys(out).length) fs.writeFileSync(path.join(maps, cid, "zones.json"), JSON.stringify(out)); else console.log(`${cid}: no encounter in a mapped scene`);
