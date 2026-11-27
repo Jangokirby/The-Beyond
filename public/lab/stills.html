@@ -1,0 +1,25 @@
+<!doctype html><meta charset="utf-8"><title>Stills</title><body style="margin:0;background:#000"><script type="module">
+import * as K from "./kit.js";
+/* Renders a room from the middle, looking north, east, south and west, at eye height. For each view: a colour picture, a depth picture
+   (white = near, black = far, the kind image-to-image tools take as a guide) and where the room's marks fall on the picture (percent).
+   window.STILLS(layout, spots, W, H) */
+const THREE = K.THREE;
+window.STILLS = async (layout, spots = {}, W = 1920, H = 1200) => {
+  await K.loadPieces(); await K.prepare(layout);
+  const { scene } = K.build(layout, { firstPerson: true }), canvas = document.createElement("canvas"); canvas.width = W; canvas.height = H;
+  const R = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true }); R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap; R.toneMapping = THREE.ACESFilmicToneMapping; R.toneMappingExposure = 1.25; R.setPixelRatio(1); R.setSize(W, H, false);
+  const far = Math.max(layout.w, layout.h) * 1.15, cam = new THREE.PerspectiveCamera(72, W / H, .3, far + 5), eye = [layout.w / 2, 1.55, layout.h / 2]; cam.position.set(...eye);
+  const depthMat = new THREE.ShaderMaterial({ uniforms: { uN: { value: .5 }, uF: { value: far } }, vertexShader: "varying float vD; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); vD = -mv.z; gl_Position = projectionMatrix * mv; }", fragmentShader: "uniform float uN; uniform float uF; varying float vD; void main(){ float d = clamp((vD - uN) / (uF - uN), 0.0, 1.0); gl_FragColor = vec4(vec3(1.0 - d), 1.0); }" });
+  const where = (label, q) => { let best = null, bd = 1e9; for (const d of layout.doors || []) { const dd = Math.hypot(d.x - q[0], d.z - q[1]); if (dd < bd) { bd = dd; best = [d.x, 1.15, d.z]; } } if (best && bd < 1.7) return best; best = null; bd = 1e9; for (const p of layout.props || []) { const dd = Math.hypot(p.x - q[0], p.z - q[1]); const def = K.CATALOG[p.t]; if (def && def.block && dd < bd) { bd = dd; best = [p.x, .95, p.z]; } } if (best && bd < 2.4 && !/^talk/i.test(label)) return best; return [q[0], /^talk/i.test(label) ? 1.2 : 1.0, q[1]]; };
+  const out = [], v = new THREE.Vector3(), names = ["north", "east", "south", "west"];
+  for (let f = 0; f < 4; f++) {
+    cam.rotation.y = -f * Math.PI / 2; cam.updateMatrixWorld(true); scene.overrideMaterial = null; R.render(scene, cam); const color = canvas.toDataURL("image/png");
+    depthMat.uniforms.uF.value = Math.max(3.5, [layout.h / 2, layout.w / 2, layout.h / 2, layout.w / 2][f] * 1.35);   /* the far end of the range is this wall: the contrast is spent on the room, not on empty distance */
+    scene.overrideMaterial = depthMat; R.toneMapping = THREE.NoToneMapping; R.render(scene, cam); const depth = canvas.toDataURL("image/png"); scene.overrideMaterial = null; R.toneMapping = THREE.ACESFilmicToneMapping;
+    const marks = []; for (const [label, q] of Object.entries(spots)) { const w = where(label, q); v.set(...w).project(cam); if (v.z < 1 && Math.abs(v.x) < 1 && Math.abs(v.y) < 1) marks.push({ label, x: Math.round((v.x * .5 + .5) * 1000) / 10, y: Math.round((-v.y * .5 + .5) * 1000) / 10 }); }
+    out.push({ face: names[f], color, depth, marks });
+  }
+  return out;
+};
+window.READY = true;
+</script>
