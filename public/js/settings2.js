@@ -29,6 +29,9 @@
       const chk = (label, get, set, hint) => el("label", { class: "set check", title: hint || null }, el("input", { type: "checkbox", checked: get() ? "checked" : null, onchange: (e) => { set(e.target.checked); save(); apply(); } }), el("span", {}, label));
       const c = window.CAMP && CAMP.camp;
       return [
+        el("h4", { class: "set-head" }, "New: look around rooms from inside (a test)"),
+        el("p", { class: "small muted set-note" }, "Stand in the room, turn left and right to see each wall, click what you find, click a door to go on. Works in scenes that have maps: the training case and The Quiet Front. Applies from the next scene. Turn it off to go back to the picture."),
+        chk("Explore rooms in first person", () => window.RPGX.on("rooms"), (v) => window.RPGX.set("rooms", v)),
         el("h4", { class: "set-head" }, "Reading and comfort"),
         el("label", { class: "set" }, el("span", {}, "Text size"), el("select", { onchange: (e) => { S.text = e.target.value; save(); apply(); } },
           ...[["s", "Small"], ["m", "Normal"], ["l", "Large"], ["xl", "Extra large"]].map(([v, t]) => el("option", { value: v, selected: (S.text || "m") === v ? "selected" : null }, t)))),
@@ -37,7 +40,7 @@
         chk("Reduce motion (no shakes or flashes)", () => S.still, (v) => (S.still = v)),
         el("h4", { class: "set-head" }, "Roleplaying features (experimental)"),
         el("p", { class: "small muted set-note" }, "New ways to play. Turn any off to get the classic game back. Changes apply from the next scene."),
-        ...window.RPGX.list.map(([k, t]) => chk(t, () => window.RPGX.on(k), (v) => window.RPGX.set(k, v))),
+        ...window.RPGX.list.filter(([k]) => k !== "rooms").map(([k, t]) => chk(t, () => window.RPGX.on(k), (v) => window.RPGX.set(k, v))),
         el("h4", { class: "set-head" }, "Pictures"),
         window.PIXEL_EDITION ? el("div", {}, el("label", { class: "set" }, el("span", {}, "Palette"), el("select", { onchange: (e) => window.PIXEL_APPLY(e.target.value) },
           ...[["bw", "Black and white"], ["tint", "One colour per era (like an old monitor)"], ["colour", "Full colour"]].map(([v, t]) => el("option", { value: v, selected: window.PIXEL_PALETTE === v ? "selected" : null }, t)))),
