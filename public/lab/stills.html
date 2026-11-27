@@ -21,5 +21,30 @@ window.STILLS = async (layout, spots = {}, W = 1920, H = 1200) => {
   }
   return out;
 };
+
+/* What the 3D room actually puts on each wall, in plain words, most important first (for the repaint tool's prompt).
+   A prop belongs to the wall it stands against (within 1.3 m); a free-standing one goes to the wall it lies towards from the middle of the room. */
+const PLAIN = { bookshelf: ["a tall bookcase full of leather books", "tall bookcases full of leather books"], bed_iron: ["an iron bed", "iron beds"], bed_double: ["a double bed", "double beds"], cot: ["a camp cot", "camp cots"], desk: ["a heavy desk", "heavy desks"], table_long: ["a long table", "long tables"], table_round: ["a round table", "round tables"], counter: ["a counter", "counters"], filing_cabinet: ["a metal filing cabinet", "metal filing cabinets"], crate_stack: ["a stack of crates", "stacks of crates"], crate_med: ["a medical crate", "medical crates"], stove: ["an iron stove", "iron stoves"], fireplace: ["a fireplace", "fireplaces"], lamp_table: ["a lamp on a table", "lamps on tables"], lamp_floor: ["a standing lamp", "standing lamps"], pillar: ["a stone pillar", "stone pillars"], sink: ["a sink", "sinks"], gramophone: ["a gramophone", "gramophones"], wardrobe: ["a wardrobe", "wardrobes"], locker: ["a metal locker", "metal lockers"], stretcher: ["a stretcher", "stretchers"] };
+const NUM = ["", "a", "two", "three", "four", "five", "six", "seven", "eight"];
+const plain = (t, n) => { const d = K.CATALOG[t], p = PLAIN[t]; if (p) return n > 1 ? `${NUM[Math.min(n, 8)]} ${p[1].replace(/^(a|an) /, "")}` : p[0]; const nm = String((d && d.name) || t).replace(/[_/]+/g, " ").replace(/\s+/g, " ").trim().toLowerCase(); return n > 1 ? `${NUM[Math.min(n, 8)]} ${nm}${/s$/.test(nm) ? "" : "s"}` : (/^[aeiou]/.test(nm) ? "an " : "a ") + nm; };
+window.WALLS = async (layout) => {
+  await K.loadPieces(); const w = layout.w, h = layout.h, W = { north: [], east: [], south: [], west: [] };
+  const wallOf = (x, z, near) => { const d = { north: z, south: h - z, west: x, east: w - x }, m = Object.entries(d).sort((a, b) => a[1] - b[1])[0]; if (m[1] < near) return m[0]; const dx = x - w / 2, dz = z - h / 2; return Math.abs(dz) >= Math.abs(dx) ? (dz < 0 ? "north" : "south") : (dx < 0 ? "west" : "east"); };
+  const edge = (o) => (o.axis === "h" ? (o.z < h / 2 ? "north" : "south") : (o.x < w / 2 ? "west" : "east"));
+  const fixed = { door: {}, window: {} }; for (const [kind, list] of [["door", layout.doors || []], ["window", layout.windows || []]]) for (const o of list) { const f = edge(o), k = kind === "door" && o.w >= 1.6 ? "wide" : "plain"; (fixed[kind][f] = fixed[kind][f] || { wide: 0, plain: 0 })[k]++; }
+  const groups = { north: {}, east: {}, south: {}, west: {} };
+  for (const p of layout.props || []) { const d = K.CATALOG[p.t]; if (!d || /rug|carpet/.test(p.t)) continue; const f = wallOf(p.x, p.z, 1.3), g = (groups[f][p.t] = groups[f][p.t] || { n: 0, area: (d.size[0] * d.size[1]) || .2, minor: /^(chair|stool|candle|barrel|crate)$/.test(p.t) }); g.n++; }
+  const out = {};
+  for (const f of Object.keys(W)) {
+    const items = [], dd = fixed.door[f], ww = fixed.window[f];
+    if (dd) { if (dd.plain) items.push(dd.plain > 1 ? `${NUM[dd.plain]} doors` : "a door"); if (dd.wide) items.push(dd.wide > 1 ? `${NUM[dd.wide]} wide double doors` : "a wide double door"); }
+    const objs = Object.entries(groups[f]).sort((a, b) => (a[1].minor - b[1].minor) || (b[1].area * b[1].n - a[1].area * a[1].n)).map(([t, g]) => plain(t, g.n));
+    items.push(...objs); if (ww) items.push(ww.plain + ww.wide > 1 ? `${NUM[ww.plain + ww.wide]} windows` : "a window");
+    out[f] = items.length ? items.join(", ") : "bare wall";
+  }
+  const light = [...new Set((layout.props || []).filter((p) => K.CATALOG[p.t] && K.CATALOG[p.t].light).map((p) => plain(p.t, 1)))];
+  const rug = (layout.props || []).some((p) => /rug|carpet/.test(p.t));
+  return { walls: out, lights: light, rug };
+};
 window.READY = true;
 </script>
