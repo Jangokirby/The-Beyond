@@ -31,7 +31,7 @@ const describe = (L, ww, ct) => {
     const pk = JSON.parse(fs.readFileSync(path.join(root, "public", idx.pack), "utf8")), spots = { ...(idx.spots || {}) };
     const views = await p.evaluate(([L, S]) => window.STILLS(L, S), [pk.layout, spots]), d = path.join(outDir, `${cid}-${sid}`); fs.mkdirSync(d, { recursive: true });
     for (const v of views) { fs.writeFileSync(path.join(d, `${v.face}-color.png`), Buffer.from(v.color.split(",")[1], "base64")); fs.writeFileSync(path.join(d, `${v.face}-depth.png`), Buffer.from(v.depth.split(",")[1], "base64")); }
-    fs.writeFileSync(path.join(d, "views.json"), JSON.stringify({ room: pk.layout.name, size_m: [pk.layout.w, pk.layout.h], eye_height_m: 1.55, fov_deg: 72, views: views.map((v) => ({ face: v.face, marks: v.marks })) }, null, 1)); const ww = await p.evaluate((L) => window.WALLS(L), pk.layout); fs.writeFileSync(path.join(d, "room.json"), JSON.stringify({ description: describe(pk.layout, ww, caseText(cid, sid)), walls: ww.walls }, null, 1));
+    fs.writeFileSync(path.join(d, "views.json"), JSON.stringify({ room: pk.layout.name, size_m: [pk.layout.w, pk.layout.h], eye_height_m: 1.55, fov_deg: 72, views: views.map((v) => ({ face: v.face, marks: v.marks })) }, null, 1)); const ww = await p.evaluate((L) => window.WALLS(L), pk.layout); fs.writeFileSync(path.join(d, "room.json"), JSON.stringify({ description: describe(pk.layout, ww, caseText(cid, sid)), walls: ww.walls, must_keep: ww.keep, must_not_add: Object.fromEntries(Object.entries(ww.forbid).map(([f, a]) => [f, a.length ? "no " + a.join(", no ") : ""])) }, null, 1));
     console.log(`${job}: 4 views -> ${d}`);
   }
   await b.close(); srv.kill();

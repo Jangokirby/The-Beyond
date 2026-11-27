@@ -42,9 +42,18 @@ window.WALLS = async (layout) => {
     items.push(...objs); if (ww) items.push(ww.plain + ww.wide > 1 ? `${NUM[ww.plain + ww.wide]} windows` : "a window");
     out[f] = items.length ? items.join(", ") : "bare wall";
   }
+  /* explicit instructions: what must stay where it is (seen from inside, facing the wall) and what must not be invented */
+  const along = (f, x, z) => { const t = f === "north" ? x / w : f === "south" ? 1 - x / w : f === "east" ? z / h : 1 - z / h; return t < .38 ? "on the left" : t > .62 ? "on the right" : "in the centre"; };
+  const keep = { north: [], east: [], south: [], west: [] }, forbid = { north: [], east: [], south: [], west: [] };
+  const wallFace = (o) => (o.axis === "h" ? (o.z < h / 2 ? "north" : "south") : (o.x < w / 2 ? "west" : "east"));
+  for (const [kind, list] of [["door", layout.doors || []], ["window", layout.windows || []]]) for (const o of list) { const f = wallFace(o); keep[f].push(`${o.w >= 1.6 && kind === "door" ? "a wide double door" : "a " + kind} ${along(f, o.x, o.z)} of the wall`); }
+  for (const f of Object.keys(keep)) { if (!(layout.doors || []).some((o) => wallFace(o) === f)) forbid[f].push("doors"); if (!(layout.windows || []).some((o) => wallFace(o) === f)) forbid[f].push("windows"); }
+  const seen = {}; for (const p of layout.props || []) { const d = K.CATALOG[p.t]; if (!d || /rug|carpet|chair|stool|candle|crate$|barrel/.test(p.t)) continue; const f = wallOf(p.x, p.z, 1.3), nearWall = Math.min(p.x, w - p.x, p.z, h - p.z) < 1.3; if (!nearWall) continue; const k = f + p.t; (seen[k] = seen[k] || { f, t: p.t, n: 0, x: 0, z: 0 }); seen[k].n++; seen[k].x += p.x; seen[k].z += p.z; }
+  for (const g of Object.values(seen)) if (keep[g.f].length < 6) keep[g.f].push(g.n > 1 ? `${plain(g.t, g.n)} along the wall` : `${plain(g.t, 1)} ${along(g.f, g.x, g.z)}`);
+  for (const f of Object.keys(forbid)) { const lit = (layout.props || []).some((p) => /fireplace|stove/.test(p.t) && wallOf(p.x, p.z, 1.3) === f); if (!lit) forbid[f].push("fireplaces"); }
   const light = [...new Set((layout.props || []).filter((p) => K.CATALOG[p.t] && K.CATALOG[p.t].light).map((p) => plain(p.t, 1)))];
   const rug = (layout.props || []).some((p) => /rug|carpet/.test(p.t));
-  return { walls: out, lights: light, rug };
+  return { walls: out, keep, forbid, lights: light, rug };
 };
 window.READY = true;
 </script>
