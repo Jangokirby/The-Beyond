@@ -169,7 +169,7 @@ export function build(L, opt = {}) {
   for (const w of walls) {
     const horiz = Math.abs(w.a[1] - w.b[1]) < .01, len = horiz ? Math.abs(w.b[0] - w.a[0]) : Math.abs(w.b[1] - w.a[1]), c0 = horiz ? Math.min(w.a[0], w.b[0]) : Math.min(w.a[1], w.b[1]), fix = horiz ? w.a[1] : w.a[0];
     const near = horiz && fix > Hm / 2 + .01;   // walls on the near side are cut down so the camera can see over them
-    const hh = (horiz && fix > .01) ? (near ? .5 : 1.2) : WH;
+    const hh = opt.firstPerson ? WH : (horiz && fix > .01) ? (near ? .5 : 1.2) : WH;   // first person: every wall is full height, you are inside the room
     const ops = [...(L.doors || []).map((d) => ({ ...d, door: true })), ...(L.windows || []).map((d) => ({ ...d }))].filter((o) => (horiz ? o.axis === "h" && Math.abs(o.z - fix) < .2 && o.x >= c0 - .01 && o.x <= c0 + len + .01 : o.axis === "v" && Math.abs(o.x - fix) < .2 && o.z >= c0 - .01 && o.z <= c0 + len + .01)).sort((p, q) => (horiz ? p.x - q.x : p.z - q.z));
     if (KIT && !near) { /* modular wall: pieces along this wall, door and window pieces in their openings */
       const rot = horiz ? (fix < Hm / 2 ? 0 : 180) : (fix < Wm / 2 ? 270 : 90), grid = KIT.grid || 2; let q0 = c0;
@@ -179,7 +179,7 @@ export function build(L, opt = {}) {
     }
     let p = c0;
     const solid = (a, b, h, y0, mat = m.wall) => { if (b - a < .02 || !draw) return; if (horiz) box(b - a, h, T, mat, (a + b) / 2, y0 + h / 2, fix); else box(T, h, b - a, mat, fix, y0 + h / 2, (a + b) / 2); };
-    for (const o of ops) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; solid(p, a, hh, 0); if (o.door) { solid(a, b, Math.max(0, hh - 2.1), 2.1); exits.push({ x: horiz ? o.x : fix, z: horiz ? fix : o.z, w: o.w || 1.4, axis: o.axis }); cuts.push([a, b, horiz, fix]); } else { solid(a, b, Math.min(.9, hh), 0); if (hh > 1.1) solid(a, b, Math.max(0, hh - 1.9), 1.9); if (hh > 1.1 && draw) { if (horiz) box(b - a - .1, 1.0, .06, m.win, (a + b) / 2, 1.4, fix); else box(.06, 1.0, b - a - .1, m.win, fix, 1.4, (a + b) / 2); } } p = b; }
+    for (const o of ops) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; solid(p, a, hh, 0); if (o.door) { solid(a, b, Math.max(0, hh - 2.1), 2.1); exits.push({ x: horiz ? o.x : fix, z: horiz ? fix : o.z, w: o.w || 1.4, axis: o.axis }); cuts.push([a, b, horiz, fix]); if (opt.firstPerson && draw) { const dw = Math.max(.6, b - a - .12); if (horiz) { box(dw, 2.08, .1, m.dark, (a + b) / 2, 1.04, fix); box(.1, .14, .16, m.brass, (a + b) / 2 + dw / 2 - .15, 1.0, fix + (fix < Hm / 2 ? .08 : -.08)); } else { box(.1, 2.08, dw, m.dark, fix, 1.04, (a + b) / 2); box(.16, .14, .1, m.brass, fix + (fix < Wm / 2 ? .08 : -.08), 1.0, (a + b) / 2 + dw / 2 - .15); } } } else { solid(a, b, Math.min(.9, hh), 0); if (hh > 1.1) solid(a, b, Math.max(0, hh - 1.9), 1.9); if (hh > 1.1 && draw) { if (horiz) box(b - a - .1, 1.0, .06, m.win, (a + b) / 2, 1.4, fix); else box(.06, 1.0, b - a - .1, m.win, fix, 1.4, (a + b) / 2); } } p = b; }
     solid(p, c0 + len, hh, 0);
     /* collision: the wall's solid spans (doors are gaps; windows block) */
     let q = c0; for (const o of ops) { const c = horiz ? o.x : o.z, a = c - (o.w || 1.3) / 2, b = c + (o.w || 1.3) / 2; if (!o.door) continue; if (a > q) collide.push(horiz ? [q, fix, a, fix] : [fix, q, fix, a]); q = b; }
@@ -206,9 +206,10 @@ export function build(L, opt = {}) {
     if (KIT.corner) for (const [x, z] of [[0, 0], [Wm, 0], [0, Hm], [Wm, Hm]]) if (z < Hm / 2) put(KIT.corner, x, z, x < Wm / 2 ? 0 : 90);
     if (KIT.floor) { const g2 = KIT.floorGrid || KIT.grid || 2; for (let x = g2 / 2; x < Wm; x += g2) for (let z = g2 / 2; z < Hm; z += g2) put(KIT.floor, x, z, 0, 1, false); }
   }
+  if (opt.firstPerson && draw) { box(Wm + .2, .12, Hm + .2, m.wall, Wm / 2, WH + .06, Hm / 2, false); }   // a ceiling
   /* daylight */
   const day = (out ? { day: [1.7, 2.4], dim: [1.0, 1.1], night: [.3, .35] } : { day: [1.4, 2.0], dim: [1.0, 1.0], night: [.35, .25] })[mood] || [1.2, 1.5];
-  S.add(new THREE.HemisphereLight(0xb4c4dc, 0x4a3a2c, day[0]));
+  S.add(new THREE.HemisphereLight(0xb4c4dc, 0x4a3a2c, opt.firstPerson && !out ? day[0] * 1.6 : day[0]));
   const sun = new THREE.DirectionalLight(0xc8d8f0, day[1]); sun.position.set(Wm * .3, 12, -6); sun.target.position.set(Wm / 2, 0, Hm / 2); sun.castShadow = true; Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16 }); sun.shadow.mapSize.set(2048, 2048); S.add(sun, sun.target);
   return { scene: S, collide, foot, lights, exits };
 }

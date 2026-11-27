@@ -20,8 +20,9 @@
     if (bg.getAttribute("src") !== pk.image) { bg.src = pk.image; bg.style.objectFit = "fill"; }
     reposition();
     if (window.WALK && !WALK.on) WALK.set(true);
+    if (window.ROOMVIEW) ROOMVIEW.sync(loc, pk);   // first-person room view (a test): replaces the top-down picture when switched on
   };
-  const undo = () => { const sc = U.$("#scene"), fr = U.$("#frame"), bg = U.$("#bg"); if (!sc || !sc.classList.contains("mapmode")) return; sc.classList.remove("mapmode"); fr.style.aspectRatio = ""; fr.style.width = ""; bg.style.objectFit = ""; };
+  const undo = () => { if (window.ROOMVIEW) ROOMVIEW.leave(); const sc = U.$("#scene"), fr = U.$("#frame"), bg = U.$("#bg"); if (!sc || !sc.classList.contains("mapmode")) return; sc.classList.remove("mapmode"); fr.style.aspectRatio = ""; fr.style.width = ""; bg.style.objectFit = ""; };
   const reposition = () => {
     const m = MM.cur(); if (!m) return; const { loc, map, pk } = m;
     let n = 0;

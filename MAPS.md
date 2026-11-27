@@ -72,3 +72,7 @@ Each place in each case gets a layout. Places repeat as types (a ward, a cellar,
 `mapstudio/` packages everything as a program that runs on your computer: a hub page, the Map Builder, Map Lab and Character Builder, and an HTTP API so other apps (Overlord) can call every tool. See `mapstudio/README.md` (setup, run, API, desktop window).
 Bought Unity/Unreal packs: convert to `.glb` (`mapstudio/convert/fbx_to_glb.py`), then `import_models` with `licensed: true` (models and piece files stay out of git), and `register_kit` for modular wall/door/floor sets, used with `style.kit`. Commit rendered maps only.
 Tools added: `import_models` (a whole folder, one measuring pass), `list_kits`, `register_kit`. Contract unchanged: only additions.
+
+## First-person room view (a test)
+`public/js/roomview.js` shows a scene that has a map from inside the room, like an old dungeon crawler: you turn left and right to see the four walls, click the same marks as ever, and click a door to load the next room. It uses the map tool's own 3D room (`build(layout, { firstPerson: true })`: full-height walls, a ceiling, door slabs). People stand in the room as painted cutouts.
+Turn it on with Settings > "Explore rooms in first person (a test)" or open the game with `?rooms=1`. A button in the corner switches between **Live** (smooth turning, flickering lamps) and **Stills** (snap turns with a crossfade, like pre-rendered views) so the two feels can be compared. Scenes without a map are unchanged; it replaces only the top-down picture.

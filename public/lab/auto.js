@@ -91,7 +91,7 @@ export function planScene(spec, seed = 1) {
       if (q) { usedProps.add(q); const d = CATALOG[q.t].size; const ox = w / 2 - q.x, oz = h / 2 - q.z, n = Math.hypot(ox, oz) || 1; p = free(q.x + ox / n * (Math.max(d[0], d[1]) / 2 + .9), q.z + oz / n * (Math.max(d[0], d[1]) / 2 + .9)); }
     }
     if (!p) p = free(w * (.2 + (hash(o.label) % 60) / 100), h * (.3 + (hash(o.label + "z") % 40) / 100));
-    out.spots[o.label] = p; if (o.kind !== "talk" && !o.goto) taken.push(p);
+    if (!(o.label in out.spots)) out.spots[o.label] = p; if (o.kind !== "talk" && !o.goto) taken.push(p);   // two options can share a label (an unlocked and a locked version): the first spot wins
   }
   L.npcs = []; L.start = out.start; return { layout: L, map: out, preset: key };
 }
